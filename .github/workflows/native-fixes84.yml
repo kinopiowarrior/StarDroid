@@ -18,6 +18,8 @@ jobs:
         run: python3 scripts/prepare_native.py
       - name: Test detector responses without game assets
         run: python3 tests/test_detectors11.py --cxx g++
+      - name: Test nearest-target campaign scripts without game assets
+        run: python3 tests/test_dunes11.py --cxx g++
       - name: Install pinned NDK
         run: |
           if [ ! -d "$ANDROID_HOME/ndk/27.3.13750724" ]; then

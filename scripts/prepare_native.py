@@ -66,8 +66,13 @@ def apply_source_patch(directory, name):
     patch_path = ROOT / 'patches' / name
     patch_program = shutil.which('patch')
     if patch_program:
-        subprocess.run([patch_program, '--batch', '--forward', '-p1', '-i', str(patch_path)],
-                       cwd=directory, check=True, stdout=subprocess.DEVNULL)
+        result = subprocess.run([patch_program, '--batch', '--forward', '-p1', '-i', str(patch_path)],
+                                cwd=directory, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+        if result.returncode:
+            print(result.stdout, flush=True)
+            for rejected in directory.rglob('*.rej'):
+                print(rejected.read_text(encoding='utf-8'), flush=True)
+            result.check_returncode()
         return
     git_program = shutil.which('git')
     if not git_program:
@@ -98,7 +103,7 @@ with tempfile.TemporaryDirectory(prefix='openbw-native-source-') as temp:
         apply_source_patch(fresh, name)
     presentation(fresh)
     feedback(fresh)
-    for name in ('native-revision.patch', 'native-missions.patch', 'native-polish33.patch', 'native-saves34.patch', 'native-campaign36.patch', 'native-finale37.patch', 'native-controls38.patch', 'native-polish39.patch', 'native-polish40.patch', 'native-polish41.patch', 'native-polish42.patch', 'native-ai43.patch', 'native-polish44.patch', 'native-ai45.patch', 'native-polish46.patch', 'native-polish54.patch', 'native-polish55.patch', 'native-polish56.patch', 'native-polish57.patch', 'native-polish58.patch', 'native-polish59.patch', 'native-upgrades1.patch', 'native-placement68.patch', 'native-scroll69.patch', 'native-polish77.patch', 'native-polish78.patch', 'native-campaign79.patch', 'native-unit-names79.patch', 'native-fog-target79.patch', 'native-ai-abilities79.patch', 'native-controls80.patch', 'native-ai-production80.patch', 'native-supply81.patch', 'native-addon-sound81.patch', 'native-replay82.patch', 'native-map-invincibility11.patch', 'native-score-names11.patch', 'native-bunker-ai11.patch', 'native-nukes11.patch', 'native-wireframes11.patch', 'native-hero-rescue11.patch', 'native-score-slots11.patch', 'native-desktop11.patch', 'native-hotkeys11.patch', 'native-assimilator11.patch', 'native-detectors11.patch'):
+    for name in ('native-revision.patch', 'native-missions.patch', 'native-polish33.patch', 'native-saves34.patch', 'native-campaign36.patch', 'native-finale37.patch', 'native-controls38.patch', 'native-polish39.patch', 'native-polish40.patch', 'native-polish41.patch', 'native-polish42.patch', 'native-ai43.patch', 'native-polish44.patch', 'native-ai45.patch', 'native-polish46.patch', 'native-polish54.patch', 'native-polish55.patch', 'native-polish56.patch', 'native-polish57.patch', 'native-polish58.patch', 'native-polish59.patch', 'native-upgrades1.patch', 'native-placement68.patch', 'native-scroll69.patch', 'native-polish77.patch', 'native-polish78.patch', 'native-campaign79.patch', 'native-unit-names79.patch', 'native-fog-target79.patch', 'native-ai-abilities79.patch', 'native-controls80.patch', 'native-ai-production80.patch', 'native-supply81.patch', 'native-addon-sound81.patch', 'native-replay82.patch', 'native-map-invincibility11.patch', 'native-score-names11.patch', 'native-bunker-ai11.patch', 'native-nukes11.patch', 'native-wireframes11.patch', 'native-hero-rescue11.patch', 'native-score-slots11.patch', 'native-desktop11.patch', 'native-hotkeys11.patch', 'native-assimilator11.patch', 'native-detectors11.patch', 'native-dunes11.patch'):
         apply_source_patch(fresh, name)
     for source in fresh.rglob('*'):
         if not source.is_file(): continue

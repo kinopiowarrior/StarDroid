@@ -1,29 +1,15 @@
 --- a/web/sandbox.h
 +++ b/web/sandbox.h
-@@ -1648,10 +1648,12 @@
- 		// Title line carries the unit's status: "name \t HP x/y \t <second stat, or empty>".
- 		int hp = sel->hp.ceil().integer_part(), maxhp = sel->unit_type->hitpoints.ceil().integer_part();
+@@ -1650,3 +1650,4 @@
  		a_string stat2;
 -		if (sel->unit_type->has_shield)
-+		// Refineries are both buildings and resources. Gas must remain the
-+		// secondary readout even when the Assimilator also has shields.
-+		if (ut_resource(sel))
-+			stat2 = format("%s %d", unit_is_mineral_field(sel) ? "Minerals" : "Gas", sel->building.resource.resource_count);
-+		else if (sel->unit_type->has_shield)
++		// Refineries report gas here; Assimilator shields belong in the life readout.
++		if (sel->unit_type->has_shield && !ut_resource(sel))
  			stat2 = format("Shields %d/%d", sel->shield_points.integer_part(), sel->unit_type->shield_points);
--		else if (ut_resource(sel))
--			stat2 = format("%s %d", unit_is_mineral_field(sel) ? "Minerals" : "Gas", sel->building.resource.resource_count);
- 		// Energy for casters and energy buildings (Comsat, Nuclear Silo.); shown alongside
- 		// shields for the Protoss casters that have both.
- 		if (ut_has_energy(sel) && !u_hallucination(sel)) {
-@@ -1750,7 +1752,9 @@
- 		details_text.clear();
- 		if (current_selection.size() != 1) return "";
+@@ -1752,3 +1753,5 @@
  		unit_t* u = get_unit(current_selection.front());
 -		if (!u || ut_resource(u) || ut_powerup(u) || unit_is_special_beacon(u) || unit_is_critter(u)) return "";
 +		// Keep refinery life/armor (and Assimilator shields) available to the
 +		// native HUD; only raw minerals/geysers omit the building details.
 +		if (!u || (ut_resource(u) && !unit_is_refinery(u)) || ut_powerup(u) || unit_is_special_beacon(u) || unit_is_critter(u)) return "";
  		int ri = (int)unit_race(u), supplied = u_completed(u) ? u->unit_type->supply_provided.raw_value / 2 : 0;
-         // Neutral doodads have no race supply array.
-         if (ri < 0 || ri >= 3) ri = 0;
