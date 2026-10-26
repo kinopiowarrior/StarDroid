@@ -10,6 +10,7 @@ permissions:
   contents: write
 jobs:
   native:
+    if: "!contains(github.event.head_commit.message, '[package-only]')"
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
