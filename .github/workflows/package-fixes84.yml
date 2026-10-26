@@ -28,7 +28,7 @@ jobs:
           PY
       - name: Prepare Android SDK
         run: |
-          sdkmanager "platforms;android-35" "build-tools;35.0.0"
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-35" "build-tools;35.0.0"
           mkdir -p "$RUNNER_TEMP/stardroid-tools"
           ln -s "$ANDROID_HOME/platforms/android-35" "$RUNNER_TEMP/stardroid-tools/android-35"
           ln -s "$ANDROID_HOME/build-tools/35.0.0" "$RUNNER_TEMP/stardroid-tools/android-15"
