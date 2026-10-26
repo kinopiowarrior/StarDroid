@@ -2,7 +2,7 @@ package org.openbw.androidtest;
 import java.io.*;
 /** Every game message belongs to one lobby revision; old transfers cannot alter a new game. */
 final class RoomProtocol {
-  static final int BUILD=60, MAX=16384, HEADER=26;
+  static final int BUILD=61, MAX=16384, HEADER=26;
   static final int HELLO=1,CONFIG=2,MAP_CHUNK=3,MAP_ACK=4,MAP_READY=5,STATE_CHUNK=6,STATE_ACK=7,READY=8,
     COUNTDOWN=9,START=10,INPUT=11,PAUSE=12,PING=13,PONG=14,LEAVE=15,ERROR=16,CHAT=17,RACE=18,DEPART=19,SAVE=20,FINISH=21;
   static final byte[] EMPTY=new byte[0],LEAVE_INPUT={2,0,87,1};

@@ -11,7 +11,7 @@ android {
     namespace 'org.openbw.androidtest'
     compileSdk 35
     buildToolsVersion '35.0.0'
-    defaultConfig { applicationId 'org.openbw.androidtest'; minSdk 26; targetSdk 35; versionCode 83; versionName '1.1' }
+    defaultConfig { applicationId 'org.openbw.androidtest'; minSdk 26; targetSdk 35; versionCode 84; versionName '1.1' }
     buildFeatures { buildConfig true }
     signingConfigs {
         if (releaseKeyPath) {

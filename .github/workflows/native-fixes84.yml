@@ -1,0 +1,59 @@
+name: StarDroid native fix build
+on:
+  push:
+    branches: [codex/dunes-detectors-1.1-build84]
+    paths-ignore:
+      - 'native-libs/**'
+      - 'NATIVE-BUILD-84.json'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare native sources
+        run: python3 scripts/prepare_native.py
+      - name: Test detector responses without game assets
+        run: python3 tests/test_detectors11.py --cxx g++
+      - name: Install pinned NDK
+        run: |
+          if [ ! -d "$ANDROID_HOME/ndk/27.3.13750724" ]; then
+            sdkmanager "ndk;27.3.13750724"
+          fi
+          mkdir -p "$RUNNER_TEMP/stardroid-tools"
+          ln -s "$ANDROID_HOME/ndk/27.3.13750724" "$RUNNER_TEMP/stardroid-tools/android-ndk-r27d"
+      - name: Compile ARM64 and x86-64
+        env:
+          STARDROID_ANDROID_TOOLS: ${{ runner.temp }}/stardroid-tools
+        run: |
+          python3 scripts/build_native_engine.py arm64-v8a --skip-prepare
+          python3 scripts/build_native_engine.py x86_64 --skip-prepare
+      - name: Record native build
+        run: |
+          python3 - <<'PY'
+          import hashlib,json,os,pathlib
+          r=pathlib.Path('.')
+          paths=sorted((r/'native-libs').rglob('*.so'))
+          report={'sourceCommit':os.environ['GITHUB_SHA'],'ndk':'27.3.13750724',
+                  'runId':os.environ['GITHUB_RUN_ID'],'detectorRegression':'passed',
+                  'sha256':{str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}}
+          (r/'NATIVE-BUILD-84.json').write_text(json.dumps(report,indent=2)+'\n')
+          PY
+      - name: Upload native libraries
+        uses: actions/upload-artifact@v4
+        with:
+          name: StarDroid-1.1-build84-native
+          path: |
+            native-libs/
+            NATIVE-BUILD-84.json
+          retention-days: 7
+      - name: Save compiled libraries on isolated build branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add native-libs NATIVE-BUILD-84.json
+          git diff --cached --quiet || git commit -m "Build native libraries for StarDroid 1.1 fixes [skip ci]"
+          git push origin HEAD:codex/dunes-detectors-1.1-build84

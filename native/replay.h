@@ -4,8 +4,8 @@
 namespace native_replay {
 constexpr size_t MAX_FILE=32u*1024*1024, MAX_ACTIONS=16u*1024*1024, MAX_MAP=16u*1024*1024;
 constexpr uint64_t MAGIC=0x3130505244445453ull; // STDDRP01
-// Simulation rules changed: map protection and campaign bunker orders.
-constexpr uint32_t ENGINE=84;
+// Simulation rules changed: bounded detector responses and campaign fixes.
+constexpr uint32_t ENGINE=85;
 struct Rules {
  bool present=false,heroes=false,teams=false,defenders=true;int difficulty=2,player=0;unsigned ai=0;
  uint64_t signature=0,initial=0;

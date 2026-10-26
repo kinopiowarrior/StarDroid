@@ -5,7 +5,7 @@ import java.util.*;
 
 /** Bounded, versioned messages. No device identity, paths, or executable content. */
 final class NearbyProtocol {
-  static final int BUILD = 84, VERSION = 2, MAX_BODY = 16384, MAX_MAP = 8 * 1024 * 1024;
+  static final int BUILD = 85, VERSION = 2, MAX_BODY = 16384, MAX_MAP = 8 * 1024 * 1024;
   static final int FRAME_MS=42, TURN_FRAMES=4, TURN_MS=FRAME_MS*TURN_FRAMES, MAP_WINDOW=8, MAP_ACK_CHUNKS=4;
   static final int HELLO=1, CONFIG=2, CHUNK=3, ACK=4, READY=5, START=6, TURN=7, PAUSE=8, PING=9, LEAVE=10, ERROR=11, FINISH=12, PONG=13, STATE_META=14, STATE_CHUNK=15, STATE_ACK=16, STATE_READY=17, COUNTDOWN=18, RELOAD=19;
   static final byte[] EMPTY = new byte[0];
