@@ -53,7 +53,9 @@ struct campaign_ai {
  bool unit_can_attack_target(unit_t* u,unit_t* other){
   return !other->invincible&&!other->hidden&&!other->undetected && (other->flying?u->air_weapon:u->ground_weapon);
  }
+ bool u_flying(unit_t* u){return u->flying;}
  bool is_reachable(unit_t*,xy pos){return pos.y!=999;}
+ bool unit_target_in_weapon_movement_range(unit_t*,unit_t* other){return other->hero;}
  int units_distance(unit_t* a,unit_t* b){int x=a->sprite->position.x-b->sprite->position.x;int y=a->sprite->position.y-b->sprite->position.y;return (x<0?-x:x)+(y<0?-y:y);}
  void issue_order(unit_t* u,bool,order_type_t* order,unit_t::target_t target){u->order_type=order;u->order_target=target;}
  int ai_read(thread& t,int n){read_count+=n;return t.operand;}
@@ -102,6 +104,12 @@ int main(){
  add(3,0,30)->building=true;add(4,0,40);add(5,1,100);run();
  if(ai.towns[0].orders!=1||units[4].order_target.unit!=&units[5])return 8;
  for(int i=0;i<4;++i)if(units[i].order_type!=&idle)return 9;
+ // Anti-air units may target flyers over impassable ground; ranged units may
+ // fire across a gap when already in range despite disconnected ground paths.
+ reset();add(0,0,0)->air_weapon=true;add(1,1,50,999)->flying=true;run();
+ if(units[0].order_target.unit!=&units[1])return 10;
+ reset();add(0,0,0);add(1,1,50,999)->hero=true;run();
+ if(units[0].order_target.unit!=&units[1])return 11;
  return 0;
 }
 '''

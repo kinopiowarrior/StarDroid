@@ -9,7 +9,8 @@ tools=pathlib.Path(os.environ.get('STARDROID_ANDROID_TOOLS',os.environ.get('OPEN
 ndk=tools/'android-ndk-r27d';bin=ndk/'toolchains/llvm/prebuilt/linux-x86_64/bin';cxx=bin/(triple+'26-clang++');cc=bin/(triple+'26-clang')
 # Materialized SDK files may lose executable mode bits; restore the tool directory.
 for executable in bin.iterdir():
-    if executable.is_file(): executable.chmod(executable.stat().st_mode | 0o111)
+    if executable.is_file() and not os.access(executable, os.X_OK):
+        executable.chmod(executable.stat().st_mode | 0o111)
 stage=ROOT/'native-engine';out=ROOT/'native-libs'/abi;out.mkdir(parents=True,exist_ok=True)
 def run(*args):subprocess.run([str(x) for x in args],check=True,cwd=ROOT)
 # Prepare once before parallel ABI builds; normal standalone builds still prepare.
