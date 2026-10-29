@@ -317,11 +317,13 @@ public final class MainActivity extends Activity {
   }
 
   private void refreshLanguage() {
-    GameLanguage.russianData = GameLanguage.installedRussian(dataDir());
+    String detected = GameLanguage.installedLanguage(dataDir());
+    GameLanguage.russianData = detected.equals("ru");
     android.content.SharedPreferences p = getSharedPreferences("native-settings", 0);
     String code = p.getString("ui-language", "en");
-    PortText.select(code);
-    p.edit().putString("ui-language", PortText.language).putBoolean("russian-data", GameLanguage.russianData).apply();
+    boolean automatic = p.getBoolean("ui-language-auto", code.equals("en"));
+    PortText.select(automatic ? detected : code);
+    p.edit().putBoolean("ui-language-auto", automatic).putString("ui-language", PortText.language).putBoolean("russian-data", GameLanguage.russianData).apply();
   }
 
   private void chooseDataStorage() {
@@ -393,13 +395,15 @@ public final class MainActivity extends Activity {
   }
 
   private void chooseLanguage() {
-    String[] codes = PortText.availableLanguages(GameLanguage.russianData);
-    String[] labels = new String[]{"English","Русский","Deutsch","Español","Français"};
-    int selected = java.util.Arrays.asList(codes).indexOf(PortText.language);
+    String[] codes = new String[]{"auto", "en", "ru", "de", "es", "fr"};
+    String[] labels = new String[]{PortText.text("Automatic (game files)"), "English", "Русский", "Deutsch", "Español", "Français"};
+    android.content.SharedPreferences p = getSharedPreferences("native-settings",0);
+    int selected = p.getBoolean("ui-language-auto", true) ? 0 : java.util.Arrays.asList(codes).indexOf(PortText.language);
     new AlertDialog.Builder(this).setTitle(PortText.text("Interface language"))
         .setSingleChoiceItems(labels, Math.max(0, selected), (dialog, which) -> {
-          PortText.select(codes[which]);
-          getSharedPreferences("native-settings",0).edit().putString("ui-language",codes[which]).apply();
+          p.edit().putBoolean("ui-language-auto", which == 0)
+              .putString("ui-language", which == 0 ? GameLanguage.installedLanguage(dataDir()) : codes[which]).apply();
+          refreshLanguage();
           dialog.dismiss(); showHome();
         }).setNegativeButton(PortText.text("Cancel"),null).show();
   }

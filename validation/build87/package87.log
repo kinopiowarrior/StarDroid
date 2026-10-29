@@ -1,0 +1,14 @@
+PASS exact-match Android resource cache; versionCode updated to 87
+warning: [options] bootstrap class path not set in conjunction with -source 8
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+1 warning
+Verifies
+Verified using v1 scheme (JAR signing): false
+Verified using v2 scheme (APK Signature Scheme v2): true
+Verified using v3 scheme (APK Signature Scheme v3): true
+Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+Verified using v4 scheme (APK Signature Scheme v4): false
+Verified for SourceStamp: false
+Number of signers: 1
+PASS signed APK: C:\Users\PC\Documents\Codex\2026-10-27\new-chat\StarDroid86\app\build\outputs\apk\release\app-release.apk SHA256: f8cf0818dbe8510477f1b3568f742530cc3e0617571ec5ac5b312feaecd9cd03

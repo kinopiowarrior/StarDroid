@@ -3,20 +3,20 @@
   "physicalAndroid": false,
   "version": "1.0.7",
   "versionCode": 77,
-  "output": "PASS 3686 font checks: original-size reuse, no-font fallback, cached glyphs, colors, accents, proportional wrapping and real dialog label bounds. AWT stand-in for Android sans font.\nPASS 41 asset checks plus 13 fallback button labels/actions; real core menus, missing palette, damaged patch, MPQ exception, imported font recovery, raw PCX and malformed bounds. Host Canvas shim; no physical device test.",
+  "output": "PASS 3627 font checks: original-size reuse, no-font fallback, cached glyphs, colors, accents, proportional wrapping and real dialog label bounds. AWT stand-in for Android sans font.\nPASS 41 asset checks plus 13 fallback button labels/actions; real core menus, missing palette, damaged patch, MPQ exception, imported font recovery, raw PCX and malformed bounds. Host Canvas shim; no physical device test.",
   "interfaceImport": "PASS interface metadata: font-only import distinguished from campaign palette; complete palette detected; missing unused font no longer discards menu files.",
   "sourceSha256": {
-    "app/src/main/java/org/openbw/androidtest/NativeArt.java": "5eb4088196305b3227475d98877b188394ae60cf8c0909ea5516cfac1bb3b3d7",
-    "app/src/main/java/org/openbw/androidtest/NativeGlue.java": "6bb79de77b500c8b58a343c62c3e907d35490aaa2dc4d60e6c2d2c4a7cfa3388",
-    "app/src/main/java/org/openbw/androidtest/MenuLabels.java": "6e4ad96d580162ed71f4b41524877a5973cc4f73e128a60697c0eb995189cfac",
-    "app/src/main/java/org/openbw/androidtest/ClassicFontCipher.java": "ebabcdf34074db16f9bda7e2283ac5eddd6b6b115430d9ee4aa6602cd00b04f2",
-    "app/src/main/java/org/openbw/androidtest/GameLanguage.java": "adb682e53c454c4b295e7c8693ce79295b9ce3601dd02061d1eeaad4ff27c179",
-    "app/src/main/java/org/openbw/androidtest/PortText.java": "8511d8b333e6be756676e731919f70d1342bfe0626ae3db4226b9b4b5c573c19",
-    "app/src/main/java/org/openbw/androidtest/NativeSurface.java": "392b11660fa050a2cd4c1ad9e51430ae586c1f5590b35974d50ad00ea61d9f49",
-    "app/src/main/java/org/openbw/androidtest/InterfaceData.java": "3737770642666be7df65f5b962873041d44b1b0bdd7e3944e9894eb9679bd4f0",
-    "app/src/main/java/org/openbw/androidtest/GameContent.java": "47178f9645d2d36c582f8d887d40cb1b7374e82d8d5cd8d0849f04ce76b39276",
-    "app/src/main/java/org/openbw/androidtest/MainActivity.java": "e91927be6e7d44fc47e43b004688e96bcb72f28e18f41fe23521029757fc5cc7",
-    "tests/run_menu_recovery.py": "1d2058ba73f80cf9314f8e269d418d82ceefa284d1a0ec73fbed908ad9fbbb27",
-    "tests/FontFallbackTest.java": "ca92077899f5e6559e92eee5ca2b6d10ad01f21ca4d00457514fdb7595f08d6d"
+    "app\\src\\main\\java\\org\\openbw\\androidtest\\NativeArt.java": "3d14c1df34a0f3a878260f72aea19010d1c8cb40fd96506570fd30a5cc6b1262",
+    "app\\src\\main\\java\\org\\openbw\\androidtest\\NativeGlue.java": "784744f759c401912dc265ed8786e5bb9325b2c526d1adaee3e97ddf802bad38",
+    "app\\src\\main\\java\\org\\openbw\\androidtest\\MenuLabels.java": "6524d413cc8d23c1d7ce4dfd94b344ef8d87d76173e7e55931e0d70b5befa1d9",
+    "app\\src\\main\\java\\org\\openbw\\androidtest\\ClassicFontCipher.java": "ebabcdf34074db16f9bda7e2283ac5eddd6b6b115430d9ee4aa6602cd00b04f2",
+    "app\\src\\main\\java\\org\\openbw\\androidtest\\GameLanguage.java": "050dfe1147654785351e3060a3cb7cc455bbfb07fe07f1f0f419b4d06410be21",
+    "app\\src\\main\\java\\org\\openbw\\androidtest\\PortText.java": "715d49b416621a93b488e553f53fb317ef378707795f2d927523e1fa89e2b971",
+    "app\\src\\main\\java\\org\\openbw\\androidtest\\NativeSurface.java": "5b48bb165452df3f5af4ea16c3dd7979fdbe19a0fd0fc108628915a4d34db908",
+    "app\\src\\main\\java\\org\\openbw\\androidtest\\InterfaceData.java": "ca87dd5776896b6227986bdfb0f44e1b4d4056e6a9c6b11c05d5b46060442fa1",
+    "app\\src\\main\\java\\org\\openbw\\androidtest\\GameContent.java": "47178f9645d2d36c582f8d887d40cb1b7374e82d8d5cd8d0849f04ce76b39276",
+    "app\\src\\main\\java\\org\\openbw\\androidtest\\MainActivity.java": "8470b2a5fb252652ce96af6f398e2c090f90f42976e71113c378beb47a632208",
+    "tests\\run_menu_recovery.py": "d75557c6dd666250fe8221e4916abb9c4cd974a05fe32ee5c0d3c45d3d754825",
+    "tests\\FontFallbackTest.java": "ca92077899f5e6559e92eee5ca2b6d10ad01f21ca4d00457514fdb7595f08d6d"
   }
 }

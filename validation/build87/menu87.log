@@ -1,0 +1,5 @@
+PASS 3627 font checks: original-size reuse, no-font fallback, cached glyphs, colors, accents, proportional wrapping and real dialog label bounds. AWT stand-in for Android sans font.
+PASS 41 asset checks plus 13 fallback button labels/actions; real core menus, missing palette, damaged patch, MPQ exception, imported font recovery, raw PCX and malformed bounds. Host Canvas shim; no physical device test.
+
+PASS interface metadata: font-only import distinguished from campaign palette; complete palette detected; missing unused font no longer discards menu files.
+

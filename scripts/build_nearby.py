@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build/sign the local multiplayer APK without Google Play services dependencies."""
 import urllib.parse
-import hashlib, os, pathlib, shutil, subprocess, sys, urllib.request, zipfile
+import hashlib, os, pathlib, re, shutil, subprocess, sys, urllib.request, zipfile
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 TOOLS=pathlib.Path(os.environ.get('STARDROID_ANDROID_TOOLS',os.environ.get('OPENBW_ANDROID_TOOLS',ROOT/'.tools'))).resolve()
 def run(*args): subprocess.run([str(x) for x in args],cwd=ROOT,check=True)
@@ -34,6 +34,7 @@ run(gradle/'bin/gradle',*proxy,'--no-daemon','--console=plain','clean','assemble
 apk=ROOT/'app/build/outputs/apk/release/app-release.apk'
 run('java','-jar',TOOLS/'android-15/lib/apksigner.jar','verify','--verbose','--print-certs',apk)
 run(TOOLS/'android-15/zipalign','-c','-P','16','4',apk)
-out=ROOT/'dist';out.mkdir(exist_ok=True);target=out/'StarDroid-1.1.apk';shutil.copyfile(apk,target)
+version=re.search(r"versionName '([^']+)'",(ROOT/'app/build.gradle').read_text(encoding='utf-8'))[1]
+out=ROOT/'dist';out.mkdir(exist_ok=True);target=out/('StarDroid-'+version+'.apk');shutil.copyfile(apk,target)
 (out/'SHA256SUMS.txt').write_text(hashlib.sha256(target.read_bytes()).hexdigest()+'  '+target.name+'\n')
 print(target)

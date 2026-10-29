@@ -1,0 +1,10 @@
+StarDroid 1.1 build 85
+Source commit: e2208ce7f85a6ab9d81b5b0e5f5d66f59f2a1814
+Simulation compatibility: 86
+APK SHA-256: 8fd253c83304dedb98602c8a5726a38c2fb2d700d96a9597a9902f3420d36e46
+
+Read docs/CHANGES-BUILD85.md and docs/QA-BUILD85.md.
+Build with python3 scripts/build.py on Linux with JDK 17.
+This archive includes the rebuilt native libraries and reproducible patch/test sources.
+Historical distribution APKs, private signing credentials, game archives and tool caches are excluded.
+Local rebuilds use a development key unless you configure your own release key.

@@ -1,0 +1,12 @@
+{
+  "sourceCommit": "816e0786b05c267b45620276bcc9c208c128243c",
+  "ndk": "27.3.13750724",
+  "runId": "40384383418",
+  "detectorRegression": "passed",
+  "sha256": {
+    "native-libs/arm64-v8a/libopenbw.so": "0a5331cf4e8a329b6665bf7c9ce3c0b2697f942696e4c649aa13a2deac5f21ec",
+    "native-libs/arm64-v8a/libsmacker.so": "9c5f4ee1c024ebd3f68e81d64864e922d284d92d7601c87cf22ce747cf81d41e",
+    "native-libs/x86_64/libopenbw.so": "2b59ea35937ec210e5facd842f34e8fe26a4493e2c1d07dce30b4cdd90e6dce0",
+    "native-libs/x86_64/libsmacker.so": "8883371481e722a5fca77d3111731bbc35c593a08dd64be9918c6ffb24e2634c"
+  }
+}

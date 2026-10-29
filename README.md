@@ -6,13 +6,13 @@
 
 StarDroid adapts the OpenBW engine for Android devices. Play campaigns, set up custom battles against computer opponents, or host a nearby multiplayer match. The interface uses the classic artwork, fonts, music, and sounds imported from your own game files.
 
-**Latest release 1.1 · Android 8.0+ · ARM64 and x86-64**
+**Latest release 1.1.1 · Android 8.0+ · ARM64 and x86-64**
 
 Put together by **ToadWarrior**.
 
-[Download the APK](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.1/StarDroid-1.1.apk) · [Release notes](https://github.com/kinopiowarrior/StarDroid/releases/tag/v1.1) · [Download source](https://api.github.com/repos/kinopiowarrior/StarDroid/zipball/v1.1) · [Discord community](https://discord.gg/F2FnjUrtQ) · [Player guide](docs/PLAYER-GUIDE.md) · [Build from source](docs/BUILDING.md) · [Report a bug](https://github.com/kinopiowarrior/StarDroid/issues/new/choose)
+[Download the APK](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.1.1/StarDroid-1.1.1.apk) · [Release notes](https://github.com/kinopiowarrior/StarDroid/releases/tag/v1.1.1) · [Download source](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.1.1/StarDroid-1.1.1-source.zip) · [Discord community](https://discord.gg/F2FnjUrtQ) · [Player guide](docs/PLAYER-GUIDE.md) · [Build from source](docs/BUILDING.md) · [Report a bug](https://github.com/kinopiowarrior/StarDroid/issues/new/choose)
 
-Version **1.1** adds replays, mouse and keyboard controls, campaign completion marks, and SD-card data storage, plus campaign, audio, and UI fixes. Install `StarDroid-1.1.apk` over the existing app. [Released changes](docs/CHANGES-1.1.md).
+Version **1.1.1** improves AI, campaign scripts, mouse commands, transports, unit displays and language detection. It adds separate button-size controls and one graphics-smoothing setting for the battlefield and UI. Install `StarDroid-1.1.1.apk` over the existing app. [Released changes](docs/CHANGES-1.1.1.md).
 
 **Diagnostics / credits** remains available in the app.
 
@@ -31,7 +31,7 @@ StarDroid is an unofficial fan project. **Game data is not included.** You need 
 
 ## Install
 
-1. Download **[StarDroid-1.1.apk](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.1/StarDroid-1.1.apk)** on your Android device. The source-code ZIP is for development, not installation.
+1. Download **[StarDroid-1.1.1.apk](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.1.1/StarDroid-1.1.1.apk)** on your Android device. The source-code ZIP is for development, not installation.
 2. Open the APK on your Android device. If Android asks, allow the browser or file manager you are using to install apps from that source.
 3. Launch **StarDroid**. The import screen appears automatically when required files are missing.
 4. Tap **Import game files**, choose the files below, and let importing finish. You can select multiple files if your file picker supports it.
@@ -62,7 +62,7 @@ This release targets classic game data. A modern launcher installation or Remast
 - Enough free space for imported archives and campaign/media content; these are much larger than the APK.
 - Bluetooth for local multiplayer. Wi-Fi Direct is optional and depends on Android version and hardware support.
 
-The [download checksum](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.1/SHA256SUMS.txt) records the SHA-256 of the published APK.
+The [download checksum](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.1.1/SHA256SUMS.txt) records the SHA-256 of the published APK and source ZIP.
 
 ## Quick start
 
@@ -138,11 +138,11 @@ Tassadar and Zeratul can merge into their hero Archon. Both hero slots remain oc
 - If an APK will not install over an existing app, check CPU architecture and signing identity. Independently signed builds cannot replace the distributed APK in place.
 - Use **Load Replay** to watch, import, export, or delete replays. See [replay controls and compatibility](docs/PLAYER-GUIDE.md#replays).
 
-More details: [player guide](docs/PLAYER-GUIDE.md) · [current source changes](docs/CHANGES-1.1.md) · [1.0 changes](docs/FIXES-1.0.md) · [validation record](VALIDATION.md).
+More details: [player guide](docs/PLAYER-GUIDE.md) · [current source changes](docs/CHANGES-1.1.1.md) · [1.0 changes](docs/FIXES-1.0.md) · [validation record](docs/QA-1.1.1.md).
 
 ## Development
 
-The **1.1 release uses build 83**. It fixes replay layouts for both current and older imports, adds working timeline seeking, and refines pixel controls and campaign transitions. See [1.1 changes](docs/CHANGES-1.1.md), [build 82 changes](docs/CHANGES-1.0.12.md), [build 81 changes](docs/CHANGES-1.0.11.md), [build 80 changes](docs/CHANGES-1.0.10.md), and the [OpenSnowstorm review](docs/OPENSNOWSTORM-REVIEW.md).
+This branch contains **1.1.1 (build 88)**; see [release notes](docs/CHANGES-1.1.1.md) and [verification](docs/QA-1.1.1.md). The [build 86 Queen/lifetime fixes](docs/CHANGES-BUILD86.md) and [build 85 community fixes](docs/CHANGES-BUILD85.md) are retained. The earlier **build 83** fixed replay layouts for both current and older imports, added working timeline seeking, and refined pixel controls and campaign transitions. See [1.1 changes](docs/CHANGES-1.1.md), [build 82 changes](docs/CHANGES-1.0.12.md), [build 81 changes](docs/CHANGES-1.0.11.md), [build 80 changes](docs/CHANGES-1.0.10.md), and the [OpenSnowstorm review](docs/OPENSNOWSTORM-REVIEW.md).
 
 The current Android app uses a native C++ engine, JNI, Android Canvas, and AudioTrack. The older web implementation remains as historical source and is not shipped in the APK.
 
@@ -152,7 +152,7 @@ On an x86-64 Linux development machine with Python 3.10+, JDK 17, Git, and `patc
 python3 scripts/build.py
 ```
 
-The build downloads pinned Android tools, prepares the patched engine, and writes **`dist/StarDroid-1.1.apk`**. Downloads and native compilation need additional disk space and time. Without an explicitly configured release key, local builds use Android's development signing key. See [build instructions](docs/BUILDING.md) for signing, faster rebuilds, and tests.
+The build downloads pinned Android tools, prepares the patched engine, and writes **`dist/StarDroid-1.1.1.apk`**. Downloads and native compilation need additional disk space and time. Without an explicitly configured release key, local builds use Android's development signing key. See [build instructions](docs/BUILDING.md) for signing, faster rebuilds, and tests.
 
 Automated checks cover upgrade progression, command cards, touch routing, saves, multiplayer protocol behavior, UI layouts, and screen-edge rendering with AddressSanitizer and guarded buffers. These do not replace physical-device checks; installation, radio interoperability, touch, audio, and full campaign playthroughs need broader device testing. See [VALIDATION.md](VALIDATION.md) for exact coverage and limitations.
 

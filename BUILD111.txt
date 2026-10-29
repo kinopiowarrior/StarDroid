@@ -1,0 +1,6 @@
+StarDroid 1.1.1 (Android build 88)
+Cumulative build 84-87 fixes; game runtime unchanged since build 87.
+Simulation compatibility: 87; room: 63; save schema: 4.
+APK SHA-256: 151305a8d19ddc69cb56480ab76b484e26c3c612992f7acd2f8bf531c2fb06a2
+Read docs/CHANGES-1.1.1.md and docs/QA-1.1.1.md.
+No original game archives or private signing material are included.

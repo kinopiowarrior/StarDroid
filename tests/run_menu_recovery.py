@@ -5,7 +5,7 @@ Usage: python3 tests/run_menu_recovery.py /path/to/classic-game-data
 Optional --baseline DIR points at unmodified 1.0.1 NativeArt/NativeGlue sources.
 Game assets stay in the ignored build directory and are never distributed.
 """
-import argparse, ast, hashlib, json, re, subprocess
+import argparse, ast, hashlib, json, os, re, subprocess
 from pathlib import Path
 
 r = Path(__file__).resolve().parents[1]
@@ -57,7 +57,7 @@ sources['android/graphics/Typeface.java'] = '''package android.graphics;public c
  public static Typeface create(String family,int style){Typeface t=new Typeface();t.family=family;t.style=style;return t;}}'''
 sources['android/graphics/Rect.java'] = '''package android.graphics;public class Rect{
  public int left,top,right,bottom;public int width(){return right-left;}public int height(){return bottom-top;}}'''
-sources['android/graphics/Paint.java'] = sources['android/graphics/Paint.java'].replace(
+sources['android/graphics/Paint.java'] = sources['android/graphics/Paint.java'].replace('public class Paint{','public class Paint{public boolean filtered;public boolean isFilterBitmap(){return filtered;}public void setFilterBitmap(boolean f){filtered=f;}public void setDither(boolean d){}').replace(
  'public void setTypeface(Typeface t){}', '''public Typeface typeface=Typeface.DEFAULT;public float scaleX=1;
  public void setTypeface(Typeface t){typeface=t;}public void setTextScaleX(float x){scaleX=x;}
  public float getTextSize(){return size;}''').replace('public void setColor(int c)', '''
@@ -192,12 +192,13 @@ class FallbackActions {
  class Activity {void runOnUiThread(Runnable r){r.run();}void requestAppOptions(){action="options";}
   void requestExit(){action="exit";}void requestDiagnostics(){action="diagnostics";}}
  static class Button {String label;Runnable run;Button(String l,Runnable r){label=l;run=r;}}
- void button(Canvas c,String label,float x,float y,float w,float h,Runnable run,boolean enabled){
+ void button(Canvas c,String label,float x,float y,float w,float h,Runnable run,boolean enabled,boolean... navigation){
   if(y<0||y+h>480)throw new AssertionError("Button outside screen");buttons.add(new Button(label,run));}
  void add(RectF r,Runnable run,boolean enabled){throw new AssertionError("Not a fallback");}
  void navigate(Runnable run){run.run();}void showRegistry(){action="registry";}void playIntroduction(){action="intro";}
  void missionList(int r){race=r;}void openSaves(boolean saving){action="load";}void message(String s){action="message";}
- void showCustom(){action="custom";}
+ void showCustom(){action="custom";}void showReplays(){action="replays";}
+ void queueMenuButtonVisual(RectF r,Runnable run,boolean enabled,boolean clickable,String label,boolean nav,java.util.function.Consumer<String> draw){draw.accept(label);buttons.add(new Button(label,run));}
 ''' + button_method + '\n void draw(Canvas c) {\n' + main + campaign + r'''}
  static void run(){FallbackActions h=new FallbackActions();
   h.page="main";h.draw(null);String[] main={"Single Player","App Options","Exit","Credits","Multiplayer","Play Introduction"};
@@ -209,7 +210,7 @@ class FallbackActions {
   check(h.buttons.size()==7,"Campaign count");for(int i=0;i<7;i++)check(h.buttons.get(i).label.equals(names[i]),"Campaign label "+i);
   for(int i=0;i<3;i++){h.buttons.get(i).run.run();check(h.race==2-i,"Campaign race mismatch");}
   h.buttons.get(3).run.run();check(h.action.equals("registry"),"Back action");h.buttons.get(4).run.run();check(h.action.equals("load"),"Load action");
-  h.buttons.get(5).run.run();check(h.action.equals("message"),"Replay action");h.buttons.get(6).run.run();check(h.action.equals("custom"),"Custom action");
+  h.buttons.get(5).run.run();check(h.action.equals("replays"),"Replay action");h.buttons.get(6).run.run();check(h.action.equals("custom"),"Custom action");
  }
  static void check(boolean v,String why){if(!v)throw new AssertionError(why);}
 }'''
@@ -221,7 +222,7 @@ for name, text in sources.items():
     target.write_text(text)
 real = [src/n for n in ['NativeArt.java','NativeGlue.java','MenuLabels.java','ClassicFontCipher.java','GameLanguage.java','PortText.java']]
 classes = b/'classes'
-subprocess.run(['javac','-d',str(classes),*[str(b/n) for n in sources],*map(str,real)],check=True)
+subprocess.run(['javac','-encoding','UTF-8','-d',str(classes),*[str(b/n) for n in sources],*map(str,real)],check=True)
 result = subprocess.run(['java','-Djava.awt.headless=true','-cp',str(classes),
                          'org.openbw.androidtest.MenuRecoveryTest',str(assets),str(b)],capture_output=True,text=True)
 print(result.stdout+result.stderr)
@@ -250,8 +251,8 @@ public class InterfacePaletteTest {
  }
 }''')
 jar = r/'build-native/json-20240303.jar'
-subprocess.run(['javac','-cp',str(jar),'-d',str(classes),str(src/'InterfaceData.java'),str(src/'MissionBundle.java'),str(src/'CampaignCatalog.java'),str(palette_test)],check=True)
-palette = subprocess.run(['java','-cp',str(classes)+':'+str(jar),'org.openbw.androidtest.InterfacePaletteTest',
+subprocess.run(['javac','-encoding','UTF-8','-cp',str(jar),'-d',str(classes),str(src/'InterfaceData.java'),str(src/'MissionBundle.java'),str(src/'CampaignCatalog.java'),str(palette_test)],check=True)
+palette = subprocess.run(['java','-cp',str(classes)+os.pathsep+str(jar),'org.openbw.androidtest.InterfacePaletteTest',
                           str(b/'interface-test.zip')],capture_output=True,text=True,check=True)
 print(palette.stdout)
 report = {'passed':True,'physicalAndroid':False,'version':'1.0.7','versionCode':77,
@@ -267,7 +268,7 @@ public class BaselineFailure {public static void main(String[]args){NativeBridge
  try{new NativeGlue(new NativeArt(),"glucmpgn","palcs",true);throw new AssertionError("Baseline unexpectedly passed");}
  catch(IllegalArgumentException expected){System.out.println("REPRODUCED 1.0.1 campaign failure: "+expected.getMessage());}}}''')
     shim = [str(b/n) for n in sources if not n.endswith(('MenuRecoveryTest.java','FallbackActions.java','FontFallbackTest.java'))]
-    subprocess.run(['javac','-d',str(baseline),*shim,str(a.baseline/'NativeArt.java'),
+    subprocess.run(['javac','-encoding','UTF-8','-d',str(baseline),*shim,str(a.baseline/'NativeArt.java'),
                     str(a.baseline/'NativeGlue.java'),str(test)],check=True)
     old = subprocess.run(['java','-Djava.awt.headless=true','-cp',str(baseline),
                          'org.openbw.androidtest.BaselineFailure',str(assets)],capture_output=True,text=True,check=True)

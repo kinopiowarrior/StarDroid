@@ -1,0 +1,7 @@
+StarDroid 1.1 build 87
+One smoothing option for all game graphics and UI.
+Baseline: 3fb0d6b6d7f47cb921dc55a211f01cc03a85d24f
+Simulation compatibility: 87; room: 63; save schema: 4 (unchanged from build 86).
+APK SHA-256: f8cf0818dbe8510477f1b3568f742530cc3e0617571ec5ac5b312feaecd9cd03
+Read docs/CHANGES-BUILD87.md and docs/QA-BUILD87.md.
+No original game archives or private signing material are included.

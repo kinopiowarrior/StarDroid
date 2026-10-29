@@ -1,0 +1,16 @@
+{
+  "origin": "Android SDK 35 AAPT2, StarDroid 1.1.1 build 88",
+  "workflowRun": "https://github.com/kinopiowarrior/StarDroid/actions/runs/40854727752",
+  "resourceCommit": "06b6a585ba4d8a77887bb68420a9620d07c07ec4",
+  "artifactSha256": "8ea80e440cc5062edd64e7407401edf37b9ac9e7ccc40eeef7aab7ee47793776",
+  "inputs": {
+    "app/src/main/AndroidManifest.xml": "aae08223aa26ec7b9fc018844a655420ce80353a6a92d71281726c95bdf5d5b2",
+    "app/src/main/res/drawable/ic_launcher.xml": "0c07490614bf34b2713efa6ec5d9f0c2d7efc6e7ba166e5e983c3147f8810f94",
+    "app/src/main/res/drawable/ic_launcher_background.xml": "dfd387d465560cba867a05204c7759c57b1a9a8c7d5d3429c8ddab702246397e",
+    "app/src/main/res/drawable/ic_launcher_foreground.xml": "2b50b379ed88f3b4879897fc8fecf5060edbbde4d4d900bd605621defe63cc1f",
+    "app/src/main/res/drawable-v33/ic_launcher.xml": "64757c3dc2ff83dac7ad26fff499e66d7d843feb2c0e1b961c5132bd09032679",
+    "app/src/main/res/values/styles.xml": "1979ff7204d2c6ed06c1934e21422334f1018ac67dd48eb253105054a020f843"
+  },
+  "cacheSha256": "de55121e25105ca99aaa1b45a108b3213e0eba393ed6ac8661e6b3b5efab7bc8",
+  "rJavaSha256": "5e81fec9295ccc03fd9ead85b9526ddfe85d0e88eddace8953c2a0abae80d79d"
+}

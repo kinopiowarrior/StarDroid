@@ -118,7 +118,7 @@ public final class NativeMissionExportInstrumentation extends NativeInstrumentat
       File broken=new File(inputs,CampaignData.filename("zerg03"));byte[] original=NativeData.read(new FileInputStream(broken),1024*1024);
       try(FileOutputStream out=new FileOutputStream(broken)){out.write(0);}
       try {MissionExport.create(inputs,cache);throw new Exception("Damaged mission accepted");}
-      catch(IOException expected){check(expected.getMessage().contains("The Swarm"),"Damaged mission not named");}
+      catch(IOException expected){check(expected.getMessage().contains("The New Dominion"),"Damaged mission not named");}
       check(cache.listFiles().length==0,"Temporary export files leaked after failure");
       try(FileOutputStream out=new FileOutputStream(broken)){out.write(original);}
       pass("corruptMissionRejectedAndTemporaryFilesRemoved");

@@ -1,0 +1,45 @@
+--- a/web/campaign_ai.h
++++ b/web/campaign_ai.h
+@@ -297,6 +297,33 @@
+         }
+         if(sent){++a.attacks;ai_trace=format("P%d wave %d: %d units at frame %d",owner+1,a.attacks,sent,st.current_frame);}
+     }
++    void ai_random_suicide(int owner) {
++        // send_suicide(1), used by SuiR in Dunes of Shakuras, is a per-unit
++        // nearest-enemy order. It is not a strategic wave aimed at a base.
++        // Do not use the town's attackers set: a later SuiR must also be able
++        // to send surviving units again after their first target is gone.
++        for(auto* u:ptr(st.player_units[owner])) {
++            if(unit_dying(u)||!u_completed(u)||!u->sprite||ut_building(u)||ut_turret(u)
++                ||u_loaded(u)||us_hidden(u)||unit_is_fighter(u)||unit_is_disabled(u)
++                ||u_order_not_interruptible(u)||u_iscript_nobrk(u)||ai_casting(u))continue;
++            unit_t* target=nullptr;int distance=0x7fffffff;
++            for(int p=0;p<8;++p)if(p!=owner&&!st.alliances[owner][p])
++                for(auto* other:ptr(st.player_units[p])) {
++                    if(unit_dying(other)||!other->sprite||ut_turret(other)
++                        ||!unit_can_attack_target(u,other))continue;
++                    if(!u_flying(other)&&!is_reachable(u,other->sprite->position)
++                        &&!unit_target_in_weapon_movement_range(u,other))continue;
++                    int d=units_distance(u,other);
++                    if(d<distance){target=other;distance=d;}
++                }
++            if(!target)continue;
++            // Preserve an attack already in progress instead of restarting its
++            // animation every time a preserved scenario trigger runs SuiR.
++            if(u->order_target.unit==target&&u->order_type==u->unit_type->attack_unit)continue;
++            issue_order(u,false,u->unit_type->attack_unit,{target->sprite->position,target});
++            ++towns[owner].orders;
++        }
++    }
+     void ai_run(thread& t) {
+         auto& a=towns[t.owner];
+         for(int budget=0;budget<64 && !t.done && t.wake<=ai_clock;++budget) {
+@@ -322,7 +349,7 @@
+             case 14: ai_attack(t.owner);break;
+             case 19: case 20: case 21: case 22: case 23: case 24: case 25: case 26:
+                 {int n=ai_read(t,1),type=ai_read(t,2);if(type>=228){ai_fail(t,"invalid defence unit",op);break;}a.defence[type]=std::max(a.defence[type],n);}break;
+-            case 31: ai_read(t,1);a.center=t.pos;ai_attack(t.owner,true);break;
++            case 31: {int mode=ai_read(t,1);if(mode==1)ai_random_suicide(t.owner);else{a.center=t.pos;ai_attack(t.owner,true);}break;}
+             case 34: ai_read(t,1);break; // default_min is superseded by explicit build requests
+             case 35: break; // No implicit opening build order in this implementation.
+             case 36: t.done=true;break;

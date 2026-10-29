@@ -1,0 +1,5 @@
+openbw_init: map 'Weave v1' 2048x2048, slot 0 of 1, units=9, fog_player=0
+PASS Queen innate spells, research cards, raw action rejection, paid research, map permissions and energy costs
+openbw_init: map 'Weave v1' 2048x2048, slot 0 of 1, units=9, fog_player=0
+PASS 1800-frame Broodling expiry, 180-point HUD, smooth bar, mid-life save/load; 1350-frame hallucinations and real caster energy
+PASS 19831 Queen/lifetime checks

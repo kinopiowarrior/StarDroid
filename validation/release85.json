@@ -1,0 +1,33 @@
+{
+  "build": 85,
+  "version": "1.1",
+  "simulation": 86,
+  "room": 62,
+  "passed": true,
+  "apkSha256": "8fd253c83304dedb98602c8a5726a38c2fb2d700d96a9597a9902f3420d36e46",
+  "apkBytes": 2484074,
+  "abis": [
+    "arm64-v8a",
+    "x86_64"
+  ],
+  "sameSigningKey": true,
+  "androidLintPassed": true,
+  "elfAndZip16KiBAligned": true,
+  "replayChecks": 118039,
+  "nearbyProtocolChecks": 1430,
+  "javaRoutingChecks": 9308,
+  "physicalAndroidTested": false,
+  "actualSpanishArchivesTested": false,
+  "infestedSupplyReportReproduced": false,
+  "sourceSha256": {
+    "patches/native-community85.patch": "f8076b73d4c66fbd02cb71c71206ce918b77a710aafcd76c3caa717ea210eea6",
+    "native/runtime.cpp": "afce7b3f08587b1bcdd6eb54e376ba28af96b06438cac356eb26a27e32e431a9",
+    "native/save_state.h": "56b4eff0068a21aaedc52ac40f258115d72e4afbbd012442b337ded6e487a490",
+    "native/replay.h": "003086d492210a35b995257d21a7ba94dc7ba0ffb36144d6b9a30caf3a2c3149",
+    "app/build.gradle": "7f077f07dd7133aa923e068d0f7197f418ac372c9262778beed6d36047f18d5d",
+    "app/src/main/java/org/openbw/androidtest/NativeSurface.java": "b4c76cf85a192b2eb2bff470a825c9256d06692f4939cdb24c04e08d2a3f8727",
+    "app/src/main/java/org/openbw/androidtest/GameLanguage.java": "050dfe1147654785351e3060a3cb7cc455bbfb07fe07f1f0f419b4d06410be21",
+    "app/src/main/java/org/openbw/androidtest/MainActivity.java": "8470b2a5fb252652ce96af6f398e2c090f90f42976e71113c378beb47a632208",
+    "app/src/main/java/org/openbw/androidtest/NativeHud.java": "0a82957ce134a5fdec27e49653cd315a81bdd5c9b68da91d5d4412fb18941bf0"
+  }
+}

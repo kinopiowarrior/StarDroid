@@ -1,0 +1,2 @@
+PASS 41 graphics checks: reversible menu pixels, button/font caches, animated/static portraits, movie and mask sampling/effects. Host AWT rendering; physical Android untested.
+PASS shared sampling audit: 54 bitmap drawing sites; one toggle and preference

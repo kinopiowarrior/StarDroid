@@ -257,6 +257,7 @@ inline HostState restore(play_ui& ui,campaign_ui* campaign,std::vector<uint8_t>&
     ui.ready_notifications=std::move(n.ready_notifications);
     ui.last_ready_sound=std::move(n.last_ready_sound);
     ui.last_ready_type=std::move(n.last_ready_type);
+    ui.ready_portrait_serial=0;ui.ready_portrait_type=-1;
     ui.events_seeded=std::move(n.events_seeded);
     ui.msg_log=std::move(n.msg_log);
     ui.player_had_units=std::move(n.player_had_units);

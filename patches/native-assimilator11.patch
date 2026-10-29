@@ -1,0 +1,15 @@
+--- a/web/sandbox.h
++++ b/web/sandbox.h
+@@ -1650,3 +1650,4 @@
+ 		a_string stat2;
+-		if (sel->unit_type->has_shield)
++		// Refineries report gas here; Assimilator shields belong in the life readout.
++		if (sel->unit_type->has_shield && !ut_resource(sel))
+ 			stat2 = format("Shields %d/%d", sel->shield_points.integer_part(), sel->unit_type->shield_points);
+@@ -1752,3 +1753,5 @@
+ 		unit_t* u = get_unit(current_selection.front());
+-		if (!u || ut_resource(u) || ut_powerup(u) || unit_is_special_beacon(u) || unit_is_critter(u)) return "";
++		// Keep refinery life/armor (and Assimilator shields) available to the
++		// native HUD; only raw minerals/geysers omit the building details.
++		if (!u || (ut_resource(u) && !unit_is_refinery(u)) || ut_powerup(u) || unit_is_special_beacon(u) || unit_is_critter(u)) return "";
+ 		int ri = (int)unit_race(u), supplied = u_completed(u) ? u->unit_type->supply_provided.raw_value / 2 : 0;

@@ -1,0 +1,192 @@
+{
+  "build": 85,
+  "simulation": 86,
+  "passed": true,
+  "physicalAndroidTested": false,
+  "actualSpanishArchivesTested": false,
+  "cases": [
+    {
+      "name": "core",
+      "passed": true,
+      "results": [
+        "PASS mixed transport command cards for all three races and both selection orders",
+        "PASS hallucination life bars: full/half/near expiry, caster precedence, expiry; real caster unchanged",
+        "PASS lethal hit credited once, tank turret, Broodlings spell, HUD and 255 cap",
+        "PASS Infested Terran real command stream: one supply each, training/completion/cancel, queued production+save restore, transport deaths and suicide"
+      ]
+    },
+    {
+      "name": "presentation",
+      "passed": true,
+      "results": [
+        "PASS ready portraits for all races: real speech lifetime, stable selection, override dismissal; rescue body/turret colors and saved restoration"
+      ]
+    },
+    {
+      "name": "mouse",
+      "passed": true,
+      "results": [
+        "PASS native physical mouse context orders: mineral harvest, gas harvest, enemy attack"
+      ]
+    },
+    {
+      "name": "burrow",
+      "passed": true,
+      "results": []
+    },
+    {
+      "name": "traps",
+      "passed": true,
+      "results": []
+    },
+    {
+      "name": "trap-arcs",
+      "passed": true,
+      "results": [
+        "PASS four fixed wall traps: out-of-arc target stays revealed, threat loss closes, later front target takes damage"
+      ]
+    },
+    {
+      "name": "projectile-edges",
+      "passed": true,
+      "results": [
+        "PASS animated projectile fog lookup at all four map edges"
+      ]
+    },
+    {
+      "name": "campaign-burrow",
+      "passed": true,
+      "results": [
+        "PASS campaign 206: initialBurrowed=54 burrowPropertyActions=13; Create+Order same pass finishes unburrow without loop",
+        "PASS campaign 301: initialBurrowed=0 burrowPropertyActions=25; Create+Order same pass finishes unburrow without loop",
+        "PASS campaign 302: initialBurrowed=42 burrowPropertyActions=30; Create+Order same pass finishes unburrow without loop"
+      ]
+    },
+    {
+      "name": "ai-direct",
+      "passed": true,
+      "results": [
+        "PASS natural expansion race=1 site=1792,240 fields=7",
+        "PASS natural expansion race=2 site=1792,240 fields=7",
+        "PASS natural expansion race=0 site=1792,240 fields=7",
+        "PASS Terran structure repair: two-SCV cap, actual HP recovery and finished-job release",
+        "PASS worker defense recruited 6 nearby idle reserves immediately and released offensive reservations"
+      ]
+    },
+    {
+      "name": "ai-island",
+      "passed": true,
+      "results": [
+        "PASS island expansion requests transport, rejects near cliff and starts depot after ferrying SCV"
+      ]
+    },
+    {
+      "name": "ai-air",
+      "passed": true,
+      "results": [
+        "PASS island builder ferry resumes Command Center construction after unloading",
+        "PASS all three transports in campaign and melee: terrain crossing, capacity, repeat trips, Ventral Sacs gate, deterministic save/restore and destroyed-carrier cleanup"
+      ]
+    },
+    {
+      "name": "ai-sweep",
+      "passed": true,
+      "results": [
+        "PASS 64 campaign maps / 144 computer owners: load/tick integration and mission unit/upgrade restrictions"
+      ]
+    },
+    {
+      "name": "macro-0",
+      "passed": true,
+      "results": [
+        "RESULT race=0 bases=5 upgrades=18 waves=22 seconds=54.8306 types=35,37,38,39,41,42,43,44,45,46,47,62,103,131,132,133,135,136,137,138,139,140,141,142,149,",
+        "PASS medium AI: paid economy, expansion, upgrades, advanced units, repeated attacks, static defenses and deterministic save continuation"
+      ]
+    },
+    {
+      "name": "macro-1",
+      "passed": true,
+      "results": [
+        "RESULT race=1 bases=6 upgrades=15 waves=5 seconds=6.68523 types=0,1,2,3,4,5,6,7,8,9,12,32,34,58,106,107,109,110,111,112,113,114,115,116,117,118,120,122,123,124,125,",
+        "PASS medium AI: paid economy, expansion, upgrades, advanced units, repeated attacks, static defenses and deterministic save continuation"
+      ]
+    },
+    {
+      "name": "macro-2",
+      "passed": true,
+      "results": [
+        "RESULT race=2 bases=6 upgrades=18 waves=15 seconds=21.4648 types=60,61,64,65,66,67,68,70,71,72,73,83,84,85,154,155,156,157,159,160,162,163,164,165,166,167,169,170,171,",
+        "PASS medium AI: paid economy, expansion, upgrades, advanced units, repeated attacks, static defenses and deterministic save continuation"
+      ]
+    },
+    {
+      "name": "resource-hud",
+      "passed": true,
+      "results": [
+        "PASS 62 resource HUD checks: three refinery races, depleted gas, four raw resources, Protoss caster"
+      ]
+    },
+    {
+      "name": "detectors11",
+      "passed": true,
+      "results": [
+        "PASS detector responses: three races; repeat-hit cap; nearest/tie; two sites; grouped attackers; moving attacker; no passive target chase; reuse/loss; scripted travel; eligibility; scan deduplication; coverage; restore orders"
+      ]
+    },
+    {
+      "name": "dunes11",
+      "passed": true,
+      "results": [
+        "PASS SuiR: mode dispatch; per-unit nearest target; repeat/retarget; workers/heroes; attackability/reachability; protected orders; strategic mode retained"
+      ]
+    },
+    {
+      "name": "desktop",
+      "passed": true,
+      "results": [
+        "PASS community display controls",
+        "PASS touch regression",
+        "PASS gamepad regression",
+        "PASS typing",
+        "PASS mouse world",
+        "PASS HUD and menus",
+        "PASS terrain toggle input",
+        "PASS navigation",
+        "PASS keyboard",
+        "PASS lifecycle",
+        "PASS Activity routing",
+        "PASS input transitions",
+        "PASS grid hotkeys",
+        "PASS desktop options",
+        "PASS settings persistence and access",
+        "PASS menu mnemonic routing",
+        "PASS menu label binding",
+        "PASS briefing Replay hotkey",
+        "PASS menu batching and replay routing",
+        "PASS navigation-only menu shortcuts",
+        "PASS 9308 production Java routing checks"
+      ]
+    },
+    {
+      "name": "language-build",
+      "passed": true,
+      "results": []
+    },
+    {
+      "name": "language",
+      "passed": true,
+      "results": [
+        "PASS 34 language/label checks: five languages, malformed tables, accents, overrides and new options"
+      ]
+    }
+  ],
+  "sourceSha256": {
+    "patches/native-community85.patch": "f8076b73d4c66fbd02cb71c71206ce918b77a710aafcd76c3caa717ea210eea6",
+    "native/runtime.cpp": "afce7b3f08587b1bcdd6eb54e376ba28af96b06438cac356eb26a27e32e431a9",
+    "native/save_state.h": "56b4eff0068a21aaedc52ac40f258115d72e4afbbd012442b337ded6e487a490",
+    "tests/native_community85.cpp": "dd1dce22f05e2f459c50016dd90e3796c5db4973ccfa93329a1acb15d3e8f171",
+    "tests/native_community_ai85.cpp": "3585c794cad4c4a7348ab71ae064fece4d284aa9f1d7cfba41be284d76578d8c",
+    "tests/native_community_macro85.cpp": "0bf2688ddc972dc8c66bff5c7a237fc1486e1703842debd53636f0d3c91883fa",
+    "tests/run_community85.py": "073c71822cbf45641c7a9a7da0beda47052ddae6222348f26b30506be859ab73"
+  }
+}

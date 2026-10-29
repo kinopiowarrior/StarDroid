@@ -1,0 +1,21 @@
+PASS community display controls
+PASS touch regression
+PASS gamepad regression
+PASS typing
+PASS mouse world
+PASS HUD and menus
+PASS terrain toggle input
+PASS navigation
+PASS keyboard
+PASS lifecycle
+PASS Activity routing
+PASS input transitions
+PASS grid hotkeys
+PASS desktop options
+PASS settings persistence and access
+PASS menu mnemonic routing
+PASS menu label binding
+PASS briefing Replay hotkey
+PASS menu batching and replay routing
+PASS navigation-only menu shortcuts
+PASS 9311 production Java routing checks

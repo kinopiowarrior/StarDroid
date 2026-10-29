@@ -13,6 +13,9 @@ final class DesktopControls {
   int buttons;
   private final HashSet<Integer> heldKeys = new HashSet<Integer>();
 
+  /** Cursor 3 is ordinary unit hover; it must still receive context orders. */
+  static boolean targetingCursor(int cursor) { return cursor == 1 || cursor == 2 || cursor == 4; }
+
   static boolean mouseSource(int source) {
     return (source & InputDevice.SOURCE_MOUSE) == InputDevice.SOURCE_MOUSE;
   }
