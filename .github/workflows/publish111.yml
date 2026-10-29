@@ -1,0 +1,169 @@
+name: Publish StarDroid 1.1.1
+on:
+  push:
+    branches: [codex/publish-v1.1.1]
+    paths: [.github/workflows/publish111.yml]
+permissions:
+  contents: read
+concurrency:
+  group: stardroid-release-v1.1.1
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.repository == 'kinopiowarrior/StarDroid' && github.ref == 'refs/heads/codex/publish-v1.1.1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    env:
+      STAGING_COMMIT: a3b794ee496e72728bf97a8d7a987b0a0025104f
+      BASE_COMMIT: c421549b9b7d7ecd4cf309c2baa8c2c9f8231bb8
+      APK_SHA256: 151305a8d19ddc69cb56480ab76b484e26c3c612992f7acd2f8bf531c2fb06a2
+      TAG: v1.1.1
+      GH_REPO: kinopiowarrior/StarDroid
+    steps:
+      - name: Check out the staged release source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.STAGING_COMMIT }}
+          path: source
+          persist-credentials: false
+      - name: Read the verified binary payload pieces
+        uses: actions/checkout@v4
+        with:
+          path: publication
+          sparse-checkout: distribution/release111-payload/
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - name: Assemble payload and verify every release source file
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C source rev-parse HEAD)" = "$STAGING_COMMIT"
+          mkdir out
+          python3 - <<'PY'
+          import hashlib,io,json,pathlib,subprocess,tarfile
+          directory=pathlib.Path('publication/distribution/release111-payload')
+          source=pathlib.Path('source')
+          parts=[directory/f'part{i:02d}' for i in range(7)]
+          assert {p.name for p in directory.glob('part*')}=={p.name for p in parts}
+          payload=b''.join(p.read_bytes() for p in parts)
+          assert len(payload)==1823348
+          assert hashlib.sha256(payload).hexdigest()=='8e6e2a2e7e569697f1e3d3d569dfb9af7c8f3dce88b7c83eab741a0d9da79881'
+          targets={
+              'StarDroid-1.1.1.apk':(pathlib.Path('out/StarDroid-1.1.1.apk'),5764726),
+              'native-libs/arm64-v8a/libopenbw.so':(source/'native-libs/arm64-v8a/libopenbw.so',2508176),
+              'native-libs/x86_64/libopenbw.so':(source/'native-libs/x86_64/libopenbw.so',2686880),
+          }
+          with tarfile.open(fileobj=io.BytesIO(payload),mode='r:xz') as archive:
+              members=archive.getmembers()
+              assert len(members)==len(targets) and {m.name for m in members}==set(targets)
+              for member in members:
+                  target,size=targets[member.name]
+                  assert member.isfile() and member.size==size
+                  data=archive.extractfile(member).read()
+                  assert len(data)==size
+                  target.write_bytes(data)
+          snapshot=json.loads((directory/'SOURCE_SNAPSHOT.json').read_text())
+          assert len(snapshot)==1278 and len({x['path'] for x in snapshot})==1278
+          expected={x['path'] for x in snapshot}
+          tracked=set(subprocess.check_output(['git','-C','source','ls-files','-z']).decode().rstrip('\0').split('\0'))
+          assert tracked==expected|{'distribution/SHA256SUMS.txt','distribution/StarDroid-1.0.apk'}
+          for entry in snapshot:
+              path=pathlib.PurePosixPath(entry['path'])
+              assert not path.is_absolute() and '..' not in path.parts
+              data=(source/path).read_bytes()
+              assert len(data)==entry['bytes'],entry['path']
+              assert hashlib.sha256(data).hexdigest()==entry['sha256'],entry['path']
+              assert hashlib.sha1(('blob '+str(len(data))+'\0').encode()+data).hexdigest()==entry['sha'],entry['path']
+          print('PASS all 1278 release source files match the verified source snapshot')
+          PY
+          echo "$APK_SHA256  out/StarDroid-1.1.1.apk" | sha256sum --check
+      - name: Create the clean source commit on a new release branch
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh auth setup-git
+          git -C source fetch --no-tags --depth=1 origin "$BASE_COMMIT"
+          git -C source add -- native-libs/arm64-v8a/libopenbw.so native-libs/x86_64/libopenbw.so
+          python3 - <<'PY'
+          import json,pathlib,subprocess
+          snapshot=json.loads(pathlib.Path('publication/distribution/release111-payload/SOURCE_SNAPSHOT.json').read_text())
+          entries={}
+          for row in subprocess.check_output(['git','-C','source','ls-files','--stage','-z']).decode().rstrip('\0').split('\0'):
+              metadata,path=row.split('\t',1)
+              mode,sha,stage=metadata.split()
+              assert stage=='0'
+              entries[path]=(mode,sha)
+          for entry in snapshot:
+              assert entries[entry['path']]==(entry['mode'],entry['sha']),entry['path']
+          changed=set(subprocess.check_output(['git','-C','source','diff','--cached','--name-only','-z','HEAD']).decode().rstrip('\0').split('\0'))
+          assert changed=={'native-libs/arm64-v8a/libopenbw.so','native-libs/x86_64/libopenbw.so'}
+          print('PASS staged source tree matches all 1278 verified file identities and modes')
+          PY
+          tree="$(git -C source write-tree)"
+          commit="$(git -C source -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit-tree "$tree" -p "$BASE_COMMIT" -m 'Release StarDroid 1.1.1 with cumulative gameplay and graphics fixes')"
+          ref=refs/heads/codex/release-v1.1.1-source
+          test -z "$(git -C source ls-remote --heads origin "$ref")"
+          git -C source push origin "$commit:$ref"
+          echo "SOURCE_COMMIT=$commit" >> "$GITHUB_ENV"
+          echo "Verified release source commit: $commit"
+      - name: Verify package and create the matching source archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "$APK_SHA256  out/StarDroid-1.1.1.apk" | sha256sum --check
+          if [ ! -x "$ANDROID_HOME/build-tools/35.0.0/apksigner" ]; then
+            "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'build-tools;35.0.0' >/dev/null
+          fi
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs out/StarDroid-1.1.1.apk > out/signature-check.txt
+          grep -q '40e172ca11ff8be42888388f51b94ffb824382dce5235c5f1bd5683b4bb8876e' out/signature-check.txt
+          "$ANDROID_HOME/build-tools/35.0.0/zipalign" -c -P 16 4 out/StarDroid-1.1.1.apk
+          git -C source archive --format=zip --prefix=StarDroid-1.1.1/ -o "$PWD/out/StarDroid-1.1.1-source.zip" "$SOURCE_COMMIT"
+          python3 - <<'PY'
+          import hashlib,json,os,pathlib,zipfile
+          out=pathlib.Path('out'); source=pathlib.Path('source'); prefix='StarDroid-1.1.1/'
+          report=json.loads((source/'validation/release111.json').read_text())
+          assert report['passed'] and report['apkSha256']==os.environ['APK_SHA256']
+          with zipfile.ZipFile(out/'StarDroid-1.1.1.apk') as apk:
+              assert apk.testzip() is None
+              for p,digest in report['nativeSha256'].items():
+                  assert hashlib.sha256(apk.read(p.replace('native-libs/','lib/',1))).hexdigest()==digest
+          with zipfile.ZipFile(out/'StarDroid-1.1.1-source.zip','a',compression=zipfile.ZIP_DEFLATED) as z:
+              assert prefix+'SOURCE-COMMIT.txt' not in z.namelist()
+              z.writestr(prefix+'SOURCE-COMMIT.txt',os.environ['SOURCE_COMMIT']+'\n')
+          with zipfile.ZipFile(out/'StarDroid-1.1.1-source.zip') as z:
+              assert z.testzip() is None and len(z.namelist())==len(set(z.namelist()))
+              for p,digest in {**report['sourceSha256'],**report['nativeSha256']}.items():
+                  assert hashlib.sha256(z.read(prefix+p)).hexdigest()==digest,p
+              for name in z.namelist():
+                  assert not name.lower().endswith(('.mpq','.p12','.jks','.keystore','.pem'))
+                  assert not name.startswith(prefix+'distribution/')
+          names=['StarDroid-1.1.1.apk','StarDroid-1.1.1-source.zip']
+          sums=''.join(hashlib.sha256((out/n).read_bytes()).hexdigest()+'  '+n+'\n' for n in names)
+          (out/'SHA256SUMS.txt').write_text(sums)
+          print(sums)
+          PY
+      - name: Upload, verify downloads, and publish the latest release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if gh release view "$TAG" --repo "$GH_REPO" >/dev/null 2>&1; then
+            echo 'Release already exists; refusing to overwrite it.' >&2
+            exit 1
+          fi
+          gh release create "$TAG" out/StarDroid-1.1.1.apk out/StarDroid-1.1.1-source.zip out/SHA256SUMS.txt \
+            --repo "$GH_REPO" --target "$SOURCE_COMMIT" --title 'StarDroid 1.1.1' \
+            --notes-file source/docs/CHANGES-1.1.1.md --draft
+          mkdir verify
+          gh release download "$TAG" --repo "$GH_REPO" --dir verify \
+            --pattern 'StarDroid-1.1.1.apk' --pattern 'StarDroid-1.1.1-source.zip' --pattern 'SHA256SUMS.txt'
+          cmp out/SHA256SUMS.txt verify/SHA256SUMS.txt
+          (cd verify && sha256sum --check SHA256SUMS.txt)
+          gh release edit "$TAG" --repo "$GH_REPO" --draft=false --latest
+          gh release view "$TAG" --repo "$GH_REPO" --json url,isDraft,tagName,assets
+
