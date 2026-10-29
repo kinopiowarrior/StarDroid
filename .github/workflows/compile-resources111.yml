@@ -25,10 +25,12 @@ jobs:
             --manifest app/src/main/AndroidManifest.xml \
             --java resource-cache/generated --auto-add-overlay \
             --min-sdk-version 26 --target-sdk-version 35 \
-            --version-code 88 --version-name 1.1.1 resource-cache/compiled.zip
+            --replace-version --version-code 88 --version-name 1.1.1 resource-cache/compiled.zip
           "$aapt" dump badging resource-cache/resources.apk > resource-cache/badging.txt
           python3 - <<'PY'
           import base64,hashlib,json,pathlib
+          badging=pathlib.Path('resource-cache/badging.txt').read_text()
+          assert "versionCode='88'" in badging and "versionName='1.1.1'" in badging
           r=pathlib.Path('.')
           inputs=[r/'app/src/main/AndroidManifest.xml',*sorted((r/'app/src/main/res').rglob('*'))]
           record={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in inputs if p.is_file()}
