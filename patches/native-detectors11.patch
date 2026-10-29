@@ -1,0 +1,72 @@
+--- a/web/campaign_ai.h
++++ b/web/campaign_ai.h
+@@ -1347,6 +1347,7 @@
+         for(auto r:a.upgrades)if(player_upgrade_level(owner,UpgradeTypes(r.type))<r.amount)for(auto* u:ptr(st.player_units[owner])){if(unit_dying(u)||u==heroProducer||!spendable(upgrade_mineral_cost(owner,get_upgrade_type(UpgradeTypes(r.type))),upgrade_gas_cost(owner,get_upgrade_type(UpgradeTypes(r.type)))))continue;af.action_select(owner,u);if(af.action_upgrade(owner,get_upgrade_type(UpgradeTypes(r.type))))break;}
+     }
+     void ai_detect(unit_t* victim,unit_t* source) {
++        if(!victim)return;
+         int owner=victim->owner;
+         if(owner>=8||owner==my_player||!towns[owner].active||!source||unit_dying(source)
+             ||st.players[owner].controller!=player_t::controller_computer_game
+@@ -1354,8 +1355,36 @@
+         action_functions af(st,ai_actions);
+         // Respond to an actual unseen attack, not hidden enemies elsewhere.
+         // Campaigns use only detectors/Comsats already supplied by their scripts.
+-        for(auto* u:ptr(st.player_units[owner]))if(unit_is(u,UnitTypes::Spell_Scanner_Sweep)
+-            &&!unit_dying(u)&&units_distance(u,source)<288)return;
++        // Detection flags refresh on an engine cadence. Do not recruit another
++        // responder during that gap if existing detection already covers this hit.
++        if(unit_calculate_detected_flags(source)&(1u<<owner))return;
++        auto usable_detector=[&](unit_t* u) {
++            return (unit_is(u,UnitTypes::Terran_Science_Vessel)||unit_is(u,UnitTypes::Protoss_Observer)||unit_is(u,UnitTypes::Zerg_Overlord))
++                &&!unit_dying(u)&&unit_can_detect(u)&&!u_hallucination(u)&&!u_loaded(u)&&!us_hidden(u)
++                &&!u_order_not_interruptible(u)&&!u_iscript_nobrk(u)&&!ai_lifting(owner,u)
++                &&(!unit_is(u,UnitTypes::Zerg_Overlord)||loaded_units(u).empty());
++        };
++        for(auto* u:ptr(st.player_units[owner])) {
++            if(unit_is(u,UnitTypes::Spell_Scanner_Sweep)&&!unit_dying(u)&&units_distance(u,source)<288)return;
++            if(unit_is(u,UnitTypes::Terran_Comsat_Station)&&!unit_dying(u)&&u_completed(u)&&!unit_is_disabled(u)
++                &&u->order_type->id==Orders::CastScannerSweep&&xy_length(u->order_target.pos-source->position)<288)return;
++            // A moving responder still reserves this attacker. Previously,
++            // every damage callback excluded it as non-idle and called the next
++            // detector. Refresh only this responder when the attacker moves;
++            // the normal Move order retains its target in existing save files.
++            if(usable_detector(u)&&u->order_type->id==Orders::Move&&u->order_target.unit==source) {
++                if(xy_length(u->order_target.pos-source->position)>64) {
++                    af.action_select(owner,u);
++                    af.action_order(owner,get_order_type(Orders::Move),source->position,source,nullptr,false);
++                }
++                return;
++            }
++            // Also count a position move already heading into detection range,
++            // including responses restored from older builds. Leave other script
++            // movement alone, and never reserve an incident for a distant unit.
++            if(usable_detector(u)&&u->order_type->id==Orders::Move&&units_distance(u,source)<=1280
++                &&xy_length(u->order_target.pos-source->position)<=std::max(32,unit_sight_range(u)-64))return;
++        }
+         for(auto* u:ptr(st.player_units[owner]))if(unit_is(u,UnitTypes::Terran_Comsat_Station)
+             &&u_completed(u)&&!unit_dying(u)&&!unit_is_disabled(u)&&ai_idle(u)
+             &&u->energy>=fp8::integer(50)&&game_st.tech_available[owner][TechTypes::Scanner_Sweep]) {
+@@ -1364,14 +1393,15 @@
+         }
+         unit_t* detector=nullptr;int distance=1281;
+         for(auto* u:ptr(st.player_units[owner])) {
+-            if(!(unit_is(u,UnitTypes::Terran_Science_Vessel)||unit_is(u,UnitTypes::Protoss_Observer)||unit_is(u,UnitTypes::Zerg_Overlord))
+-                ||unit_dying(u)||!u_completed(u)||unit_is_disabled(u)||u_loaded(u)||us_hidden(u)
+-                ||u_order_not_interruptible(u)||u_iscript_nobrk(u))continue;
++            if(!usable_detector(u))continue;
+             bool escort=u->order_type->id==Orders::Follow;
+-            if(ai_lifting(owner,u)||(!ai_idle(u)&&!escort))continue;
+-            int d=units_distance(u,victim);if(d<distance){distance=d;detector=u;}
+-        }
+-        if(detector){af.action_select(owner,detector);af.action_order(owner,get_order_type(Orders::Move),source->position,nullptr,nullptr,false);}
++            // Preserve unrelated scripted movement. On arrival the ordinary idle
++            // order makes the detector eligible for later attacks in any area.
++            if(!ai_idle(u)&&!escort)continue;
++            int d=units_distance(u,source);
++            if(d<distance||(d==distance&&detector&&u->index<detector->index)){distance=d;detector=u;}
++        }
++        if(detector){af.action_select(owner,detector);af.action_order(owner,get_order_type(Orders::Move),source->position,source,nullptr,false);}
+     }
+     void on_scenario_attack(unit_t* victim, unit_t* source) override {
+         ai_detect(victim,source);

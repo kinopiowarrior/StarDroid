@@ -41,6 +41,22 @@ final class NativeArt {
   }
 
   static final Paint PIXELS = new Paint();
+  static { setSmoothGraphics(true); }
+
+  // One sampling policy for the battlefield and every bitmap in the interface.
+  // NativeSurface changes it on the renderer thread before loading/drawing art.
+  static void setSmoothGraphics(boolean enabled) {
+    PIXELS.setFilterBitmap(enabled);
+    PIXELS.setDither(false);
+  }
+
+  // Animated menu layers and portrait masks have their own alpha/color/blend
+  // effects. Copy only sampling flags, preserving those presentation effects.
+  static Paint bitmapPaint(Paint paint) {
+    paint.setFilterBitmap(PIXELS.isFilterBitmap());
+    paint.setDither(false);
+    return paint;
+  }
 
   static final class PCX {
     Bitmap image;
@@ -157,6 +173,7 @@ final class NativeArt {
     final Font substitute;
     final int low, high, height, spacing;
     final Map<Integer, Bitmap> glyphs = new HashMap<Integer, Bitmap>();
+    private boolean glyphsSmooth = PIXELS.isFilterBitmap();
     int fixedColor, shadedColor;
     private SystemFont systemFont;
 
@@ -273,6 +290,11 @@ final class NativeArt {
     }
 
     Bitmap glyph(int code, int color) {
+      if (substitute != null && glyphsSmooth != PIXELS.isFilterBitmap()) {
+        // Resized substitute fonts must not retain the previous sampling mode.
+        glyphs.clear();
+        glyphsSmooth = PIXELS.isFilterBitmap();
+      }
       int key = (code & 65535) | color << 16;
       if (glyphs.containsKey(key)) return glyphs.get(key);
       if (substitute != null) {
@@ -626,7 +648,7 @@ final class NativeArt {
         NativeBridge.movieFrame(id, time, loop, bitmap);
         frame = f;
       }
-      c.drawBitmap(bitmap, null, new RectF(x, y, x + width, y + height), paint);
+      c.drawBitmap(bitmap, null, new RectF(x, y, x + width, y + height), bitmapPaint(paint));
     }
 
     public void close() {

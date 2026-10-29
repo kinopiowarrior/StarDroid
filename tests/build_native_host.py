@@ -7,7 +7,7 @@ import os
 
 root = Path(__file__).resolve().parents[1]
 name = sys.argv[1] if len(sys.argv) > 1 else 'controls'
-if name not in ('controls', 'engine', 'gameplay', 'presentation', 'feedback', 'missions', 'saves', 'campaigns', 'revision40', 'revision41', 'revision42', 'revision43', 'revision44', 'revision45', 'revision46', 'revision54', 'revision55', 'revision56', 'revision57', 'revision58', 'revision59', 'revision77', 'revision78', 'campaign79', 'abilities79', 'controls80', 'production80', 'campaign_ai81', 'replay81', 'replay82', 'supply81', 'addon_sound81', 'upgrades', 'placement', 'multiplayer'):
+if name not in ('queen86', 'community85', 'community_ai85', 'community_macro85', 'controls', 'engine', 'gameplay', 'presentation', 'feedback', 'missions', 'saves', 'campaigns', 'revision40', 'revision41', 'revision42', 'revision43', 'revision44', 'revision45', 'revision46', 'revision54', 'revision55', 'revision56', 'revision57', 'revision58', 'revision59', 'revision77', 'revision78', 'campaign79', 'abilities79', 'controls80', 'production80', 'campaign_ai81', 'replay81', 'replay82', 'supply81', 'addon_sound81', 'resource_hud11', 'upgrades', 'placement', 'multiplayer'):
     raise SystemExit('Usage: build_native_host.py [controls|engine|gameplay|presentation|feedback|missions|saves|campaigns]')
 out = root / 'build-native/host'
 out.mkdir(parents=True, exist_ok=True)
@@ -15,16 +15,22 @@ if '--skip-prepare' not in sys.argv:
     subprocess.run([sys.executable, str(root / 'scripts/prepare_native.py')], check=True)
 sanitizer = ['-fsanitize=address', '-fno-omit-frame-pointer'] if '--asan' in sys.argv else []
 suffix = '-asan' if sanitizer else ''
+extension = '.exe' if os.name == 'nt' else ''
 smacker = out / ('smacker' + suffix + '.o')
 subprocess.run(['gcc', '-O2'] + sanitizer + ['-c', str(root / 'vendor/libsmacker/smacker.c'),
                 '-o', str(smacker)], check=True)
 stage = root / 'native-engine'
-command = [os.environ.get('CXX','g++'), '-std=c++17', ('-O0' if '--fast' in sys.argv else '-O1' if name in ('gameplay','feedback','missions','saves','campaigns','revision40', 'revision41', 'revision42', 'revision43', 'revision44', 'revision45', 'revision46', 'revision54', 'revision55', 'revision56', 'revision57', 'revision58', 'revision59', 'revision77', 'revision78', 'campaign79', 'abilities79', 'controls80', 'production80', 'campaign_ai81', 'replay81', 'replay82', 'supply81', 'addon_sound81', 'upgrades', 'placement', 'multiplayer') else '-O2'), '-g1', '-rdynamic', '-pthread', '-DOPENBW_ENABLE_UI',
+command = [os.environ.get('CXX','g++'), '-std=c++17', ('-O0' if '--fast' in sys.argv else '-O1' if name in ('queen86', 'community85','community_ai85','community_macro85','gameplay','feedback','missions','saves','campaigns','revision40', 'revision41', 'revision42', 'revision43', 'revision44', 'revision45', 'revision46', 'revision54', 'revision55', 'revision56', 'revision57', 'revision58', 'revision59', 'revision77', 'revision78', 'campaign79', 'abilities79', 'controls80', 'production80', 'campaign_ai81', 'replay81', 'replay82', 'supply81', 'addon_sound81', 'resource_hud11', 'upgrades', 'placement', 'multiplayer') else '-O2'), '-g1', '-rdynamic', '-pthread', '-DOPENBW_ENABLE_UI',
            '-DOPENBW_NO_SDL_IMAGE', '-DOPENBW_NO_SDL_MIXER']
+if os.name == 'nt':
+    command.remove('-rdynamic')
+    command += ['-I' + str(root/'tests/win32'), '-Wl,--stack,16777216']
 command += sanitizer
 command += ['-I' + str(p) for p in (stage, stage / 'ui', stage / 'web')]
 command += [str(root / ('tests/native_' + name + '.cpp')),
             str(root / 'native/generated/wasm_backend.cpp'), str(smacker),
-            '-o', str(out / ('native-' + name + suffix))]
+            '-o', str(out / ('native-' + name + suffix + extension))]
 subprocess.run(command, check=True)
-print(out / ('native-' + name + suffix))
+binary=out / ('native-' + name + suffix + extension)
+binary.chmod(binary.stat().st_mode | 0o111)
+print(binary)

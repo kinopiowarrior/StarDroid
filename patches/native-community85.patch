@@ -1,0 +1,605 @@
+--- a/bwgame.h
++++ b/bwgame.h
+@@ -3507,7 +3507,7 @@
+ 			u->secondary_order_state = 0;
+ 		}
+ 		set_unit_owner(u, new_owner, true);
+-		if (new_owner < 8) set_sprite_owner(u, new_owner);
++		if (new_owner < 8 && st.players[old_owner].controller != player_t::controller_rescue_passive) set_sprite_owner(u, new_owner);
+ 		if (any_upgrades_granted) apply_upgrades_to_player_units(new_owner);
+ 		bool idle = u_completed(u);
+ 		if (u_loaded(u)) idle = false;
+@@ -3866,6 +3866,19 @@
+ 		if (unit_is(u, UnitTypes::Zerg_Broodling)) return 1800;
+ 		return 0;
+ 	}
++
++    // The yellow lifetime meter takes precedence over a hallucinated caster's energy.
++    int unit_status_energy(const unit_t* u) const {
++        if (default_remove_timer(u)) return std::max(0,u->remove_timer);
++        return ut_has_energy(u) ? int(u->energy.integer_part()) : -1;
++    }
++    int unit_status_max_energy(const unit_t* u) const {
++        int lifetime=default_remove_timer(u);
++        return lifetime ? lifetime : int(unit_max_energy(u).integer_part());
++    }
++    int unit_status_energy_percent(const unit_t* u) const {
++        return std::max(0,std::min(100,unit_status_energy(u)*100/std::max(1,unit_status_max_energy(u))));
++    }
+ 
+ 	void set_remove_timer(unit_t* u) {
+ 		set_remove_timer(u, default_remove_timer(u));
+@@ -6076,8 +6089,28 @@
+ 	}
+ 
+ 	void order_TowerAttack(unit_t* u) {
++        if (unit_is_trap(u)) {
++            // Failure to fire is not absence of a threat. Fixed wall weapons
++            // cannot turn toward a target outside their firing arc; closing and
++            // immediately reacquiring that same target made the reveal loop.
++            auto nearby=[&](unit_t* target) {
++                return target&&!unit_dying(target)&&unit_target_is_enemy(u,target)
++                    &&unit_can_attack_target(u,target)&&unit_can_see_target(u,target)
++                    &&units_distance(u,target)<=unit_target_acquisition_range(u)*32;
++            };
++            if (!nearby(u->order_target.unit)) u->order_target.unit=find_acquire_random_target(u);
++            if (unit_is_disabled(u)||!nearby(u->order_target.unit)) {
++                set_unit_order(u,get_order_type(Orders::HideTrap));
++            } else {
++                u->order_target.pos=u->order_target.unit->position;
++                set_unit_move_target(u,u->position);
++                set_next_target_waypoint(u,u->order_target.pos);
++                try_attack_something(u);
++            }
++            return;
++        }
+ 		if (unit_is_disabled(u) || !try_attack_something(u)) {
+-			if(unit_is_trap(u))set_unit_order(u,get_order_type(Orders::HideTrap));else order_done(u);
++            order_done(u);
+ 		} else {
+ 			set_unit_move_target(u, u->sprite->position);
+ 			set_next_target_waypoint(u, u->order_target.pos);
+@@ -7315,7 +7348,7 @@
+ 			if (is_dark_archon) decloak_unit(u);
+ 			u->sprite->flags &= ~sprite_t::flag_iscript_nobrk;
+ 			sprite_run_anim(u->sprite, iscript_anims::SpecialState1);
+-			u->kill_count += target->kill_count;
++			u->kill_count = std::min(255,u->kill_count + target->kill_count);
+ 			if (is_dark_archon) u->energy = fp8::integer(50);
+ 			target->user_action_flags |= 4;
+ 			kill_unit(target);
+@@ -13240,7 +13273,14 @@
+ 			iscript_bullet = b;
+ 			iscript_flingy = b;
+ 			if (b->sprite) {
+-				if (!us_hidden(b)) set_sprite_visibility(b->sprite, tile_visibility(b->sprite->position));
++				if (!us_hidden(b)) {
++                    // Projectile animation offsets can briefly put its sprite
++                    // outside the map. There is no fog tile there; do not turn
++                    // an edge-of-map shot into a fatal tile-index lookup.
++                    xy pos=b->sprite->position;
++                    bool inside=pos.x>=0&&pos.y>=0&&pos.x<game_st.map_width&&pos.y<game_st.map_height;
++                    set_sprite_visibility(b->sprite,inside?tile_visibility(pos):0);
++                }
+ 				if (!iscript_execute_sprite(b->sprite)) b->sprite = nullptr;
+ 			}
+ 			if (!b->sprite && b->bullet_state != bullet_t::state_dying) error("non-dying bullet has null sprite");
+@@ -13891,6 +13931,15 @@
+ 		on_scenario_attack(u, source_unit);
+ 	}
+ 
++    void credit_unit_kill(const unit_t* source, const unit_t* victim) {
++        if (!source || source==victim || u_hallucination(source)) return;
++        source=unit_main_unit(source);
++        if (!source) return;
++        if (unit_is_fighter(source) && source->fighter.parent) source=source->fighter.parent;
++        auto* killer=const_cast<unit_t*>(source);
++        killer->kill_count=std::min(255,killer->kill_count+1);
++    }
++
+ 	void unit_deal_damage(unit_t* u, fp8 damage, unit_t* source_unit, int source_owner, bool reveal_source = true, bool notify = true) {
+ 		if (u->hp == 0_fp8 || cheat_damage_immune(u)) return;
+ 		// Source-less decay, stim and trigger HP edits are not attacks. Weapon hits
+@@ -13909,18 +13958,17 @@
+ 			}
+ 		} else {
+ 			if (unit_provides_space(u) && !ut_building(u)) {
+-				for (unit_t* n : loaded_units(u)) {
+-					kill_unit(n);
+-					// todo: units lost scores
+-				}
+-			}
++                for (unit_t* n : loaded_units(u)) {
++                    credit_unit_kill(source_unit,n);
++                    on_scenario_kill(source_owner,n);
++                    kill_unit(n);
++                }
++			}
++            credit_unit_kill(source_unit,u);
+ 			on_scenario_kill(source_owner, u);
+ 			u->hp = 0_fp8;
+ 			kill_unit(u);
+-			// todo: units lost scores
+-			if (source_unit && unit_target_is_enemy(source_unit, u)) {
+-				// todo: kill scores
+-			}
++
+ 		}
+ 	}
+ 
+@@ -14196,7 +14244,8 @@
+ 			spawn(target->sprite->position - xy(2, 2));
+ 			spawn(target->sprite->position + xy(2, 2));
+ 		}
+-		// todo: increment scores and kill count
++        credit_unit_kill(source_unit,target);
++        on_scenario_kill(source_unit->owner,target);
+ 		kill_unit(target);
+ 	}
+ 
+@@ -17553,8 +17602,20 @@
+             cloak_unit(u);
+             set_secondary_order(u,get_order_type(Orders::Cloak));
+         }
+-        if ((valid&2) && (flags&2) && ut_can_burrow(u))
+-            set_unit_order(u,get_order_type(Orders::Burrowing));
++        if ((valid&2) && (flags&2) && ut_can_burrow(u) && !u_burrowed(u)) {
++            // UNIT/UPRP describe an initial state, not a visible Burrow command.
++            // Complete it synchronously so a following trigger Order can unburrow
++            // the new unit in this same trigger pass without losing its movement.
++            stop_unit(u);
++            int dir=unit_is_defiler(u)?11:unit_is(u,UnitTypes::Zerg_Drone)?13:12;
++            set_unit_heading(u,8_dir*dir);
++            u_set_status_flag(u,unit_t::status_flag_no_collide);
++            set_unit_burrowed(u);
++            cloak_unit(u);
++            u->order_signal&=~4;
++            u_unset_status_flag(u,unit_t::status_flag_order_not_interruptible);
++            set_unit_order(u,get_order_type(Orders::Burrowed));
++        }
+     }
+ 
+ 	unit_t* create_initial_unit(const unit_type_t* unit_type, xy pos, int owner) {
+--- a/ui/ui.h
++++ b/ui/ui.h
+@@ -621,6 +621,7 @@
+ 	int global_volume = 50;
+ 
+ 	struct sound_channel {
++        uint64_t serial = 0;
+ 		bool playing = false;
+ 		const sound_type_t* sound_type = nullptr;
+ 		int priority = 0;
+@@ -738,7 +739,7 @@
+ 			auto* c = get_sound_channel(sound_type->priority);
+ 			if (c) {
+ 				native_sound::play(c - sound_channels.data(), &*s, (128 - 4) * (volume * global_volume / 100) / 100, pan);
+-				++sound_play_serial;
++				c->serial=++sound_play_serial;
+ 				c->playing = true;
+ 				c->sound_type = sound_type;
+ 				c->flags = sound_type->flags;
+@@ -1332,10 +1333,7 @@
+ 
+ 		int energy_dw = 0;
+ 		if (has_energy) {
+-			int energy_percent;
+-			if (ut_has_energy(u)) energy_percent = (int)u->energy.integer_part() * 100 / std::max((int)unit_max_energy(u).integer_part(), 1);
+-			else energy_percent = (int)u->remove_timer / std::max((int)default_remove_timer(u), 1);
+-			energy_dw = filled_width(energy_percent);
++            energy_dw = filled_width(unit_status_energy_percent(u));
+ 		}
+ 
+ 		const int no_shield_colors_66[] = {18, 0, 1, 2, 18};
+--- a/web/sandbox.h
++++ b/web/sandbox.h
+@@ -337,6 +337,16 @@
+ 	// share a ready notification. Remember the completed type as well as the ID.
+ 	a_unordered_map<uint16_t, int> announced;
+ 	int ready_notifications = 0, last_ready_sound = -1, last_ready_type = -1;
++    uint64_t ready_portrait_serial=0;
++    int ready_portrait_type=-1;
++    int production_portrait() const {
++        if (!ready_portrait_serial) return -1;
++        for (size_t i=0;i<sound_channels.size();++i) {
++            const auto& c=sound_channels[i];
++            if (c.playing && c.serial==ready_portrait_serial && native_sound::is_playing(i)) return ready_portrait_type;
++        }
++        return -1;
++    }
+ 	bool events_seeded = false;                   // first poll seeds silently (no startup spam)
+ 	// System message log (eliminations, later chat), shown as fading lines top-left.
+ 	struct log_msg { a_string text; int age; };
+@@ -554,6 +564,7 @@
+ 	// Selection ack: the unit's "what" line, escalating to its "pissed"
+ 	// (annoyed) lines when the same single unit is clicked repeatedly.
+ 	void on_selection(bool) override {
++        ready_portrait_serial=0;ready_portrait_type=-1;
+ 		if (current_selection.size() > 12) current_selection.resize(12);   // BW's 12-unit cap
+ 		// Can't select what you can't see: drop anything hidden by fog.
+ 		if (fog_player >= 0) {
+@@ -1571,9 +1582,16 @@
+         // Keep passenger icons in the cargo panel so Load/Unload never move
+         // onto a second command-card page when the transport fills up.
+         if (u_completed(u) && (unit_provides_space(u) || id == U::Zerg_Overlord)) {
+-            bool available=unit_provides_space(u);
+-            if (available && !unit_is_disabled(u) && unit_space_left(u)>0) card.push_back({'l', "Load", C_LOAD, U::None, true});
+-            if (available && !unit_is_disabled(u) && !loaded_units(u).empty()) card.push_back({'u', "Unload", C_UNLOADALL, U::None, true});
++            bool can_load=false,can_unload=false;
++            for (auto selected : current_selection) {
++                auto* transport=get_unit(selected);
++                if (!transport || transport->owner!=my_player || unit_dying(transport)
++                    || !u_completed(transport) || unit_is_disabled(transport) || !unit_provides_space(transport)) continue;
++                can_load |= unit_space_left(transport)>0;
++                can_unload |= !loaded_units(transport).empty();
++            }
++            if (can_load) card.push_back({'l', "Load", C_LOAD, U::None, true});
++            if (can_unload) card.push_back({'u', "Unload", C_UNLOADALL, U::None, true});
+         }
+         if (id==U::Zerg_Nydus_Canal && u_completed(u) && u->building.nydus.exit) {
+             if (u_completed(u->building.nydus.exit) && !unit_is_disabled(u)) card.push_back({'l', "Load", C_LOAD, U::None, true});
+@@ -1762,8 +1780,7 @@
+ 		details_text = format("%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d",u->kill_count,
+ 			u->unit_type->has_shield ? u->shield_points.integer_part() : -1,
+ 			u->unit_type->shield_points,
+-			ut_has_energy(u) && !u_hallucination(u) ? u->energy.integer_part() : -1,
+-			unit_max_energy(u).integer_part(),ut_building(u) ? 1 : 0,
++            unit_status_energy(u),unit_status_max_energy(u),ut_building(u) ? 1 : 0,
+ 			ut_detector(u) && !u_hallucination(u) && !unit_unpowered(u) ? 1 : 0, supplied,
+ 			st.supply_used[u->owner][ri].raw_value / 2,
+ 			std::min<int>(200,available_supply(u->owner,ri).raw_value / 2),ri,cargo ? 1 : 0);
+@@ -2115,6 +2132,7 @@
+         return -1;
+     }
+     bool announces_ready(const unit_t* u) const {
++        if(u_hallucination(u))return false;
+         if(hero_ready_sound(u)>=0 && (u_hallucination(u) || spectator || st.players[my_player].controller!=player_t::controller_occupied))return false;
+ 		using U = UnitTypes;
+ 		switch (u->unit_type->id) {
+@@ -2397,7 +2415,9 @@
+ 					last_ready_type = int(u->unit_type->id); last_ready_sound = ready_sound_for(u);
+ 					++ready_notifications;
+ 					// Production completion is a global acknowledgement, including offscreen units.
++                    auto serial=sound_play_serial;
+ 					play_sound(last_ready_sound, xy(), u, false);
++                    if (sound_play_serial!=serial&&!ut_building(u)) {ready_portrait_serial=sound_play_serial;ready_portrait_type=last_ready_type;}
+ 					ping_minimap(u, 0);
+ 				}
+ 			}
+--- a/web/campaign_ai.h
++++ b/web/campaign_ai.h
+@@ -224,15 +224,36 @@
+             if(lift.passengers.empty()){it=a.lifts.erase(it);continue;}
+             if(!ai_transport(ship)){++it;continue;}
+             if(lift.phase==0) {
++                int capacity=int(ship->unit_type->space_provided),planned=0;
++                for(auto id:lift.passengers)planned+=get_unit(id)->unit_type->space_required;
++                // Reinforcements join a waiting load before another ship departs.
++                if(lift.build_type<0&&planned<capacity) {
++                    a_vector<unit_t*> candidates;
++                    for(auto id:a.attackers)if(auto* cargo=get_unit(id)) {
++                        if(unit_dying(cargo)||cargo->owner!=owner||!u_completed(cargo)||u_flying(cargo)||u_loaded(cargo)||us_hidden(cargo)
++                            ||ut_building(cargo)||ut_worker(cargo)||ai_lifting(owner,cargo)||!cargo->unit_type->space_required
++                            ||is_reachable(cargo,lift.target)||!is_reachable(cargo,ship->position)
++                            ||!is_reachable(ai_drop_target(owner,cargo),lift.target)||xy_length(cargo->position-ship->position)>896)continue;
++                        candidates.push_back(cargo);
++                    }
++                    std::stable_sort(candidates.begin(),candidates.end(),[&](unit_t* l,unit_t* r){return units_distance(ship,l)<units_distance(ship,r);});
++                    for(auto* cargo:candidates)if(planned+int(cargo->unit_type->space_required)<=capacity) {
++                        planned+=cargo->unit_type->space_required;lift.passengers.push_back(get_unit_id(cargo));
++                    }
++                }
+                 unit_t* next=nullptr;int loaded=0;
+-                for(auto id:lift.passengers) {auto* u=get_unit(id);if(u_loaded(u)){++loaded;continue;}if(!next)next=u;}
+-                if(!next || ai_clock-lift.started>=720) {
++                for(auto id:lift.passengers) {auto* u=get_unit(id);if(u_loaded(u)&&u->connected_unit==ship){loaded+=u->unit_type->space_required;continue;}if(!next)next=u;}
++                bool timeout=ai_clock-lift.started>=720;
++                bool ready=lift.build_type>=0 ? !next : (!next&&loaded*4>=capacity*3);
++                // A final small group may leave after a bounded extra wait; do not
++                // strand a campaign's last passenger forever when no more are produced.
++                if(ready || (timeout&&(loaded*2>=capacity||!loaded||ai_clock-lift.started>=1440))) {
+                     // Do not let one blocked/oversized passenger stall a partly full ship.
+                     lift.passengers.erase(std::remove_if(lift.passengers.begin(),lift.passengers.end(),[&](unit_id id){auto* u=get_unit(id);if(u_loaded(u))return false;issue_order(u,false,get_order_type(Orders::Stop),{});return true;}),lift.passengers.end());
+                     if(!loaded){issue_order(ship,false,get_order_type(Orders::Stop),{});it=a.lifts.erase(it);continue;}
+                     lift.phase=1;lift.started=ai_clock;lift.retry=ai_clock+240;
+                     issue_order(ship,false,get_order_type(Orders::MoveUnload),{lift.landing,nullptr});
+-                } else if(!u_order_not_interruptible(next)&&!u_iscript_nobrk(next)) {
++                } else if(next&&!u_order_not_interruptible(next)&&!u_iscript_nobrk(next)) {
+                     if(u_burrowed(next)) {if(next->order_type->id!=Orders::Unburrowing)issue_order(next,false,get_order_type(Orders::Unburrowing),{});}
+                     else if(unit_is_sieged_tank(next)) {action_functions af(st,ai_actions);af.action_select(owner,next);af.action_unsiege(owner,false);}
+                     else if(unit_can_load_target(ship,next)) {
+@@ -245,14 +266,25 @@
+                     auto* u=get_unit(*cargo);
+                     if(u_loaded(u)){++cargo;continue;}
+                     if(lift.build_type>=0) {
++                        if(lift.phase==1){lift.phase=2;lift.started=ai_clock;}
+                         auto* type=get_unit_type(UnitTypes(lift.build_type));xy tile=(lift.target-type->placement_size/2)/32;
+                         action_functions af(st,ai_actions);af.action_select(owner,u);
+-                        if(af.action_build(owner,get_order_type(kit_for(st.players[owner].race).build_order),type,{size_t(tile.x),size_t(tile.y)}))++a.built;
++                        if(has_available_resources_for(owner,type)&&can_place_building(u,owner,type,lift.target,false,false))
++                            af.action_build(owner,get_order_type(kit_for(st.players[owner].race).build_order),type,{size_t(tile.x),size_t(tile.y)});
++                        // action_build can accept the command without placing it on
++                        // unexplored ground. Keep the worker reserved until it scouts
++                        // the footprint and actually queues construction.
++                        if(u->current_build_unit||(!u->build_queue.empty()&&u->build_queue.front()==type))++a.built;
++                        else if(ai_clock-lift.started<720) {
++                            if(u->order_type->id!=Orders::Move||u->order_target.pos!=lift.target)
++                                af.action_order(owner,get_order_type(Orders::Move),lift.target,nullptr,nullptr,false);
++                            ++cargo;continue;
++                        }
+                     } else issue_order(u,false,get_order_type(Orders::AttackMove),{lift.target,nullptr});
+                     cargo=lift.passengers.erase(cargo);
+                 }
+                 if(lift.passengers.empty()) {issue_order(ship,false,get_order_type(Orders::Stop),{});it=a.lifts.erase(it);continue;}
+-                if(ai_clock>=lift.retry && ship->order_type->id!=Orders::MoveUnload) {
++                if(lift.phase==1 && ai_clock>=lift.retry && ship->order_type->id!=Orders::MoveUnload) {
+                     // Retry a clear adjacent landing after dynamic blockers move.
+                     auto* cargo=get_unit(lift.passengers.front());xy pos;
+                     if(ai_landing(cargo,lift.target,ship->position,pos,(ai_clock-lift.started)/240))lift.landing=pos;
+@@ -275,7 +307,7 @@
+                 auto* cargo=get_unit(otherId);
+                 if(!cargo||unit_dying(cargo)||cargo->owner!=owner||!u_completed(cargo)||u_flying(cargo)||u_loaded(cargo)||us_hidden(cargo)
+                     ||ut_building(cargo)||ut_worker(cargo)||ai_lifting(owner,cargo)||is_reachable(cargo,target)||!is_reachable(ai_drop_target(owner,cargo),target)
+-                    ||xy_length(cargo->position-u->position)>384||int(cargo->unit_type->space_required)>capacity)continue;
++                    ||xy_length(cargo->position-u->position)>896||!is_reachable(cargo,u->position)||int(cargo->unit_type->space_required)>capacity)continue;
+                 capacity-=cargo->unit_type->space_required;lift.passengers.push_back(otherId);
+             }
+             if(!lift.passengers.empty())a.lifts.push_back(lift);
+@@ -472,7 +504,8 @@
+     }
+     bool ai_busy_worker(unit_t* u) {
+         return u_loaded(u)||ai_lifting(u->owner,u)||unit_dying(u)||!ut_worker(u)||!u_completed(u)||u_order_not_interruptible(u)||u_iscript_nobrk(u)
+-            ||!u->build_queue.empty()||u->current_build_unit||u->order_type->id==Orders::ConstructingBuilding;
++            ||!u->build_queue.empty()||u->current_build_unit||u->order_type->id==Orders::ConstructingBuilding
++            ||u->order_type->id==Orders::Repair||u->order_type->id==Orders::MoveToRepair;
+     }
+     void ai_mine_melee(int owner) {
+         auto depots=ai_depots(owner);if(depots.empty())return;
+@@ -564,7 +597,7 @@
+         }
+     }
+     bool ai_expand(int owner) {
+-        for(auto& lift:towns[owner].lifts)if(lift.build_type>=0)return false;
++        for(auto& lift:towns[owner].lifts)if(lift.build_type>=0)return true;
+         const auto race=st.players[owner].race;const int depot=race==race_t::zerg?131:race==race_t::protoss?154:106;
+         // A worker only spends the depot price when construction starts.
+         // Keep that money reserved during the entire approach, including ticks
+@@ -592,53 +625,70 @@
+             for(auto* u:ptr(st.player_units[owner]))if(ut_worker(u)&&!unit_dying(u))return true;
+             return false; // Rebuild a lost worker before reserving a depot.
+         }
+-        a_vector<xy> clusters;
++        // Score the whole mineral line, not the first legal tile around its first patch.
++        // A footprint across a cliff can be legal while being useless to miners.
++        a_vector<a_vector<unit_t*>> clusters;
+         for(auto* r:ptr(st.player_units[11]))if(unit_is_mineral_field(r)&&r->building.resource.resource_count>0){
+-            bool near=false;for(auto p:clusters)if(xy_length(p-r->position)<400)near=true;
+-            for(auto* base:depots)if(xy_length(base->position-r->position)<750)near=true;
+-            for(int p=0;p<8;++p)if(p!=owner&&!st.alliances[owner][p])
+-                for(auto* enemy:ptr(st.player_units[p]))if(ut_resource_depot(enemy)&&!unit_dying(enemy)&&xy_length(enemy->position-r->position)<800)near=true;
+-            if(!near)clusters.push_back(r->position);
+-        }
+-        std::stable_sort(clusters.begin(),clusters.end(),[&](xy a,xy b){return xy_length(a-towns[owner].center)<xy_length(b-towns[owner].center);});
+-        // Retry another resource group after a bounded scouting interval.
+-        // Terrain connectivity alone does not guarantee a usable route through
+-        // occupied choke points, so one failed approach must not stall the AI.
+-        if(!clusters.empty())std::rotate(clusters.begin(),clusters.begin()+(ai_clock/6000)%clusters.size(),clusters.end());
+-        for(auto p:clusters)for(int radius=4;radius<=11;++radius)for(int dy=-radius;dy<=radius;++dy)for(int dx=-radius;dx<=radius;++dx){
+-            if(std::abs(dx)!=radius&&std::abs(dy)!=radius)continue;
+-            xy pos=xy((p.x/32+dx)*32,(p.y/32+dy)*32)+cc->placement_size/2;
++            bool claimed=false;
++            for(auto* base:depots)if(xy_length(base->position-r->position)<512&&is_reachable(base->position,r->position))claimed=true;
++            for(int player=0;player<8;++player)if(player!=owner&&!st.alliances[owner][player])
++                for(auto* enemy:ptr(st.player_units[player]))if(ut_resource_depot(enemy)&&!unit_dying(enemy)&&xy_length(enemy->position-r->position)<640)claimed=true;
++            if(claimed)continue;
++            bool added=false;
++            for(auto& cluster:clusters)if(xy_length(cluster.front()->position-r->position)<400&&is_reachable(cluster.front()->position,r->position)) {
++                cluster.push_back(r);added=true;break;
++            }
++            if(!added)clusters.push_back({r});
++        }
++        auto center_of=[](const a_vector<unit_t*>& cluster){xy p{};for(auto* r:cluster)p+=r->position;return p/int(cluster.size());};
++        std::stable_sort(clusters.begin(),clusters.end(),[&](const auto& a,const auto& b){
++            xy l=center_of(a),r=center_of(b);
++            int ld=long_path_distance(towns[owner].center,l),rd=long_path_distance(towns[owner].center,r);
++            return ld!=rd?ld<rd:xy_length(l-towns[owner].center)<xy_length(r-towns[owner].center);
++        });
++        for(const auto& cluster:clusters) {
++            xy center=center_of(cluster),best{};int score=0x7fffffff;bool found=false;
++            for(int dy=-11;dy<=11;++dy)for(int dx=-11;dx<=11;++dx){
++                xy pos=(center/32+xy(dx,dy))*32+cc->placement_size/2;
++                if(!can_place_building(nullptr,owner,cc,pos,false,true,true))continue;
++                int cost=0;bool connected=true;
++                for(auto* resource:cluster) {
++                    int distance=long_path_distance(pos,resource->position);
++                    if(distance>640){connected=false;break;}
++                    cost+=distance;
++                }
++                if(!connected)continue;
++                cost=cost*8/int(cluster.size());
++                // A nearby gas geyser is part of the base, but mineral travel dominates.
++                for(auto* gas:ptr(st.player_units[11]))if(unit_is(gas,UnitTypes::Resource_Vespene_Geyser)
++                    &&xy_length(gas->position-center)<400&&is_reachable(center,gas->position))cost+=long_path_distance(pos,gas->position)*2;
++                if(cost<score){score=cost;best=pos;found=true;}
++            }
++            if(!found)continue;
+             unit_t* worker=nullptr;int distance=0x7fffffff;
+-            for(auto* u:workers) {
+-                int d=xy_length(u->position-pos);
+-                // Continue the existing scout rather than allocating a new SCV
+-                // on each manager tick or restarting its path around terrain.
+-                if(u->order_type->id==Orders::Move)d-=100000;
+-                if(d<distance&&can_place_building(u,owner,cc,pos,false,true,true)){distance=d;worker=u;}
++            for(auto* u:workers)if(is_reachable(u,best)){
++                int d=unit_long_path_distance(u,u->position,best);
++                if(u->order_type->id==Orders::Move&&xy_length(u->order_target.pos-best)<96)d-=100000;
++                if(d<distance){distance=d;worker=u;}
+             }
+             if(!worker) {
+-                if(!can_place_building(nullptr,owner,cc,pos,false,true,true))continue;
+-                for(auto* u:workers)if(!is_reachable(u,pos)) {
+-                    auto* ship=ai_available_transport(owner,u->position);
+-                    if(!ship) {
+-                        ai_transport_requests(owner,1,towns[owner].builds);return false;
+-                    }
+-                    airlift lift;lift.transport=get_unit_id(ship);lift.target=pos;lift.started=ai_clock;lift.build_type=depot;
+-                    if(!ai_landing(u,pos,u->position,lift.landing))continue;
+-                    lift.passengers.push_back(get_unit_id(u));towns[owner].lifts.push_back(lift);return false;
+-                }
+-                continue;
+-            }
+-            // Reserve the depot cost once a legal expansion site exists.
+-            // Army replacement must not spend it again every manager tick.
++                // Keep the depot on the resource island and arrange transport there.
++                // Never fall back to a reachable cliff on the opposite shore.
++                worker=workers.front();
++                auto* ship=ai_available_transport(owner,worker->position);
++                if(!ship){ai_transport_requests(owner,1,towns[owner].builds);return false;}
++                airlift lift;lift.transport=get_unit_id(ship);lift.target=best;lift.started=ai_clock;lift.build_type=depot;
++                if(!ai_landing(worker,best,worker->position,lift.landing))continue;
++                lift.passengers.push_back(get_unit_id(worker));towns[owner].lifts.push_back(lift);return true;
++            }
+             if(!has_available_resources_for(owner,cc))return true;
+             action_functions af(st,ai_actions);af.action_select(owner,worker);
+-            if(can_place_building(worker,owner,cc,pos,false,false)){
+-                xy tile=(pos-cc->placement_size/2)/32;
++            if(can_place_building(worker,owner,cc,best,false,false)){
++                xy tile=(best-cc->placement_size/2)/32;
+                 if(af.action_build(owner,get_order_type(kit_for(race).build_order),cc,{size_t(tile.x),size_t(tile.y)})){++towns[owner].built;return true;}
+-            }else if(worker->order_type->id!=Orders::Move||worker->order_target.pos!=pos)
+-                af.action_order(owner,get_order_type(Orders::Move),pos,nullptr,nullptr,false);
+-            return true; // Retain the expansion budget while its scout travels.
++            }else if(worker->order_type->id!=Orders::Move||worker->order_target.pos!=best)
++                af.action_order(owner,get_order_type(Orders::Move),best,nullptr,nullptr,false);
++            return true;
+         }
+         return false;
+     }
+@@ -653,6 +703,42 @@
+             }
+             if(escort){af.action_select(owner,u);af.action_order(owner,get_order_type(unit_is(u,UnitTypes::Terran_Medic)?Orders::HealMove:Orders::Follow),escort->position,escort,nullptr,false);}
+         }
++    }
++    void ai_repair_structures(int owner) {
++        if(!melee_ai || st.current_minerals[owner]<=0)return;
++        action_functions af(st,ai_actions);int total=0;
++        for(auto* worker:ptr(st.player_units[owner]))if(unit_is(worker,UnitTypes::Terran_SCV)&&!unit_dying(worker)
++            &&(worker->order_type->id==Orders::Repair||worker->order_type->id==Orders::MoveToRepair))++total;
++        for(auto* building:ptr(st.player_units[owner])) {
++            if(total>=4)break;
++            if(unit_dying(building)||!u_completed(building)||!u_grounded_building(building)
++                ||unit_race(building)!=race_t::terran||building->hp>=building->unit_type->hitpoints)continue;
++            int assigned=0;for(auto* worker:ptr(st.player_units[owner]))if(!unit_dying(worker)&&worker->order_target.unit==building
++                &&(worker->order_type->id==Orders::Repair||worker->order_type->id==Orders::MoveToRepair))++assigned;
++            int wanted=unit_hp_percent(building)<40?2:1;
++            while(assigned<wanted&&total<4) {
++                unit_t* best=nullptr;int distance=641;
++                for(auto* worker:ptr(st.player_units[owner]))if(unit_is(worker,UnitTypes::Terran_SCV)&&!ai_busy_worker(worker)
++                    &&!worker->worker.resources_carried&&is_reachable(worker,building->position)) {
++                    auto order=worker->order_type->id;
++                    if(!ai_idle(worker)&&!(order>=Orders::MoveToGas&&order<=Orders::ReturnMinerals))continue;
++                    int d=units_distance(worker,building);if(d<distance){distance=d;best=worker;}
++                }
++                if(!best)break;
++                af.action_select(owner,best);
++                if(!af.action_order(owner,get_order_type(Orders::Repair),building->position,building,nullptr,false))break;
++                ++assigned;++total;
++            }
++        }
++    }
++    int ai_local_buildings(int owner,int type,xy center) {
++        int count=0;
++        for(auto* u:ptr(st.player_units[owner]))if(!unit_dying(u)) {
++            if(ai_type(u,type)&&xy_length(u->position-center)<512)++count;
++            else if(ut_worker(u)&&!u->current_build_unit&&!u->build_queue.empty()&&int(u->build_queue.front()->id)==type
++                &&xy_length(u->order_target.pos-center)<512)++count;
++        }
++        return count;
+     }
+     void ai_resume_construction(int owner) {
+         if(ai_clock%240)return;
+@@ -733,7 +819,7 @@
+                 }
+                 if(unit_is_zerg_building(u)&&af.action_morph_building(owner,ut)){++a.built;return true;}
+             } else {
+-                if(u->current_build_unit || u->order_type->id==Orders::ConstructingBuilding)continue;
++                if(ai_busy_worker(u))continue;
+                 if(melee_ai&&u->order_type->id==Orders::Move)continue; // Expansion scout owns this order.
+                 auto* order=get_order_type(kit_for(st.players[owner].race).build_order);
+                 xy start=a.center;
+@@ -746,7 +832,9 @@
+                   a_vector<xy> centers{a.center};
+                   if(melee_ai){centers.clear();for(auto* base:ai_depots(owner))centers.push_back(base->position);
+                     if(type==156)for(auto* b:ptr(st.player_units[owner]))if(!unit_dying(b)&&u_completed(b)&&ut_requires_psionic_matrix(b)&&!is_in_psionic_matrix(owner,b->position))centers.insert(centers.begin(),b->position);
+-                    std::stable_sort(centers.begin(),centers.end(),[&](xy l,xy r){return xy_length(u->position-l)<xy_length(u->position-r);});}
++                    std::stable_sort(centers.begin(),centers.end(),[&](xy l,xy r){
++                        if(type==125||type==124||type==162){int lc=ai_local_buildings(owner,type,l),rc=ai_local_buildings(owner,type,r);if(lc!=rc)return lc<rc;}
++                        return xy_length(u->position-l)<xy_length(u->position-r);});}
+                   for(auto center:centers)for(int r=2;r<=(melee_ai?14:12);++r)for(int dy=-r;dy<=r;++dy)for(int dx=-r;dx<=r;++dx) {
+                     start=center;
+                     if(std::abs(dx)!=r && std::abs(dy)!=r)continue;
+@@ -1263,16 +1351,19 @@
+             // some Brood War support. Grow a melee roster at real tech/cost gates.
+             if(ai_clock>2400)ai_request(req,34,2,86);
+             if(ai_clock>3000)ai_request(req,107,1,96);
++            if(ai_clock>2400){ai_request(req,125,bases,88);a.defence[0]=std::max(a.defence[0],4*bases);}
++            if(ai_clock>3600)ai_request(req,124,bases,87);
+             int techTime=5500+(2-melee_ai_level)*3500;
+             if(ai_clock>techTime){ai_request(req,9,1,88);ai_request(req,1,2,87);}
+             if(ai_clock>techTime+4500)ai_request(req,12,melee_ai_level==2?2:1,89);
+             allowed_requests(); ai_melee_prerequisites(req);
+             if(bases>1)ai_request(req,110,bases,94);
+-            reserveExpansion=ai_expand(owner);ai_support(owner);ai_resume_construction(owner);
++            reserveExpansion=ai_expand(owner);ai_support(owner);ai_resume_construction(owner);ai_repair_structures(owner);
+         }
+         if(melee_ai && st.players[owner].race==race_t::protoss) {
+             int bases=int(ai_depots(owner).size());
+             ai_request(req,64,std::min(48,20*bases),80);
++            if(ai_clock>2400){ai_request(req,162,bases*(melee_ai_level==0?1:2),88);a.defence[65]=std::max(a.defence[65],2*bases);}
+             int techTime=5500+(2-melee_ai_level)*3500;
+             if(ai_clock>3000){ai_request(req,66,4,55);ai_request(req,65,6,50);}
+             if(ai_clock>techTime){ai_request(req,84,2,88);ai_request(req,61,2,86);ai_request(req,67,2,85);}
+@@ -1446,7 +1537,7 @@
+         auto& alert=defence_alerts[owner];
+         if(alert.until<=ai_clock || !get_unit(alert.source)) {
+             alert.source=get_unit_id(source);alert.victim=get_unit_id(victim);
+-            alert.wake=ai_clock+48; // Campaign response, not an instant global army pull.
++            alert.wake=ai_clock+(melee_ai?0:48); // Campaigns retain their bounded response delay.
+         }
+         alert.until=ai_clock+192;
+     }
+@@ -1455,16 +1546,19 @@
+         if(!base_defence_enabled){alert={};return;}
+         if(alert.until<=ai_clock||alert.wake>ai_clock)return;
+         auto* source=get_unit(alert.source);auto* victim=get_unit(alert.victim);
+-        if(!source||!victim||unit_dying(source)||unit_dying(victim)||victim->owner!=owner
+-            || !unit_target_is_enemy(victim,source)||units_distance(victim,source)>640) {
+-            alert={};return;
+-        }
+-        alert.wake=ai_clock+48;
++        if(!source||unit_dying(source)||source->owner==owner||st.alliances[owner][source->owner]){alert={};return;}
++        if(!victim||unit_dying(victim)||victim->owner!=owner) {
++            victim=nullptr;
++            for(auto* base:ptr(st.player_units[owner]))if(ut_building(base)&&!unit_dying(base)&&units_distance(base,source)<=640){victim=base;break;}
++        }
++        if(!victim||units_distance(victim,source)>640){alert={};return;}
++        alert.wake=ai_clock+(melee_ai?24:48);
+         a_vector<unit_t*> defenders;
+         for(auto* u:ptr(st.player_units[owner])) {
+             if(unit_dying(u)||!u_completed(u)||ut_building(u)||ut_worker(u)||ut_turret(u)
+                 ||ut_hero(u)||u_loaded(u)||us_hidden(u)||unit_is_fighter(u)||unit_is_disabled(u)
+-                ||!ai_idle(u)||ai_attacking(towns[owner],u)||!u->order_queue.empty()
++                ||(!ai_idle(u)&&!(melee_ai&&ai_attacking(towns[owner],u)&&u->order_type->id==Orders::AttackMove))
++                ||(!melee_ai&&ai_attacking(towns[owner],u))||!u->order_queue.empty()
+                 ||u_order_not_interruptible(u)||u_iscript_nobrk(u)||u_burrowed(u)
+                 ||!unit_can_attack_target(u,source)||!unit_can_see_target(u,source)
+                 ||units_distance(u,victim)>1024)continue;
+@@ -1473,6 +1567,8 @@
+         std::stable_sort(defenders.begin(),defenders.end(),[&](unit_t* a,unit_t* b){return units_distance(a,victim)<units_distance(b,victim);});
+         int sent=0;
+         for(auto* u:defenders) {
++            auto& attackers=towns[owner].attackers;
++            attackers.erase(std::remove(attackers.begin(),attackers.end(),get_unit_id(u)),attackers.end());
+             issue_order(u,false,get_order_type(Orders::AttackMove),{source->sprite->position,nullptr});
+             ++towns[owner].orders;if(++sent==12)break;
+         }

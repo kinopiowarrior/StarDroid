@@ -16,6 +16,7 @@ final class NativeGlue implements AutoCloseable {
   final Map<Integer, NativeArt.PCX> panels = new HashMap<Integer, NativeArt.PCX>();
   final Map<Integer, Bitmap> fixedPanelDecorations = new HashMap<Integer, Bitmap>();
   final Map<Integer, Bitmap> movingPanels = new HashMap<Integer, Bitmap>();
+  final Set<Integer> scaledPanels = new HashSet<Integer>();
 
   static final class Layer {
     NativeArt.Widget widget;
@@ -101,9 +102,9 @@ final class NativeGlue implements AutoCloseable {
           // original multiplayer frames until the optional interface import is present.
           if(name.equals("glucustm")&&(w.id==1||w.id==2||w.id==19))try {
             NativeArt.PCX original=art.pcx(w.id==2?"glue/chatroom/pjoin.pcx":"glue/chatroom/plist.pcx",true,glass);
-            Bitmap scaled=Bitmap.createBitmap(w.w,w.h,Bitmap.Config.ARGB_8888);
-            new Canvas(scaled).drawBitmap(original.image,null,new RectF(0,0,w.w,w.h),NativeArt.PIXELS);
-            panels.put(w.id,original);movingPanels.put(w.id,scaled);
+            // Resize from the original at draw time so toggling smoothing also
+            // updates an already open custom-game screen.
+            panels.put(w.id,original);scaledPanels.add(w.id);
           }catch(Exception missing){}
         }
       List<NativeArt.Anim> animations = layout.animations(w);
@@ -307,7 +308,10 @@ final class NativeGlue implements AutoCloseable {
         c.save();
         if (movingPanels.containsKey(w.id)) c.clipRect(w.x + shift(w), w.y,
             w.x + shift(w) + w.w, w.y + w.h);
-        c.drawBitmap(movingPanels.containsKey(w.id) ? movingPanels.get(w.id) : p.image,
+        if (scaledPanels.contains(w.id))
+          c.drawBitmap(p.image, null, new RectF(w.x + shift(w), w.y,
+              w.x + shift(w) + w.w, w.y + w.h), NativeArt.PIXELS);
+        else c.drawBitmap(movingPanels.containsKey(w.id) ? movingPanels.get(w.id) : p.image,
             w.x + shift(w), w.y, NativeArt.PIXELS);
         c.restore();
       }
@@ -382,7 +386,7 @@ final class NativeGlue implements AutoCloseable {
   }
 
   Bitmap selectFrame(int width, int height) {
-    String key = width + ":" + height;
+    String key = width + ":" + height + ":" + NativeArt.PIXELS.isFilterBitmap();
     if (selectors.containsKey(key)) return selectors.get(key);
     byte[] data = art.read("glue/palnl/dlg.grp");
     Bitmap result = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
@@ -400,7 +404,7 @@ final class NativeGlue implements AutoCloseable {
   }
 
   Bitmap panel(int width, int height, boolean button) {
-    String key = "panel:" + width + ":" + height + ":" + button;
+    String key = "panel:" + width + ":" + height + ":" + button + ":" + NativeArt.PIXELS.isFilterBitmap();
     if (selectors.containsKey(key)) return selectors.get(key);
     Bitmap result = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
     Canvas c = new Canvas(result);

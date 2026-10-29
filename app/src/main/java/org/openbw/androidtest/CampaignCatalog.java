@@ -14,7 +14,7 @@ final class CampaignCatalog {
         {12,"terran12","The Hammer Falls","campaign/terran/terran12/",false},
         {101,"zerg01","Among the Ruins","campaign/zerg/zerg01/",false},
         {102,"zerg02","Egression","campaign/zerg/zerg02/",false},
-        {103,"zerg03","The Swarm","campaign/zerg/zerg03/",false},
+        {103,"zerg03","The New Dominion","campaign/zerg/zerg03/",false},
         {104,"zerg04","Agent of the Swarm","campaign/zerg/zerg04/",false},
         {105,"zerg05","The Amerigo","campaign/zerg/zerg05/",false},
         {106,"zerg06","The Dark Templar","campaign/zerg/zerg06/",false},

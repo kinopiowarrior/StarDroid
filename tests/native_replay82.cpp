@@ -110,7 +110,7 @@ static ReplayReference82 fixture82(int race,int frames,bool expansion,bool teams
  auto recorded=world_hash();ReplayReference82 ref;ref.bytes=native_replay::save();ref.frames=frames;
  auto parsed=native_replay::parse(ref.bytes.data(),ref.bytes.size());
  check(parsed.frames==frames&&parsed.actions.size()>30,"Seek fixture lacks commands or valid duration");
- check(native_replay::ENGINE==84,"Unexpected simulation rules for the integrated campaign fixes");
+ check(native_replay::ENGINE==87,"Unexpected simulation rules for the integrated campaign fixes");
  if(classicOnly)ref.bytes.resize(parsed.classicSize);
  ref.targets={0,1,63,64,65,95,96,97,143,144,145,511,512,899,900,901,1199,1200,1439,1440,1441,1499,1500,1501,1699,1700,1701,2199,2200,2499,2500,2501,frames/2,frames-1,frames};
  for(int frame=300;frame<frames;frame+=317)ref.targets.insert(frame);

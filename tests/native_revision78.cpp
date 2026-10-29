@@ -88,7 +88,7 @@ static void air78(const char* archive) {
    town.active=false;town.attackers.clear();
    for(auto id:cargo)g_ui->issue_order(g_ui->get_unit(id),false,g_ui->get_order_type(Orders::AttackMove),{enemyPos,nullptr});
   }
-  int loaded=0,delivered=0;std::set<unsigned> riding,landed;bool snapshotChecked=false;
+  int loaded=0,delivered=0;std::set<unsigned> riding,landed;bool snapshotChecked=false,bulkDeparture=false;
   for(int frame=0;frame<16000&&delivered<9;frame++) {
    native_step();
    if(frame%24)continue;
@@ -97,6 +97,9 @@ static void air78(const char* archive) {
     if(g_ui->u_loaded(u)){if(riding.insert(id.raw_value).second)loaded++;}
     else if(riding.count(id.raw_value)&&g_ui->is_reachable(u,enemyPos)&&landed.insert(id.raw_value).second)delivered++;
    }
+   if(!bulkDeparture)for(const auto& job:g_campaign->towns[1].lifts)if(job.transport==shipId&&job.phase==1){
+    require(g_ui->unit_space_left(carrier)<=2,"First assault departed with less than 75 percent cargo");bulkDeparture=true;
+   }
    if(loaded>0&&!snapshotChecked) {
     auto state=save_game();restore_game(state);require(save_game()==state,"Saved airlift did not round trip");
     for(int i=0;i<120;i++)native_step();auto future=save_game();restore_game(state);for(int i=0;i<120;i++)native_step();require(save_game()==future,"Airlift diverged after restoration");
@@ -104,7 +107,7 @@ static void air78(const char* archive) {
    }
   }
   std::cout<<"AIRLIFT type="<<int(type)<<" melee="<<melee<<" loaded="<<loaded<<" delivered="<<delivered<<std::endl;
-  require(delivered==9&&snapshotChecked,"Transport failed to deliver two waves of cargo");
+  require(delivered==9&&snapshotChecked&&bulkDeparture,"Transport failed to deliver two waves of cargo");
   if(melee&&type==U::Terran_Dropship) {
    auto* worker=room77(U::Terran_SCV,1,home);auto workerId=g_ui->get_unit_id(worker);auto* cc=g_ui->get_unit_type(U::Terran_Command_Center);
    xy site;bool found=false;
@@ -167,6 +170,9 @@ static void sweep78(const char* starcraft,const char* broodwar) {
  std::cout<<"PASS "<<missions<<" campaign maps / "<<owners<<" computer owners: load/tick integration and mission unit/upgrade restrictions\n";
 }
 
+#ifdef OPENBW_REVISION78_EMBEDDED
+#define main retained_revision78_main85
+#endif
 int main(int argc,char**argv) {try{
  require(argc>=4,"DATA MAP STARCRAFT [frames]");std::string d=argv[1];open_archive(0,d+"/STARDAT.MPQ");open_archive(1,d+"/BROODAT.MPQ");open_archive(2,d+"/patch_rt.mpq");
  if(argc>5&&std::string(argv[4])=="sweep"){sweep78(argv[3],argv[5]);return 0;}

@@ -118,7 +118,8 @@ final class NativeSurface extends SurfaceView
   private String customName = "Weave", customDescription = "", customTileset = "Desert";
   private int customWidth = 64, customHeight = 64, customStarts = 4;
   private int customRace = 1, customBotSlot = 1;
-  private int resourcePercent = 100, commandPercent = 100, descriptionPercent = 100, touchPercent = 100;
+  private int resourcePercent = 100, commandPercent = 100, groupPercent = 100, descriptionPercent = 100, touchPercent = 100;
+  private boolean smoothGraphics;
   private Bitmap titleArtwork;
   private int opponentRace = 1; // Zerg, Terran or Protoss.
   private int terranAiLevel = 2;
@@ -210,6 +211,7 @@ final class NativeSurface extends SurfaceView
     fps = prefs.getInt("fps", 60);
     resourcePercent = ControlSettings.clamp(prefs.getInt("resource-percent", 100), 100, 150);
     commandPercent = ControlSettings.clamp(prefs.getInt("command-percent", 100), 100, 120);
+    groupPercent = ControlSettings.clamp(prefs.getInt("group-percent", commandPercent), 75, 150);
     descriptionPercent = ControlSettings.clamp(prefs.getInt("description-percent", 100), 100, 150);
     touchPercent = ControlSettings.clamp(prefs.getInt("touch-percent", 100), 100, 150);
     speed = prefs.getFloat("frame-ms", prefs.getInt("speed", 42));
@@ -254,6 +256,11 @@ final class NativeSurface extends SurfaceView
     synchronized (gate) {
       gate.notifyAll();
     }
+  }
+
+  private void loadGraphicsSettings() {
+    smoothGraphics = prefs.getBoolean("smooth-graphics", true);
+    NativeArt.setSmoothGraphics(smoothGraphics);
   }
 
   void resume() {
@@ -377,6 +384,8 @@ final class NativeSurface extends SurfaceView
   private void loop() {
     long processed = 0;
     try {
+      // The previous Activity's renderer has released the shared drawing state.
+      loadGraphicsSettings();
       loadArchives();
       art = new NativeArt();
       missions =
@@ -495,7 +504,9 @@ final class NativeSurface extends SurfaceView
     String[] core = {"STARDAT.MPQ", "BROODAT.MPQ", "patch_rt.mpq"};
     for (int i = 0; i < 3; i++)
       NativeBridge.open(i, new File(new File(gameFiles, "mpq"), core[i]).getPath());
-    GameLanguage.russianData = GameLanguage.isRussian(NativeBridge.asset(-1, "rez/stat_txt.tbl"));
+    String detectedLanguage = GameLanguage.detect(NativeBridge.asset(-1, "rez/stat_txt.tbl"));
+    GameLanguage.russianData = detectedLanguage.equals("ru");
+    if (prefs.getBoolean("ui-language-auto", true)) PortText.select(detectedLanguage);
     prefs.edit().putBoolean("russian-data", GameLanguage.russianData).apply();
     String[] bundle = {
       InterfaceData.NAME,
@@ -2322,7 +2333,7 @@ final class NativeSurface extends SurfaceView
     padGroup=group;
   }
 
-  private float controlGroupScale() { return 1.2f * commandPercent / 100f; }
+  private float controlGroupScale() { return 1.2f * groupPercent / 100f; }
 
   private int controlGroupRows() {
     return 8+316*controlGroupScale() > logicalWidth-204*resourcePercent/100f-8 ? 2 : 1;
@@ -2578,24 +2589,26 @@ final class NativeSurface extends SurfaceView
       radio(c, "Off", !wide, x + 26, y + 100, 62, () -> setWideMode(0));
       radio(c, "On", wide && !overCamera, x + 98, y + 100, 62, () -> setWideMode(1));
       radio(c, "+ over camera area", wide && overCamera, x + 170, y + 100, 176, () -> setWideMode(2));
-      toggle(c, "Allow zoom out", zoomOut, x + 26, y + 139, () -> {zoomOut = !zoomOut; if (!zoomOut) zoom = Math.max(1, zoom); resizeWorld(); saveSettings();});
-      option(c, "View zoom: " + Math.round(zoom * 100) + "%", x + 26, y + 175, 320, () -> {
+      toggle(c, "Allow zoom out", zoomOut, x + 26, y + 132, () -> {zoomOut = !zoomOut; if (!zoomOut) zoom = Math.max(1, zoom); resizeWorld(); saveSettings();});
+      option(c, "View zoom: " + Math.round(zoom * 100) + "%", x + 26, y + 165, 320, () -> {
         float[] levels = {.5f, .67f, 1, 1.25f, 1.5f, 2}; float next = zoomOut ? .5f : 1;
         for (float v : levels) if (v > zoom + .005f && (zoomOut || v >= 1)) {next = v; break;}
         zoom = next; resizeWorld(); saveSettings();
       });
-      option(c, "Frame rate: " + fps, x + 26, y + 214, 320, () -> {fps = fps == 30 ? 60 : fps == 60 ? 90 : fps == 90 ? 120 : 30; saveSettings();});
-      navigationOption(c, "Interface sizes", x + 26, y + 253, 320, () -> modal = "ui-sizes");
+      option(c, "Frame rate: " + fps, x + 26, y + 198, 320, () -> {fps = fps == 30 ? 60 : fps == 60 ? 90 : fps == 90 ? 120 : 30; saveSettings();});
+      navigationOption(c, "Interface sizes", x + 26, y + 264, 320, () -> modal = "ui-sizes");
+      toggle(c, "Smooth graphics (game + UI)", smoothGraphics, x + 26, y + 231, () -> {smoothGraphics = !smoothGraphics; NativeArt.setSmoothGraphics(smoothGraphics); saveSettings();});
     } else if (modal.equals("network")) {
       toggle(c,"Show network overlay",networkStats,x+26,y+48,()->{networkStats=!networkStats;saveSettings();});
       body(c,(nearby==null?"No active match":nearby.summary())+"\n"+String.format(Locale.ROOT,"Display: %.1f FPS\nDrawing: %.2f ms/frame\nTotal frame work: %.2f ms/frame",displayFps,drawMs,frameMs)+"\nInput buffer: "+(nearby==null?168:nearby.setup.frameMs()*4)+" ms.\nWait: blocked on other devices.\nValues retain the last active sample.",x+26,y+88,320,142);
       navigationOption(c,"View / copy diagnostics",x+26,y+240,320,()->activity.runOnUiThread(activity::requestDiagnostics));
     } else if (modal.equals("ui-sizes")) {
       option(c, "Resources: " + resourcePercent + "%", x + 26, y + 48, 320, () -> {resourcePercent = resourcePercent >= 150 ? 100 : resourcePercent + 25; saveSettings();});
-      option(c, "Commands & control groups: " + commandPercent + "%", x + 26, y + 92, 320, () -> {commandPercent = commandPercent >= 120 ? 100 : commandPercent + 10; saveSettings();});
-      option(c, "Descriptions & messages: " + descriptionPercent + "%", x + 26, y + 136, 320, () -> {descriptionPercent = descriptionPercent >= 150 ? 100 : descriptionPercent + 25; saveSettings();});
-      option(c, "Selection & move buttons: " + touchPercent + "%", x + 26, y + 180, 320, () -> {touchPercent = touchPercent >= 150 ? 100 : touchPercent + 25; saveSettings();});
-      option(c, "Reset interface sizes", x + 26, y + 232, 320, () -> {resourcePercent = commandPercent = descriptionPercent = touchPercent = 100; saveSettings();});
+      option(c, "Command buttons: " + commandPercent + "%", x + 26, y + 88, 320, () -> {commandPercent = commandPercent >= 120 ? 100 : commandPercent + 10; saveSettings();});
+      option(c, "Control groups: " + groupPercent + "%", x + 26, y + 128, 320, () -> {groupPercent = groupPercent >= 150 ? 75 : Math.min(150, groupPercent + 25); saveSettings();});
+      option(c, "Descriptions & messages: " + descriptionPercent + "%", x + 26, y + 168, 320, () -> {descriptionPercent = descriptionPercent >= 150 ? 100 : descriptionPercent + 25; saveSettings();});
+      option(c, "Selection & move buttons: " + touchPercent + "%", x + 26, y + 208, 320, () -> {touchPercent = touchPercent >= 150 ? 100 : touchPercent + 25; saveSettings();});
+      option(c, "Reset interface sizes", x + 26, y + 256, 320, () -> {resourcePercent = commandPercent = groupPercent = descriptionPercent = touchPercent = 100; saveSettings();});
     } else if (modal.equals("misc")) {
       toggle(c, "Nearby enemies defend their base", nearbyDefenders, x + 22, y + 52, () -> {
         nearbyDefenders = !nearbyDefenders; syncControls(); saveSettings();
@@ -2915,6 +2928,8 @@ final class NativeSurface extends SurfaceView
         .putInt("fps", fps)
         .putInt("resource-percent", resourcePercent)
         .putInt("command-percent", commandPercent)
+        .putInt("group-percent", groupPercent)
+        .putBoolean("smooth-graphics", smoothGraphics)
         .putInt("description-percent", descriptionPercent)
         .putInt("touch-percent", touchPercent)
         .putFloat("frame-ms", (float) speed)
@@ -3074,7 +3089,7 @@ final class NativeSurface extends SurfaceView
         float x = w.x + glue.shift(w);
         int layer = c.saveLayer(x, w.y, x + w.w, w.y + w.h, null);
         m.draw(c, x, w.y, w.w, w.h, clock, !modal.isEmpty(), true);
-        if (glue.portraitMasks[i] != null) c.drawBitmap(glue.portraitMasks[i], x, w.y, glue.maskPaint);
+        if (glue.portraitMasks[i] != null) c.drawBitmap(glue.portraitMasks[i], x, w.y, NativeArt.bitmapPaint(glue.maskPaint));
         c.restoreToCount(layer);
         if (glue.portraitFrames[i] != null) c.drawBitmap(glue.portraitFrames[i], x, w.y, NativeArt.PIXELS);
         if (talk && glue.speakerFrames[i] != null) c.drawBitmap(glue.speakerFrames[i], x, w.y, NativeArt.PIXELS);
@@ -4038,7 +4053,7 @@ final class NativeSurface extends SurfaceView
   private void desktopSecondary(){
     if(profileEditing||chatEditing||!desktopInside||!activeGame||!page.equals("game")||!modal.isEmpty()||pendingScreen!=null)return;
     String card=NativeBridge.text(0);
-    if(NativeBridge.value(0,0)>0||card.startsWith("Build\t")||card.startsWith("Advanced Build\t")||placement){
+    if(DesktopControls.targetingCursor(NativeBridge.value(0,0))||card.startsWith("Build\t")||card.startsWith("Advanced Build\t")||placement){
       NativeBridge.command(2,27,41,0,0);placement=false;commandHover.cancel();return;
     }
     if(hud!=null&&hud.minimap.contains(desktopX,desktopY)){mini(desktopX,desktopY,true);return;}

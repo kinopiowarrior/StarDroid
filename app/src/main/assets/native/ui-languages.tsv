@@ -740,3 +740,9 @@ Hide minimap terrain	Скрыть рельеф миникарты	Minikartengel�
 Show minimap terrain	Показать рельеф миникарты	Minikartengelände einblenden	Mostrar terreno del minimapa	Afficher le terrain de la minicarte
 Hides terrain on the minimap. Unit markers remain visible.	Скрывает рельеф на миникарте. Метки юнитов остаются видимыми.	Blendet das Gelände auf der Minikarte aus. Einheitenmarkierungen bleiben sichtbar.	Oculta el terreno del minimapa. Las marcas de las unidades siguen visibles.	Masque le terrain de la minicarte. Les repères des unités restent visibles.
 Shows terrain on the minimap.	Показывает рельеф на миникарте.	Blendet das Gelände auf der Minikarte ein.	Muestra el terreno del minimapa.	Affiche le terrain de la minicarte.
+
+Automatic (game files)	Автоматически (файлы игры)	Automatisch (Spieldateien)	Automático (archivos del juego)	Automatique (fichiers du jeu)
+Command buttons	Кнопки команд	Befehlsschaltflächen	Botones de órdenes	Boutons de commande
+Control groups	Группы управления	Kontrollgruppen	Grupos de control	Groupes de contrôle
+Smooth graphics (game + UI)	Сглаживание (игра и интерфейс)	Grafik glätten (Spiel + Oberfläche)	Suavizar gráficos (juego e interfaz)	Lisser graphismes (jeu + interface)
+The New Dominion	Новый Доминион	Das neue Dominion	El nuevo Dominio	Le nouveau Dominion

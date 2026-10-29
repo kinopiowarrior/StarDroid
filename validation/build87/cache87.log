@@ -1,0 +1,2 @@
+PASS exact-match Android resource cache; versionCode updated to 87
+PASS cached manifest: only versionCode changed, versionName guarded, current source hashes verified, R identifiers preserved, all stored entries aligned before/after signing

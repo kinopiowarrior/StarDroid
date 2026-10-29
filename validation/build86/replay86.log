@@ -1,0 +1,18 @@
+openbw_init: map 'Weave v1' 2048x2048, slot 0 of 2, units=5, fog_player=0
+PASS checkpoint timing scenario=broodwar_ai units=97 snapshotBytes=566672 captureMs=1.9247 restoreMs=1.4639
+PASS unavailable-checkpoint fallback: original replay reload preserves world, pause, camera, viewpoint and presentation settings
+PASS seek scenario=broodwar_ai frames=7000 targets=57 footer=1 cacheBytes=1048576 checkpoints=1
+openbw_init: map 'Weave v1' 2048x2048, slot 0 of 3, units=5, fog_player=0
+PASS checkpoint timing scenario=team_hero_ai units=105 snapshotBytes=581672 captureMs=2.0049 restoreMs=1.4946
+PASS unavailable-checkpoint fallback: original replay reload preserves world, pause, camera, viewpoint and presentation settings
+PASS seek scenario=team_hero_ai frames=4600 targets=49 footer=1 cacheBytes=1048576 checkpoints=1
+openbw_init: map 'Weave v1' 2048x2048, slot 0 of 1, units=9, fog_player=0
+PASS checkpoint timing scenario=classic_human units=90 snapshotBytes=462776 captureMs=1.5696 restoreMs=1.2559
+PASS unavailable-checkpoint fallback: original replay reload preserves world, pause, camera, viewpoint and presentation settings
+PASS seek scenario=classic_human frames=2200 targets=36 footer=0 cacheBytes=524288 checkpoints=1
+PASS 24-hour replay: request only queues work, first pump bounded, cancel and restart responsive
+openbw_init: map 'Weave v1' 2048x2048, slot 0 of 2, units=5, fog_player=0
+PASS checkpoint stress synthetic=1 units=290 snapshotBytes=871059 captureMs=2.6604 restoreMs=1.9558
+PASS intermediate seek rendering preserves simulation and AI in the classic human fixture
+PASS bounded seek pumps=1196 requests=403 maxFramesPerPump=128 longestHostPumpMs=261.186 peakCacheBytes=8388608 peakCheckpoints=8 checkpointEvictions=2 checkpointRestores=210
+PASS 118099 checks in 3 replay seek scenarios

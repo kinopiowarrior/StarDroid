@@ -1,0 +1,7 @@
+StarDroid 1.1 build 86
+Baseline: verified build 85 archive (source commit e2208ce7f85a6ab9d81b5b0e5f5d66f59f2a1814).
+Simulation compatibility: 87; room: 63; save schema: 4.
+APK SHA-256: 08201de9349d7fad8d873569e5fa57b3dcf1cfd745ba63738d8cff8759821d90
+
+Read docs/CHANGES-BUILD86.md and docs/QA-BUILD86.md.
+No original StarCraft game archives or private signing material are included.

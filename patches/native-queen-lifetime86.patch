@@ -1,0 +1,43 @@
+--- a/bwgame.h
++++ b/bwgame.h
+@@ -3867,18 +3867,22 @@
+ 		return 0;
+ 	}
+ 
+     // The yellow lifetime meter takes precedence over a hallucinated caster's energy.
+     int unit_status_energy(const unit_t* u) const {
+-        if (default_remove_timer(u)) return std::max(0,u->remove_timer);
++        // Classic displays ten simulation frames as one lifetime point.
++        if (default_remove_timer(u)) return std::max(0,u->remove_timer) / 10;
+         return ut_has_energy(u) ? int(u->energy.integer_part()) : -1;
+     }
+     int unit_status_max_energy(const unit_t* u) const {
+         int lifetime=default_remove_timer(u);
+-        return lifetime ? lifetime : int(unit_max_energy(u).integer_part());
++        return lifetime ? lifetime / 10 : int(unit_max_energy(u).integer_part());
+     }
+     int unit_status_energy_percent(const unit_t* u) const {
++        // Keep the world bar at frame precision, independent of the rounded text.
++        int lifetime=default_remove_timer(u);
++        if (lifetime) return std::max(0,std::min(100,u->remove_timer*100/lifetime));
+         return std::max(0,std::min(100,unit_status_energy(u)*100/std::max(1,unit_status_max_energy(u))));
+     }
+ 
+ 	void set_remove_timer(unit_t* u) {
+ 		set_remove_timer(u, default_remove_timer(u));
+@@ -18735,13 +18739,12 @@
+ 		case TechTypes::Spawn_Broodlings:
+ 			if (!unit_is(u, UnitTypes::Zerg_Queens_Nest)) return false;
+ 			if (unit_is_constructing(u) || unit_is_researching(u) || unit_is_upgrading(u)) return false;
+ 			return true;
+ 		case TechTypes::Parasite:
+-			if (!unit_is(u, UnitTypes::Zerg_Queens_Nest)) return false;
+-			if (unit_is_constructing(u) || unit_is_researching(u) || unit_is_upgrading(u)) return false;
+-			return true;
++			// Queens start with Parasite; it has no research button or research order.
++			return false;
+ 		case TechTypes::Plague:
+ 			if (!unit_is(u, UnitTypes::Zerg_Defiler_Mound)) return false;
+ 			if (unit_is_constructing(u) || unit_is_researching(u) || unit_is_upgrading(u)) return false;
+ 			return true;
+ 		case TechTypes::Consume:

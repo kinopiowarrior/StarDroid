@@ -133,7 +133,7 @@ final class NativeHud implements AutoCloseable {
   }
 
   Bitmap panel(int width, int height, boolean button, boolean enabled) {
-    String key = width + ":" + height + ":" + button + ":" + enabled;
+    String key = width + ":" + height + ":" + button + ":" + enabled + ":" + NativeArt.PIXELS.isFilterBitmap();
     Bitmap old = panels.get(key);
     if (old != null) return old;
     Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
@@ -167,11 +167,11 @@ final class NativeHud implements AutoCloseable {
     int type = NativeBridge.value(1, 0);
     String wiresText = NativeBridge.text(3);
     int identity = wiresText.isEmpty() ? -1 : number(wiresText.split("\t"), 0, -1);
-    portrait.selection(transmissionType >= 0 ? -2 - transmissionType : identity);
+    int readyType = NativeBridge.value(30, 0);
+    int shownType = transmissionType >= 0 ? transmissionType : readyType >= 0 ? readyType : type;
+    portrait.selection(transmissionType >= 0 ? -2 - transmissionType : readyType >= 0 ? -232 - readyType : identity);
     boolean talk = NativeBridge.value(12, 0) != 0;
-    portrait.target(
-        transmissionType >= 0 ? transmissionType : type,
-        transmissionType >= 0 ? transmissionTalk : talk);
+    portrait.target(shownType, transmissionType >= 0 ? transmissionTalk : readyType >= 0 || talk);
     // Empty portraits must be black too: the console contains a transparent
     // video opening, so otherwise live terrain leaks through its corner pixels.
     Paint backdrop = new Paint(); backdrop.setColor(Color.rgb(8,8,8));
