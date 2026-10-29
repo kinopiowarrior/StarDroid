@@ -1,0 +1,43 @@
+name: Prepare StarDroid 1.1.1 Android resources
+on:
+  push:
+    branches: [codex/release-resources-1.1.1]
+    paths: [.github/workflows/compile-resources111.yml]
+permissions:
+  contents: read
+jobs:
+  resources:
+    if: github.repository == 'kinopiowarrior/StarDroid'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile release metadata with the Android SDK
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-35' 'build-tools;35.0.0' >/dev/null
+          mkdir -p resource-cache/generated
+          aapt="$ANDROID_HOME/build-tools/35.0.0/aapt2"
+          "$aapt" compile --dir app/src/main/res -o resource-cache/compiled.zip
+          "$aapt" link -o resource-cache/resources.apk \
+            -I "$ANDROID_HOME/platforms/android-35/android.jar" \
+            --manifest app/src/main/AndroidManifest.xml \
+            --java resource-cache/generated --auto-add-overlay \
+            --min-sdk-version 26 --target-sdk-version 35 \
+            --version-code 88 --version-name 1.1.1 resource-cache/compiled.zip
+          "$aapt" dump badging resource-cache/resources.apk > resource-cache/badging.txt
+          python3 - <<'PY'
+          import base64,hashlib,json,pathlib
+          r=pathlib.Path('.')
+          inputs=[r/'app/src/main/AndroidManifest.xml',*sorted((r/'app/src/main/res').rglob('*'))]
+          record={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in inputs if p.is_file()}
+          (r/'resource-cache/inputs.json').write_text(json.dumps(record,indent=2)+'\n')
+          for name,p in [('APK',r/'resource-cache/resources.apk'),('R',r/'resource-cache/generated/org/openbw/androidtest/R.java'),('INPUTS',r/'resource-cache/inputs.json')]:
+              print('RESOURCE_'+name+'_BASE64='+base64.b64encode(p.read_bytes()).decode())
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: StarDroid-1.1.1-resources
+          path: resource-cache/
+          retention-days: 7
