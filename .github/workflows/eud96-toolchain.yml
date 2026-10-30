@@ -1,38 +1,50 @@
-name: Recover pinned Android tools for EUD96
+name: Recover remaining pinned EUD96 tools
 on:
   push:
     branches: [codex/eud96-toolchain-recovery]
 permissions:
   contents: read
 jobs:
-  download:
+  ndk:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    strategy:
-      matrix:
-        include:
-          - name: platform-35_r02.zip
-            sha1: 0bb560a90a7a2cbd0dd8348224d518b638fe7949
-          - name: build-tools_r35_linux.zip
-            sha1: 2cfaa0bbb2336e9ec18ed3ecea84fa2e2af607bc
-          - name: android-ndk-r27d-linux.zip
-            sha1: 22105e410cf29afcf163760cc95522b9fb981121
     steps:
-      - name: Download and verify pinned official package
-        env:
-          PACKAGE_NAME: ${{ matrix.name }}
-          PACKAGE_SHA1: ${{ matrix.sha1 }}
+      - name: Download, verify and split official NDK
         run: |
           set -eu
-          curl --fail --location --retry 3 --output "$PACKAGE_NAME" "https://dl.google.com/android/repository/$PACKAGE_NAME"
-          printf '%s  %s\n' "$PACKAGE_SHA1" "$PACKAGE_NAME" | sha1sum --check --strict
-          sha256sum "$PACKAGE_NAME" > "$PACKAGE_NAME.sha256"
+          curl --fail --location --retry 3 --output android-ndk-r27d-linux.zip https://dl.google.com/android/repository/android-ndk-r27d-linux.zip
+          printf '%s\n' '22105e410cf29afcf163760cc95522b9fb981121  android-ndk-r27d-linux.zip' | sha1sum --check --strict
+          split -b 350000000 -d android-ndk-r27d-linux.zip ndk-part
+          sha256sum android-ndk-r27d-linux.zip ndk-part* > ndk-sha256.txt
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: eud96-${{ matrix.name }}
+          name: eud96-ndk-part00
           path: |
-            ${{ matrix.name }}
-            ${{ matrix.name }}.sha256
+            ndk-part00
+            ndk-sha256.txt
+          compression-level: 0
+          retention-days: 1
+          if-no-files-found: error
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: eud96-ndk-part01
+          path: ndk-part01
+          compression-level: 0
+          retention-days: 1
+          if-no-files-found: error
+  jdk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Download and verify official JDK17
+        run: |
+          set -eu
+          curl --fail --location --retry 3 --output jdk17.tar.gz https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.21%2B9/OpenJDK17U-jdk_x64_linux_hotspot_17.0.21_9.tar.gz
+          printf '%s\n' '8b9b611d917e3dfd8419d3566b5949226f69b052fed7e109c1368add1dfe8711  jdk17.tar.gz' | sha256sum --check --strict
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: eud96-jdk17
+          path: jdk17.tar.gz
           compression-level: 0
           retention-days: 1
           if-no-files-found: error
