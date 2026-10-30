@@ -1,0 +1,38 @@
+name: Recover pinned Android tools for EUD96
+on:
+  push:
+    branches: [codex/eud96-toolchain-recovery]
+permissions:
+  contents: read
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      matrix:
+        include:
+          - name: platform-35_r02.zip
+            sha1: 0bb560a90a7a2cbd0dd8348224d518b638fe7949
+          - name: build-tools_r35_linux.zip
+            sha1: 2cfaa0bbb2336e9ec18ed3ecea84fa2e2af607bc
+          - name: android-ndk-r27d-linux.zip
+            sha1: 22105e410cf29afcf163760cc95522b9fb981121
+    steps:
+      - name: Download and verify pinned official package
+        env:
+          PACKAGE_NAME: ${{ matrix.name }}
+          PACKAGE_SHA1: ${{ matrix.sha1 }}
+        run: |
+          set -eu
+          curl --fail --location --retry 3 --output "$PACKAGE_NAME" "https://dl.google.com/android/repository/$PACKAGE_NAME"
+          printf '%s  %s\n' "$PACKAGE_SHA1" "$PACKAGE_NAME" | sha1sum --check --strict
+          sha256sum "$PACKAGE_NAME" > "$PACKAGE_NAME.sha256"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: eud96-${{ matrix.name }}
+          path: |
+            ${{ matrix.name }}
+            ${{ matrix.name }}.sha256
+          compression-level: 0
+          retention-days: 1
+          if-no-files-found: error
