@@ -1,50 +1,31 @@
-name: Recover remaining pinned EUD96 tools
+name: Recover original EUD regression maps
 on:
   push:
     branches: [codex/eud96-toolchain-recovery]
 permissions:
   contents: read
 jobs:
-  ndk:
+  maps:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 10
     steps:
-      - name: Download, verify and split official NDK
+      - name: Download unchanged original regression maps
         run: |
           set -eu
-          curl --fail --location --retry 3 --output android-ndk-r27d-linux.zip https://dl.google.com/android/repository/android-ndk-r27d-linux.zip
-          printf '%s\n' '22105e410cf29afcf163760cc95522b9fb981121  android-ndk-r27d-linux.zip' | sha1sum --check --strict
-          split -b 350000000 -d android-ndk-r27d-linux.zip ndk-part
-          sha256sum android-ndk-r27d-linux.zip ndk-part* > ndk-sha256.txt
+          mkdir maps
+          python3 - <<'PY'
+          import urllib.request,hashlib,pathlib
+          rows=[('xk9hpy5k','2820764216c977be3d0d3c737da3d0ada93365ea2bb61883b7d885e604c30730'),('G4Dqc2dr','13480c334896eeaab3851274915ea00460f58d9a618fa77272d1297b3ac3234b'),('r3h3hgy5','5d9b88704466e1bb0a47f776f87f5213d367823956ab52d2dac9a3c0f2567a4f'),('dDzjhH8B','44946e16d571e8a6922e3bdbe20e8f9f171a35a2bdb0ed7d2020565398e33167'),('97RxyDYs','6b360631a890d7db14f25cfb28723fb1379559fecb63eebde13f27a02d9500fa')]
+          for name,digest in rows:
+              with urllib.request.urlopen('https://scmscx.com/api/maps/'+digest,timeout=60) as r:data=r.read(16000000)
+              assert hashlib.sha256(data).hexdigest()==digest,name
+              pathlib.Path('maps',name+'.scx').write_bytes(data)
+              print(name,len(data),digest)
+          PY
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: eud96-ndk-part00
-          path: |
-            ndk-part00
-            ndk-sha256.txt
-          compression-level: 0
-          retention-days: 1
-          if-no-files-found: error
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: eud96-ndk-part01
-          path: ndk-part01
-          compression-level: 0
-          retention-days: 1
-          if-no-files-found: error
-  jdk:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - name: Download and verify official JDK17
-        run: |
-          set -eu
-          curl --fail --location --retry 3 --output jdk17.tar.gz https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.21%2B9/OpenJDK17U-jdk_x64_linux_hotspot_17.0.21_9.tar.gz
-          printf '%s\n' '8b9b611d917e3dfd8419d3566b5949226f69b052fed7e109c1368add1dfe8711  jdk17.tar.gz' | sha256sum --check --strict
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: eud96-jdk17
-          path: jdk17.tar.gz
+          name: eud96-original-maps
+          path: maps/*.scx
           compression-level: 0
           retention-days: 1
           if-no-files-found: error
