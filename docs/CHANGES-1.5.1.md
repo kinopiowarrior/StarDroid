@@ -7,7 +7,7 @@ Version **1.5.1**, Android build **121**, fixes drag selection across the game i
 - The same behavior applies to touch, mouse, and controller selection drags.
 - Taps and clicks that start on the UI remain UI actions. They do not select a unit underneath the panel or start a battlefield selection drag.
 
-This is a targeted update to 1.5. Remastered graphics are not included. The application identity and existing simulation, replay, multiplayer, and save-format versions are unchanged.
+This is a targeted update to 1.5. The application identity and existing simulation, replay, multiplayer, and save-format versions are unchanged.
 
 Install `StarDroid-1.5.1.apk` over the existing app to retain imported data, settings, and saves. The release uses the same signing identity as 1.5.
 

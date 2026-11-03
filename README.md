@@ -79,7 +79,7 @@ To update, install over the existing app **without uninstalling**. Use the same 
 
 The **[1.5.1 source ZIP](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.5.1/StarDroid-1.5.1-source.zip)** contains the matching code, build instructions, and validation records. The repository code snapshot remains at 1.1.1.
 
-Version 1.5.1 builds on 1.5 with a targeted selection fix and rebuilt ARM64/x86-64 native libraries. Host regression and APK checks passed; physical-device testing remains ongoing. Remastered graphics are not included.
+Version 1.5.1 builds on 1.5 with a targeted selection fix and rebuilt ARM64/x86-64 native libraries. Host regression and APK checks passed; physical-device testing remains ongoing.
 
 ## Credits
 
