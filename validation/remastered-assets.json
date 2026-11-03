@@ -1,0 +1,186 @@
+{
+  "passed": true,
+  "sanitizers": false,
+  "leak_check": false,
+  "source_sha256": {
+    "native/remastered/assets.h": "14ecc1bfd26c5dadc27bf6a13a316f59f3c4eda6f56d02ad209d31bbbdbdc159",
+    "tests/native_remastered_assets.cpp": "0ab7bc131fa596cc91e9fe5baaf4832b2bcfc2a7545bb32253881de2b13c6d30",
+    "tools/remastered_inspect.cpp": "beafd85101e4b9d94bbc4d98af15b1fea87de4d0fc5613d80ace261bb4aa6ae1",
+    "tests/run_remastered_assets.py": "8fad74665fb7b00ba14475ecaa8f5856426a1a34f0a1fbe0dcfd203db65305f0"
+  },
+  "scope": "Synthetic ANIM/DDS reader and developer CLI checks only; no licensed assets, Android device, CASC or game renderer validation.",
+  "checks": [
+    {
+      "command": [
+        "g++",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-pedantic",
+        "-O2",
+        "/workspace/scratch/169ead29422f/stardroid-remastered/tests/native_remastered_assets.cpp",
+        "-o",
+        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets/native-remastered-assets"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "g++",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-pedantic",
+        "-O2",
+        "/workspace/scratch/169ead29422f/stardroid-remastered/tools/remastered_inspect.cpp",
+        "-o",
+        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets/remastered-inspect"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets/native-remastered-assets"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS 641 synthetic Remastered asset checks\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets/native-remastered-assets",
+        "--write-fixture",
+        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets/synthetic-rc_kkln6/fixture.anim"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets/synthetic-rc_kkln6/fixture.anim",
+        "--frame",
+        "0",
+        "--preview",
+        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets/synthetic-rc_kkln6/frame.pam"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"format\": \"ANIM\",\n  \"scale\": 2,\n  \"frame_count\": 2,\n  \"canvas_hd\": [24,32],\n  \"layers\": [{\"name\":\"diffuse\",\"present\":true,\"width\":4,\"height\":4},{\"name\":\"teamcolor\",\"present\":true,\"width\":4,\"height\":4}],\n  \"frame\": 0,\n  \"texture_crop\": [0,0,4,4],\n  \"offset_pixels\": [-2,-1],\n  \"decoded_pixels\": 16,\n  \"renderer_integrated\": false\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets/synthetic-rc_kkln6/fixture.anim",
+        "--team-color",
+        "ff0000"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"format\": \"ANIM\",\n  \"scale\": 2,\n  \"frame_count\": 2,\n  \"canvas_hd\": [24,32],\n  \"layers\": [{\"name\":\"diffuse\",\"present\":true,\"width\":4,\"height\":4},{\"name\":\"teamcolor\",\"present\":true,\"width\":4,\"height\":4}],\n  \"frame\": 0,\n  \"texture_crop\": [0,0,4,4],\n  \"offset_pixels\": [-2,-1],\n  \"decoded_pixels\": 16,\n  \"renderer_integrated\": false\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets/synthetic-rc_kkln6/fixture.anim",
+        "--frame",
+        "-1"
+      ],
+      "exit_code": 2,
+      "stdout": "",
+      "stderr": "Remastered asset error: Invalid frame number\n"
+    },
+    {
+      "command": [
+        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets/synthetic-rc_kkln6/fixture.anim",
+        "--frame",
+        "999999999999999999999999999999"
+      ],
+      "exit_code": 2,
+      "stdout": "",
+      "stderr": "Remastered asset error: Invalid frame number\n"
+    },
+    {
+      "command": [
+        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets/synthetic-rc_kkln6/fixture.anim",
+        "--team-color",
+        "xxyyzz"
+      ],
+      "exit_code": 2,
+      "stdout": "",
+      "stderr": "Remastered asset error: Invalid hexadecimal team color\n"
+    },
+    {
+      "command": [
+        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets/synthetic-rc_kkln6/fixture.anim",
+        "--frame",
+        "2"
+      ],
+      "exit_code": 2,
+      "stdout": "",
+      "stderr": "Remastered asset error: ANIM frame index out of range\n"
+    },
+    {
+      "command": [
+        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets/synthetic-rc_kkln6/fixture.anim",
+        "--preview",
+        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets/synthetic-rc_kkln6/fixture.anim"
+      ],
+      "exit_code": 2,
+      "stdout": "",
+      "stderr": "Remastered asset error: Preview must not overwrite the source asset\n"
+    },
+    {
+      "command": [
+        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets/synthetic-rc_kkln6/fixture.anim",
+        "--unknown",
+        "value"
+      ],
+      "exit_code": 2,
+      "stdout": "",
+      "stderr": "Remastered asset error: Unknown option: --unknown\n"
+    },
+    {
+      "command": [
+        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets/synthetic-rc_kkln6/truncated.anim"
+      ],
+      "exit_code": 2,
+      "stdout": "",
+      "stderr": "Remastered asset error: ANIM header is truncated or outside the file\n"
+    },
+    {
+      "command": [
+        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets/synthetic-rc_kkln6/blank.anim"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"format\": \"ANIM\",\n  \"scale\": 2,\n  \"frame_count\": 2,\n  \"canvas_hd\": [24,32],\n  \"layers\": [{\"name\":\"diffuse\",\"present\":true,\"width\":4,\"height\":4},{\"name\":\"teamcolor\",\"present\":true,\"width\":4,\"height\":4}],\n  \"frame\": 0,\n  \"texture_crop\": [0,0,0,0],\n  \"offset_pixels\": [-2,-1],\n  \"decoded_pixels\": 0,\n  \"renderer_integrated\": false\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets/synthetic-rc_kkln6/blank.anim",
+        "--preview",
+        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets/synthetic-rc_kkln6/blank.pam"
+      ],
+      "exit_code": 2,
+      "stdout": "",
+      "stderr": "Remastered asset error: This frame is empty; there are no preview pixels to export\n"
+    }
+  ],
+  "error": null
+}
