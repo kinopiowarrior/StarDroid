@@ -3,8 +3,8 @@
   "sanitizers": true,
   "leak_check": false,
   "source_sha256": {
-    "native/remastered/assets.h": "14ecc1bfd26c5dadc27bf6a13a316f59f3c4eda6f56d02ad209d31bbbdbdc159",
-    "tests/native_remastered_assets.cpp": "0ab7bc131fa596cc91e9fe5baaf4832b2bcfc2a7545bb32253881de2b13c6d30",
+    "native/remastered/assets.h": "1f6eb55a53b5f5d12a3425d0fb728d98e586bf7fd0629d8a8dd79489441f815c",
+    "tests/native_remastered_assets.cpp": "eaac896d6d26e2a27034426758b6fbb233645fd79821d18b390d4c64bab64e7e",
     "tools/remastered_inspect.cpp": "beafd85101e4b9d94bbc4d98af15b1fea87de4d0fc5613d80ace261bb4aa6ae1",
     "tests/run_remastered_assets.py": "8fad74665fb7b00ba14475ecaa8f5856426a1a34f0a1fbe0dcfd203db65305f0"
   },
@@ -22,9 +22,9 @@
         "-g",
         "-fsanitize=address,undefined",
         "-fno-omit-frame-pointer",
-        "/workspace/scratch/169ead29422f/stardroid-remastered/tests/native_remastered_assets.cpp",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/tests/native_remastered_assets.cpp",
         "-o",
-        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets-sanitized/native-remastered-assets"
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets-sanitized/native-remastered-assets"
       ],
       "exit_code": 0,
       "stdout": "",
@@ -42,9 +42,9 @@
         "-g",
         "-fsanitize=address,undefined",
         "-fno-omit-frame-pointer",
-        "/workspace/scratch/169ead29422f/stardroid-remastered/tools/remastered_inspect.cpp",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/tools/remastered_inspect.cpp",
         "-o",
-        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets-sanitized/remastered-inspect"
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets-sanitized/remastered-inspect"
       ],
       "exit_code": 0,
       "stdout": "",
@@ -52,17 +52,17 @@
     },
     {
       "command": [
-        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets-sanitized/native-remastered-assets"
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets-sanitized/native-remastered-assets"
       ],
       "exit_code": 0,
-      "stdout": "PASS 641 synthetic Remastered asset checks\n",
+      "stdout": "PASS 655 synthetic Remastered asset checks\n",
       "stderr": ""
     },
     {
       "command": [
-        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets-sanitized/native-remastered-assets",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets-sanitized/native-remastered-assets",
         "--write-fixture",
-        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets-sanitized/synthetic-y6oilmjx/fixture.anim"
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets-sanitized/synthetic-5xnx46nd/fixture.anim"
       ],
       "exit_code": 0,
       "stdout": "",
@@ -70,12 +70,12 @@
     },
     {
       "command": [
-        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets-sanitized/remastered-inspect",
-        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets-sanitized/synthetic-y6oilmjx/fixture.anim",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets-sanitized/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets-sanitized/synthetic-5xnx46nd/fixture.anim",
         "--frame",
         "0",
         "--preview",
-        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets-sanitized/synthetic-y6oilmjx/frame.pam"
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets-sanitized/synthetic-5xnx46nd/frame.pam"
       ],
       "exit_code": 0,
       "stdout": "{\n  \"format\": \"ANIM\",\n  \"scale\": 2,\n  \"frame_count\": 2,\n  \"canvas_hd\": [24,32],\n  \"layers\": [{\"name\":\"diffuse\",\"present\":true,\"width\":4,\"height\":4},{\"name\":\"teamcolor\",\"present\":true,\"width\":4,\"height\":4}],\n  \"frame\": 0,\n  \"texture_crop\": [0,0,4,4],\n  \"offset_pixels\": [-2,-1],\n  \"decoded_pixels\": 16,\n  \"renderer_integrated\": false\n}\n",
@@ -83,8 +83,8 @@
     },
     {
       "command": [
-        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets-sanitized/remastered-inspect",
-        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets-sanitized/synthetic-y6oilmjx/fixture.anim",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets-sanitized/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets-sanitized/synthetic-5xnx46nd/fixture.anim",
         "--team-color",
         "ff0000"
       ],
@@ -94,8 +94,8 @@
     },
     {
       "command": [
-        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets-sanitized/remastered-inspect",
-        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets-sanitized/synthetic-y6oilmjx/fixture.anim",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets-sanitized/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets-sanitized/synthetic-5xnx46nd/fixture.anim",
         "--frame",
         "-1"
       ],
@@ -105,8 +105,8 @@
     },
     {
       "command": [
-        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets-sanitized/remastered-inspect",
-        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets-sanitized/synthetic-y6oilmjx/fixture.anim",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets-sanitized/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets-sanitized/synthetic-5xnx46nd/fixture.anim",
         "--frame",
         "999999999999999999999999999999"
       ],
@@ -116,8 +116,8 @@
     },
     {
       "command": [
-        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets-sanitized/remastered-inspect",
-        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets-sanitized/synthetic-y6oilmjx/fixture.anim",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets-sanitized/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets-sanitized/synthetic-5xnx46nd/fixture.anim",
         "--team-color",
         "xxyyzz"
       ],
@@ -127,8 +127,8 @@
     },
     {
       "command": [
-        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets-sanitized/remastered-inspect",
-        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets-sanitized/synthetic-y6oilmjx/fixture.anim",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets-sanitized/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets-sanitized/synthetic-5xnx46nd/fixture.anim",
         "--frame",
         "2"
       ],
@@ -138,10 +138,10 @@
     },
     {
       "command": [
-        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets-sanitized/remastered-inspect",
-        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets-sanitized/synthetic-y6oilmjx/fixture.anim",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets-sanitized/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets-sanitized/synthetic-5xnx46nd/fixture.anim",
         "--preview",
-        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets-sanitized/synthetic-y6oilmjx/fixture.anim"
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets-sanitized/synthetic-5xnx46nd/fixture.anim"
       ],
       "exit_code": 2,
       "stdout": "",
@@ -149,8 +149,8 @@
     },
     {
       "command": [
-        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets-sanitized/remastered-inspect",
-        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets-sanitized/synthetic-y6oilmjx/fixture.anim",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets-sanitized/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets-sanitized/synthetic-5xnx46nd/fixture.anim",
         "--unknown",
         "value"
       ],
@@ -160,8 +160,8 @@
     },
     {
       "command": [
-        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets-sanitized/remastered-inspect",
-        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets-sanitized/synthetic-y6oilmjx/truncated.anim"
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets-sanitized/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets-sanitized/synthetic-5xnx46nd/truncated.anim"
       ],
       "exit_code": 2,
       "stdout": "",
@@ -169,8 +169,8 @@
     },
     {
       "command": [
-        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets-sanitized/remastered-inspect",
-        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets-sanitized/synthetic-y6oilmjx/blank.anim"
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets-sanitized/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets-sanitized/synthetic-5xnx46nd/blank.anim"
       ],
       "exit_code": 0,
       "stdout": "{\n  \"format\": \"ANIM\",\n  \"scale\": 2,\n  \"frame_count\": 2,\n  \"canvas_hd\": [24,32],\n  \"layers\": [{\"name\":\"diffuse\",\"present\":true,\"width\":4,\"height\":4},{\"name\":\"teamcolor\",\"present\":true,\"width\":4,\"height\":4}],\n  \"frame\": 0,\n  \"texture_crop\": [0,0,0,0],\n  \"offset_pixels\": [-2,-1],\n  \"decoded_pixels\": 0,\n  \"renderer_integrated\": false\n}\n",
@@ -178,10 +178,10 @@
     },
     {
       "command": [
-        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets-sanitized/remastered-inspect",
-        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets-sanitized/synthetic-y6oilmjx/blank.anim",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets-sanitized/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets-sanitized/synthetic-5xnx46nd/blank.anim",
         "--preview",
-        "/workspace/scratch/169ead29422f/stardroid-remastered/build-native/remastered-assets-sanitized/synthetic-y6oilmjx/blank.pam"
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets-sanitized/synthetic-5xnx46nd/blank.pam"
       ],
       "exit_code": 2,
       "stdout": "",

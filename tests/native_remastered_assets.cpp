@@ -174,6 +174,39 @@ static void run_tests() {
     check(pixel(partial_tint, 0, 0) == std::array<uint8_t, 4>{66, 98, 132, 70},
         "Partial mask modulates colored diffuse and preserves original alpha");
 
+    // A decoded sprite outlives its source container and serves every frame
+    // without retaining or re-decoding the compressed input.
+    const DecodedSprite cached = Anim::parse(fixture()).decode_sprite();
+    check(cached.scale() == 2 && cached.canvas_width_hd() == 24 && cached.canvas_height_hd() == 32,
+        "Cached sprite retains geometry after input destruction");
+    check(cached.frames().size() == 2 && cached.resident_bytes() == 128,
+        "Cached sprite accounts for both RGBA atlases");
+    check(cached.diffuse().rgba == colored.decode_layer("diffuse").rgba &&
+        cached.teamcolor() && cached.teamcolor()->rgba == mask.rgba,
+        "Read-only cached atlas access preserves decoded layers");
+    check(cached.frame_image(0, std::array<uint8_t, 3>{255, 0, 0}).rgba == colored_frame.rgba,
+        "Cached frame preserves team-color composition");
+    check(cached.frame_image(1).rgba.empty(), "Cached blank frame remains empty");
+    rejects([&]{ cached.frame_bounds(2); }, "Cached frame index bounds");
+    rejects([&]{ cached.frame_image(2); }, "Cached extraction index bounds");
+    const DecodedSprite no_mask = colored.decode_sprite(false);
+    check(!no_mask.teamcolor() && no_mask.resident_bytes() == 64,
+        "Optional mask excluded from memory budget");
+    check(no_mask.frame_image(0, std::array<uint8_t, 3>{255, 0, 0}).rgba == colored.frame_image(0).rgba,
+        "Missing team mask leaves diffuse unchanged");
+    const DecodedSprite cached_crop = atlas_anim.decode_sprite();
+    check(cached_crop.frame_image(0).rgba == atlas_frame.rgba,
+        "Cached non-square atlas crop keeps row stride");
+    Limits cache_limits;
+    cache_limits.max_working_pixels = 31;
+    rejects([&]{ Anim::parse(fixture(), cache_limits).decode_sprite(); },
+        "Combined resident atlas memory cap");
+    cache_limits.max_working_pixels = 32;
+    const DecodedSprite bounded = Anim::parse(fixture(), cache_limits).decode_sprite();
+    check(bounded.resident_bytes() == 128, "Exact resident atlas budget accepted");
+    rejects([&]{ bounded.frame_image(0); }, "Output allocation counts resident mask even without tint");
+    check(bounded.frame_image(1).rgba.empty(), "Blank cached frame needs no output allocation");
+
     // Every truncation point must fail without an out-of-bounds read.
     for (size_t size = 0; size < bc1.size(); ++size)
         rejects([&]{ Anim::parse(Bytes(bc1.begin(), bc1.begin() + size)); }, "Truncated ANIM rejected");

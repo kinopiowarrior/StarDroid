@@ -1,0 +1,1478 @@
+{
+  "passed": true,
+  "game_build": "1.23.10.13515",
+  "sanitizers": true,
+  "leak_check": false,
+  "source_sha256": {
+    "native/remastered/assets.h": "1f6eb55a53b5f5d12a3425d0fb728d98e586bf7fd0629d8a8dd79489441f815c",
+    "tests/native_remastered_real_assets.cpp": "2a7dc74509c1b0b7e1939ad58d6f6d57f22601bdda20df5a5e2daa578a4c37b9",
+    "tests/run_remastered_real_assets.py": "a83fd3fa01ee511674a2b3b581982bf022343b03122a811bee0ad321e30e59ed"
+  },
+  "sample_count": 31,
+  "frame_count": 1993,
+  "layer_count": 89,
+  "reference": {
+    "decoder": "Pillow",
+    "version": "13.0.0",
+    "numpy_version": "2.3.5",
+    "allowed_rgb_delta": 1,
+    "allowed_alpha_delta": 0
+  },
+  "scope": "External HD2 samples: all present layers, all frame geometry, every diffuse crop and red/blue team-color result. No lighting, gameplay anchor, Android renderer or device validation.",
+  "results": [
+    {
+      "file": "main_000.anim",
+      "input_sha256": "a50bbec9ddfee123dec8ac9f8948f898561caa66169b9b5baa22260ebfbef0a2",
+      "input_bytes": 1139196,
+      "canvas_hd": [
+        196,
+        182
+      ],
+      "frame_count": 85,
+      "nonempty_frames": 85,
+      "alpha_visible_frames": 85,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 1818624,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 512,
+          "height": 444,
+          "rgba_sha256": "265b5205ada4232249033fad954bc872d2502511f732b98ddc8208f8dd3764e8",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "bright",
+          "encoding": "DXT5",
+          "width": 512,
+          "height": 444,
+          "rgba_sha256": "bffaafbbf6a2fb068fb6542acdfa5c71dc1d383df439b8de999dafb91ada022e",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "teamcolor",
+          "encoding": "DXT1",
+          "width": 512,
+          "height": 444,
+          "rgba_sha256": "4b5db33b0a87072f826a46ffc4a989f5d3c1173bade2fccdeb754284c22abfee",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "normal",
+          "encoding": "DXT5",
+          "width": 512,
+          "height": 444,
+          "rgba_sha256": "ad473411d061b40276ef41cd11e7fc16fd195e58cecd93183df5320db58cc595",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "specular",
+          "encoding": "DXT1",
+          "width": 512,
+          "height": 444,
+          "rgba_sha256": "848faa5749abc6a7d459e2017d09f78718c01c1051b2246d2aa5d5c2ff79896b",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "ao_depth",
+          "encoding": "DXT5",
+          "width": 512,
+          "height": 444,
+          "rgba_sha256": "2e43438af8cc080f25c32f2a19b95822fea4898001af41ffe1ce15a713d0c6bd",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "96652f77644bfb6d2fe5cb23d2e03ba7ac40e300aa50c88f0af6e342d95a6816",
+        "red": "53d5c65bd67c27f850e35a707a0ad4d6190d07d252da6676ccf68fe82b6617d6",
+        "blue": "425c7537e5899fe3a1e750e94a76369b4f302b9dadb7ef9f75e8aa4269c5d9bb"
+      }
+    },
+    {
+      "file": "main_001.anim",
+      "input_sha256": "50e20d85a6c43f25aa755d00f5ccaea4904ab1fa9d3215287ad11ef6229fa096",
+      "input_bytes": 309564,
+      "canvas_hd": [
+        196,
+        182
+      ],
+      "frame_count": 85,
+      "nonempty_frames": 85,
+      "alpha_visible_frames": 85,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 1230592,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 1012,
+          "height": 304,
+          "rgba_sha256": "24d83dfec2dbbf2fbe16f461ea89d242fa7821f7960c1702e02928bb7d6bd111",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "1c9d2fcf3e43233baeca95f4717d0bbe36ec55841ba627e34413ee0901d4e6c6",
+        "red": "1c9d2fcf3e43233baeca95f4717d0bbe36ec55841ba627e34413ee0901d4e6c6",
+        "blue": "1c9d2fcf3e43233baeca95f4717d0bbe36ec55841ba627e34413ee0901d4e6c6"
+      }
+    },
+    {
+      "file": "main_002.anim",
+      "input_sha256": "ca3379cdd718f8a13a95916677e07f40bbf26becbf01e098107f7e8701a4f352",
+      "input_bytes": 173596,
+      "canvas_hd": [
+        389,
+        640
+      ],
+      "frame_count": 7,
+      "nonempty_frames": 7,
+      "alpha_visible_frames": 7,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 921600,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 480,
+          "height": 240,
+          "rgba_sha256": "092256bb83d8fc07c979bfb4ada195bd3c2e03be2ec557ce4a076cc33c173fd3",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "teamcolor",
+          "encoding": "DXT1",
+          "width": 480,
+          "height": 240,
+          "rgba_sha256": "022b0d1a408c66c9639f46901142f2cdda81d56216c446d57febfc64e63b251d",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "3e57fd01f27ff395066162dabb857d5f8a130ec221e62643ebece1dfac7523e9",
+        "red": "54a71f436e210bafa07b8730a917ebdf3a9e6dafc4e3137345d853cc11fd73d7",
+        "blue": "a07e9aefe5484562c6cfbb1062cd99d0b4ad8ca8a697c7f0402f9c100880017f"
+      }
+    },
+    {
+      "file": "main_003.anim",
+      "input_sha256": "01d458eae337636940ff9242ae809c031c3ea8900ecf7b2efa46cdd3a8636c10",
+      "input_bytes": 10588,
+      "canvas_hd": [
+        196,
+        182
+      ],
+      "frame_count": 1,
+      "nonempty_frames": 1,
+      "alpha_visible_frames": 1,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 8448,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 48,
+          "height": 44,
+          "rgba_sha256": "b2c98b5a7285524fcd46269d096276daf9deca4821878299d973ea323fc9ec56",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "bright",
+          "encoding": "DXT5",
+          "width": 48,
+          "height": 44,
+          "rgba_sha256": "cd8fbd48c055a40c945c7bac83957e44f8a4f42a6c81ec56e43737236f175928",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "normal",
+          "encoding": "DXT5",
+          "width": 48,
+          "height": 44,
+          "rgba_sha256": "75b828852fb3e14defea298077b52f4d984a40019e1838038afa999c18250dce",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "specular",
+          "encoding": "DXT1",
+          "width": 48,
+          "height": 44,
+          "rgba_sha256": "880bf033bfb5c26db9110e5fbc3914961352fb2a74fb438778a5147e2f9fe24e",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "ao_depth",
+          "encoding": "DXT5",
+          "width": 48,
+          "height": 44,
+          "rgba_sha256": "c6e4a2c1430c20d248e93882f9591e0e662c74772bb486099471ac7c78b6c2a8",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "b6b76e4d28b88cec5ae37a2a29d1212fb74a031746adf676698c379257ecbcfd",
+        "red": "b6b76e4d28b88cec5ae37a2a29d1212fb74a031746adf676698c379257ecbcfd",
+        "blue": "b6b76e4d28b88cec5ae37a2a29d1212fb74a031746adf676698c379257ecbcfd"
+      }
+    },
+    {
+      "file": "main_004.anim",
+      "input_sha256": "769ba730b494731e2e138864e3ac65a616289a034de238040e65051779a5ff9e",
+      "input_bytes": 91452,
+      "canvas_hd": [
+        185,
+        200
+      ],
+      "frame_count": 9,
+      "nonempty_frames": 9,
+      "alpha_visible_frames": 9,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 483328,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 256,
+          "height": 236,
+          "rgba_sha256": "98c3ef8c0ef0cc58085ecda64c12bb09d811c36c2a1eaa2a7cade989d41f380a",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "teamcolor",
+          "encoding": "DXT1",
+          "width": 256,
+          "height": 236,
+          "rgba_sha256": "0cfe23c8850a911704eb6f08d14400ac5a75ed0076f55d2cf030c54e59c0744d",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "2b61ce62443802d1cc4709342e7e8a87db33963fcf9d9493b7695d9831a08847",
+        "red": "db55b6e9f9558b47a2c120df5b6d2fc0d8861143efcae92e0a7e0d2afbedd418",
+        "blue": "a678fda61e73890e3c0dd7a9b40e29202e8f0ce8a90eacc4d781e2fb2ca6588a"
+      }
+    },
+    {
+      "file": "main_005.anim",
+      "input_sha256": "ffa1dbad5cc78f06ca155aff54c6f4c7339eac19ea57b90e8a6e505403d248ab",
+      "input_bytes": 4325740,
+      "canvas_hd": [
+        240,
+        220
+      ],
+      "frame_count": 204,
+      "nonempty_frames": 204,
+      "alpha_visible_frames": 204,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 6914048,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 1024,
+          "height": 844,
+          "rgba_sha256": "8d4da72fd37bf46e7d8d74c6018f8a1ef192685acc2d8a4d4913ad3a002ed2c4",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "bright",
+          "encoding": "DXT5",
+          "width": 1024,
+          "height": 844,
+          "rgba_sha256": "ce63327eefd5a79c5d6681635ddae3c6c13fda86a67390f40a31b1e24a0af28d",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "teamcolor",
+          "encoding": "DXT1",
+          "width": 1024,
+          "height": 844,
+          "rgba_sha256": "8a19c2eab700b680a9608cb5d20c585c2f81c883404ea6c5b44f32ee97395bee",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "normal",
+          "encoding": "DXT5",
+          "width": 1024,
+          "height": 844,
+          "rgba_sha256": "ffdeb734adc2b837ba21298b766b625afd0b4a9b512afef2e13a16bb16f8105d",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "specular",
+          "encoding": "DXT1",
+          "width": 1024,
+          "height": 844,
+          "rgba_sha256": "9de06fde86e0de9d914b5ebcebe1da81025485f1629b2a5fa3edfb05232f1a02",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "ao_depth",
+          "encoding": "DXT5",
+          "width": 1024,
+          "height": 844,
+          "rgba_sha256": "20ad6fb001dc905247b4d058beff0303d1b2cb3dd59addf5a5c38b8ad9ae2053",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "a7bb455f11e8fbb88bc88f934978531a84d9e698b975b2e56ad595c3c7b68ca7",
+        "red": "db3de1a7cfb9911bf14ec763b8099c1759f902b9a6749d6ca851ed881da1f8cc",
+        "blue": "5778b63df94a8ce069095c7443efee2471e431748f09b94a21d954abc4822bf2"
+      }
+    },
+    {
+      "file": "main_006.anim",
+      "input_sha256": "ed2de59777e034e6fc53e6046f9cd857c624346da9bf6f6496d322127fe15635",
+      "input_bytes": 827116,
+      "canvas_hd": [
+        240,
+        220
+      ],
+      "frame_count": 204,
+      "nonempty_frames": 204,
+      "alpha_visible_frames": 204,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 3293184,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 1024,
+          "height": 804,
+          "rgba_sha256": "80b5cb5caad3ebce85cfe9b5033bef6becbdbc1bb20d9b2a521d4261eb4f0aac",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "e0817b9cc95ffcd93eae018540ab57b7a313cdef92aedc97fb5e0a83d3d7c73f",
+        "red": "e0817b9cc95ffcd93eae018540ab57b7a313cdef92aedc97fb5e0a83d3d7c73f",
+        "blue": "e0817b9cc95ffcd93eae018540ab57b7a313cdef92aedc97fb5e0a83d3d7c73f"
+      }
+    },
+    {
+      "file": "main_007.anim",
+      "input_sha256": "49c7c6917f1a4e4f55873985faa915d8665771df353b5ff5409381ad136c4d97",
+      "input_bytes": 18556,
+      "canvas_hd": [
+        240,
+        220
+      ],
+      "frame_count": 5,
+      "nonempty_frames": 5,
+      "alpha_visible_frames": 5,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 71680,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 224,
+          "height": 80,
+          "rgba_sha256": "04f5c904dc28f6ff7491d6d19caf564628be2613b53ffb31d7f2c9c421cee486",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "30f92a8f57f50585edd3ec7213aede900295ce2164c782c7737e10657a9ee06e",
+        "red": "30f92a8f57f50585edd3ec7213aede900295ce2164c782c7737e10657a9ee06e",
+        "blue": "30f92a8f57f50585edd3ec7213aede900295ce2164c782c7737e10657a9ee06e"
+      }
+    },
+    {
+      "file": "main_013.anim",
+      "input_sha256": "0e6edfd839d206dd996d16f0b58654f2e32a342d2a3744036a5fa43c5c0c0c13",
+      "input_bytes": 7214780,
+      "canvas_hd": [
+        292,
+        309
+      ],
+      "frame_count": 289,
+      "nonempty_frames": 289,
+      "alpha_visible_frames": 289,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 11534336,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 2048,
+          "height": 704,
+          "rgba_sha256": "ad237fdfbcfed6ae433bae4f54b15521626098981223f8a42124ed909200933e",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "bright",
+          "encoding": "DXT5",
+          "width": 2048,
+          "height": 704,
+          "rgba_sha256": "5de3904c2ef56bb755c2c7a269e55a77c94813702d6f152a338fddf5fae9bcf5",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "teamcolor",
+          "encoding": "DXT1",
+          "width": 2048,
+          "height": 704,
+          "rgba_sha256": "5fd3c18c485de820957cc5a31cff1491c8eaeacab7ec927dec5553ff29effbaa",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "normal",
+          "encoding": "DXT5",
+          "width": 2048,
+          "height": 704,
+          "rgba_sha256": "5298155b0b91679c0065f10366077c8d48743f987e2ee69a696bd6aa785d9910",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "specular",
+          "encoding": "DXT1",
+          "width": 2048,
+          "height": 704,
+          "rgba_sha256": "3740fd598e91969bdc5a65e58c0014d883b819fbf6446fa02ebb4a0eb395f97e",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "ao_depth",
+          "encoding": "DXT5",
+          "width": 2048,
+          "height": 704,
+          "rgba_sha256": "0942268885a65d627a95c503a44fa42613ae0405bf2f652a200726df318f7d87",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "4695ca27dbc5da9df72c89f9b333f63254365812779358bec9929df9f8bbbd48",
+        "red": "f4764d826756b26e662130a8caf625bf7c004c51abd1957c361e6e64e77876d2",
+        "blue": "ec4db4c7835f2991972e7aaf280c36d095b8d3435f316b89b3f0b045f02221c2"
+      }
+    },
+    {
+      "file": "main_024.anim",
+      "input_sha256": "3809a52d7d257340892927acab72123f60648e1ff56dbc16fc9e8f03dd18d0ca",
+      "input_bytes": 905628,
+      "canvas_hd": [
+        420,
+        397
+      ],
+      "frame_count": 12,
+      "nonempty_frames": 12,
+      "alpha_visible_frames": 12,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 1446784,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 508,
+          "height": 356,
+          "rgba_sha256": "5645f1b4533e138df8f5d1d5fdfcc5b9a79f39229e4b3ac4e12a8023a94d4405",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "bright",
+          "encoding": "DXT5",
+          "width": 508,
+          "height": 356,
+          "rgba_sha256": "4cd0e745f80ce5804f697bcdc0800f8d5977b9369f68e67ecb90850e94757648",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "teamcolor",
+          "encoding": "DXT1",
+          "width": 508,
+          "height": 356,
+          "rgba_sha256": "96f17a7f31804c99433ffa64be6a2fe392dc5048c1707e3a176c817e3035f872",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "normal",
+          "encoding": "DXT5",
+          "width": 508,
+          "height": 356,
+          "rgba_sha256": "293ff01f9d3e3c3293621b32607ac15eed9e232b02a8d0eab92c9f314693a306",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "specular",
+          "encoding": "DXT1",
+          "width": 508,
+          "height": 356,
+          "rgba_sha256": "46640cb873ce01e23f880700fa90fd340963e62e982fffb2f41a1b2b98d0cb3a",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "ao_depth",
+          "encoding": "DXT5",
+          "width": 508,
+          "height": 356,
+          "rgba_sha256": "2094f34ad621680ab9d5a2383fa01e831b6e8125209693542b479c2e735da2ed",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "965544c91e8edfbeb4213a6466c1b499545a88b95ec2e3b2f54ddaaa6b2720a4",
+        "red": "989b8947f61eed7b9d0501e2437e110e51fd81663d4af3746f4566dbde265682",
+        "blue": "1baa2711160d07fc4f8f561ee3195f157aeecbfa5ea0c27ad6f4aab5c3fba069"
+      }
+    },
+    {
+      "file": "main_036.anim",
+      "input_sha256": "edf5523b55d00f3f889987907164e94aaf17eb12840f91c1abfd056856b0aa6b",
+      "input_bytes": 780796,
+      "canvas_hd": [
+        155,
+        136
+      ],
+      "frame_count": 85,
+      "nonempty_frames": 85,
+      "alpha_visible_frames": 85,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 1245184,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 512,
+          "height": 304,
+          "rgba_sha256": "53f998ed22bc3a6bbe71cb7d39966c3504d467f6363d3e5d7e85a4ab21ec0de6",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "bright",
+          "encoding": "DXT5",
+          "width": 512,
+          "height": 304,
+          "rgba_sha256": "36e634fa96d8ae1efc5b4bd80e015e3cd5d43d56b66f7fa4975cac392d89f650",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "teamcolor",
+          "encoding": "DXT1",
+          "width": 512,
+          "height": 304,
+          "rgba_sha256": "aa870f22b169587997dc4f938b5787d76801db78cf9ee510ebd148734f8d9edd",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "normal",
+          "encoding": "DXT5",
+          "width": 512,
+          "height": 304,
+          "rgba_sha256": "e5d75e93b5c568ef42a167bbf4cf334d077a5232e7318848f5fa86e2ea2330e2",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "specular",
+          "encoding": "DXT1",
+          "width": 512,
+          "height": 304,
+          "rgba_sha256": "65ea21af85aef6e5126f8e5111baacb6945f10c67d735448f629244381e7bdf6",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "ao_depth",
+          "encoding": "DXT5",
+          "width": 512,
+          "height": 304,
+          "rgba_sha256": "feeb7f1a33fc364e1359b28c88fee859dc5f5278802001b197293d80cfe4382c",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "432b341f4904574b4c7512b2cd8db6f98376bb39bdb4d1c138e16a2253918f99",
+        "red": "7d05ddad8e72dc1c12176d0ad18510f8a5101d382dd770d3e66ad07eb7f1cab7",
+        "blue": "9783f64b97d89bf78625af397026eee3926d6c29316c421af77d27f3d785696d"
+      }
+    },
+    {
+      "file": "main_045.anim",
+      "input_sha256": "50335461ea67715e6014fca9c6a2bc57b3562eadc17b31a5a23e6f6ee6540bb1",
+      "input_bytes": 90012,
+      "canvas_hd": [
+        331,
+        323
+      ],
+      "frame_count": 1,
+      "nonempty_frames": 1,
+      "alpha_visible_frames": 1,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 142080,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 120,
+          "height": 148,
+          "rgba_sha256": "b1dc1f34d7fe8cd976ec8a1a5bfc2189b83b0cc5a63f244d0f81bb81494bdeba",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "bright",
+          "encoding": "DXT5",
+          "width": 120,
+          "height": 148,
+          "rgba_sha256": "cbba95d297dcc340d2b5b5491631f774dbaf58fa1272d7f2aaa6f1d834d12a66",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "teamcolor",
+          "encoding": "DXT1",
+          "width": 120,
+          "height": 148,
+          "rgba_sha256": "8ecb2ca96fecea4bfad837ea8a3c31958d128d73b132403af7df54e9765b54e5",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "normal",
+          "encoding": "DXT5",
+          "width": 120,
+          "height": 148,
+          "rgba_sha256": "dbce6aaaacd107969f5632afae46377eda4258a09abb9fdcafcfcb9f19bf111f",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "specular",
+          "encoding": "DXT1",
+          "width": 120,
+          "height": 148,
+          "rgba_sha256": "f751b759a9b4b625aedff5e45d007aefb9748a04b1f9f793a64a5cd80cbd05b2",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "ao_depth",
+          "encoding": "DXT5",
+          "width": 120,
+          "height": 148,
+          "rgba_sha256": "8a7087a8f211b974a6f826f09eec3dca5ecab1414465c0cb570b6235659273c4",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "f606c6021957952186418e2ee25e1329ba7030b1947217a6d261351734554b48",
+        "red": "8c6f982e6007f83673722a0c0b321ee5e2fcf4e4af70bd7adde6c70914704253",
+        "blue": "1ad64112b924e9421ac6bd160df3666cc5093a5245e9b5ad8ede25a6d558608f"
+      }
+    },
+    {
+      "file": "main_063.anim",
+      "input_sha256": "efdd7c3b804a42d0d893bd85dbfd578f0061eff599f9d33d4d9362c1c73a3db6",
+      "input_bytes": 2073996,
+      "canvas_hd": [
+        516,
+        646
+      ],
+      "frame_count": 6,
+      "nonempty_frames": 6,
+      "alpha_visible_frames": 6,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 3014656,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 1024,
+          "height": 368,
+          "rgba_sha256": "f9673e1adf15cbfb1b9bfc0c48b56cd6b2be087486ca9247c09a7f13dacf4080",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "bright",
+          "encoding": "DXT5",
+          "width": 1024,
+          "height": 368,
+          "rgba_sha256": "52a8e13955e560f40cdeda63546ef3c72adf17b6ae9f9892451b8d4ad051e0db",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "teamcolor",
+          "encoding": "DXT1",
+          "width": 1024,
+          "height": 368,
+          "rgba_sha256": "55b22a263543e656d0a38099cf5a0284f93a17e2b1e283b285314484ff243f0a",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "emissive",
+          "encoding": "DXT1",
+          "width": 1024,
+          "height": 368,
+          "rgba_sha256": "f26050641d56cd1066b494115ffb96d717335db27816cbe07a2615cbb9dbabd1",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "normal",
+          "encoding": "DXT5",
+          "width": 1024,
+          "height": 368,
+          "rgba_sha256": "19aecccf7891fe84d818a381b11b10c0cae1860c078cf65bfb6b539664335db6",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "specular",
+          "encoding": "DXT1",
+          "width": 1024,
+          "height": 368,
+          "rgba_sha256": "d56df58af9e1bd02802def17ef60d7377d1cfebdefc82405d5f74173bf3d5415",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "ao_depth",
+          "encoding": "DXT5",
+          "width": 1024,
+          "height": 368,
+          "rgba_sha256": "19f9291f177132b6ccb69747e5a871aa52cdd0a2938862d75336b2f6129f44a4",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "ae685319d17c13db744253f6cef3cc0863981cb80645799fddf02f8a206e66d0",
+        "red": "f409072417315dbb45cf87a56215fcf32582bffde8061fe14bf3714899795554",
+        "blue": "6308454353a006a89064113822cadcfda2d6c69813504b25f302bc1e56b9d847"
+      }
+    },
+    {
+      "file": "main_081.anim",
+      "input_sha256": "898cef932875515f3e37e96e6ef42986fce15c1960033dc825628a568155acdc",
+      "input_bytes": 146460,
+      "canvas_hd": [
+        519,
+        784
+      ],
+      "frame_count": 3,
+      "nonempty_frames": 3,
+      "alpha_visible_frames": 3,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 583424,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 424,
+          "height": 344,
+          "rgba_sha256": "f484937d21127ea538187292b08d2b70388f70f6ee2cb2b8f5aa61cf44d6c0df",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "a7a89afdddf444b56d1560d69412fb1ff0e2cc99b164fa21dcfc478f4a99c4b0",
+        "red": "a7a89afdddf444b56d1560d69412fb1ff0e2cc99b164fa21dcfc478f4a99c4b0",
+        "blue": "a7a89afdddf444b56d1560d69412fb1ff0e2cc99b164fa21dcfc478f4a99c4b0"
+      }
+    },
+    {
+      "file": "main_100.anim",
+      "input_sha256": "09d4b49b17a61b0e703b3ece28b4255fee7a5ce9db79af8b768954a3b56ad4e4",
+      "input_bytes": 25388,
+      "canvas_hd": [
+        508,
+        515
+      ],
+      "frame_count": 4,
+      "nonempty_frames": 4,
+      "alpha_visible_frames": 4,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 99072,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 172,
+          "height": 144,
+          "rgba_sha256": "2a63f19e4d9fcd36c1c4767b4c6ea03d842fcfeee6b31ef87a5f665eee72a5f5",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "d1351167e7404987b2c47dab43309d9e629d80e7554425f94f3b91c291e4a3d8",
+        "red": "d1351167e7404987b2c47dab43309d9e629d80e7554425f94f3b91c291e4a3d8",
+        "blue": "d1351167e7404987b2c47dab43309d9e629d80e7554425f94f3b91c291e4a3d8"
+      }
+    },
+    {
+      "file": "main_122.anim",
+      "input_sha256": "40d34dd5d1426c5a6e796a3f56346451f6e679625b1f200cfa82ab0e9c7ef737",
+      "input_bytes": 10370844,
+      "canvas_hd": [
+        384,
+        376
+      ],
+      "frame_count": 415,
+      "nonempty_frames": 415,
+      "alpha_visible_frames": 415,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 15073280,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 2048,
+          "height": 920,
+          "rgba_sha256": "22bd5297fcd24cf099d0bb8193421aba1efe2c13f3b983b88f272a0d174a3363",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "bright",
+          "encoding": "DXT5",
+          "width": 2048,
+          "height": 920,
+          "rgba_sha256": "d8092cccdc72369539b1f2c85f43ea424a0a94416623f8a34acb888fb67f0aea",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "teamcolor",
+          "encoding": "DXT1",
+          "width": 2048,
+          "height": 920,
+          "rgba_sha256": "872c5e2d69d7e8ab8f6e262415e2049d691fed5c79439fc0860a442db1add1ab",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "emissive",
+          "encoding": "DXT1",
+          "width": 2048,
+          "height": 920,
+          "rgba_sha256": "2a919fa0bbb0cf43aac71f425d20acef95b69b64801c4653459f75f2e35396eb",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "normal",
+          "encoding": "DXT5",
+          "width": 2048,
+          "height": 920,
+          "rgba_sha256": "312287caaddafdbfd6119752dc9c7235d2cc948c15abe617858ce2010497f4d1",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "specular",
+          "encoding": "DXT1",
+          "width": 2048,
+          "height": 920,
+          "rgba_sha256": "e2b5676be91ce9d504dd913dda361eaa19f7de18f83ba871bfda9d22ea8ad54d",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "ao_depth",
+          "encoding": "DXT5",
+          "width": 2048,
+          "height": 920,
+          "rgba_sha256": "847f76161a59739dcae00f01d7bcaa24e8a88d5143a3d0c45d2474f9549acfa3",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "725282301d5d512f415f855317aadb3407acd17e70dba722d03855c750579173",
+        "red": "8826f84b9fcb0ac3e7490d35c36fd6bd3210884f437cc7451a0e8327c66d8ec1",
+        "blue": "df5df99ec8989eff217cd5f2d23f74d76e38af1473f9978c8b9b6d5867ac0498"
+      }
+    },
+    {
+      "file": "main_145.anim",
+      "input_sha256": "dac6766da9658e3255e81ebc9dc67eaee8d44c8b79dd5e96cf78a6f673d1adaf",
+      "input_bytes": 1928764,
+      "canvas_hd": [
+        336,
+        350
+      ],
+      "frame_count": 153,
+      "nonempty_frames": 153,
+      "alpha_visible_frames": 153,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 7703040,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 2040,
+          "height": 944,
+          "rgba_sha256": "c4629881564bde6f1c82bcb45b49641a8317f34f1dc44236c398fe184608db91",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "9fe35c41d57f1edded46d756658d35bd1b3f9e0c543db8637bd2cbfba53d14ba",
+        "red": "9fe35c41d57f1edded46d756658d35bd1b3f9e0c543db8637bd2cbfba53d14ba",
+        "blue": "9fe35c41d57f1edded46d756658d35bd1b3f9e0c543db8637bd2cbfba53d14ba"
+      }
+    },
+    {
+      "file": "main_177.anim",
+      "input_sha256": "303feada5664f430f4bfdaaa127572198b6d376046fa6b94c177da3730a6b316",
+      "input_bytes": 37436,
+      "canvas_hd": [
+        381,
+        514
+      ],
+      "frame_count": 1,
+      "nonempty_frames": 1,
+      "alpha_visible_frames": 1,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 147456,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 192,
+          "height": 192,
+          "rgba_sha256": "c44048f506386fae8187eed47e52ef1e90a8d3777a19f436672325dad1013d40",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "f0ad6848a6e3a5aeee899060a4fbfc74d0f6fffa46de2e7eb75b3b75cfdec309",
+        "red": "f0ad6848a6e3a5aeee899060a4fbfc74d0f6fffa46de2e7eb75b3b75cfdec309",
+        "blue": "f0ad6848a6e3a5aeee899060a4fbfc74d0f6fffa46de2e7eb75b3b75cfdec309"
+      }
+    },
+    {
+      "file": "main_202.anim",
+      "input_sha256": "0eaa67d2bb2bf38f0117fcd79138c26c88cc6ef21bfe7f587ded391a89189014",
+      "input_bytes": 36476,
+      "canvas_hd": [
+        520,
+        640
+      ],
+      "frame_count": 1,
+      "nonempty_frames": 1,
+      "alpha_visible_frames": 1,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 143616,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 264,
+          "height": 136,
+          "rgba_sha256": "988e4b68170db2ecf7934cd1603cfe5d159a952d7adf88532110460e1dd4a4e3",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "34f6920c2da10a742cdf6b684200d6b1e9c2b544210dc7815d3315f6db5aa4e7",
+        "red": "34f6920c2da10a742cdf6b684200d6b1e9c2b544210dc7815d3315f6db5aa4e7",
+        "blue": "34f6920c2da10a742cdf6b684200d6b1e9c2b544210dc7815d3315f6db5aa4e7"
+      }
+    },
+    {
+      "file": "main_228.anim",
+      "input_sha256": "09525d8df4e2ef9d8582ccfd756c0fea14eefaafd4182382d86b5e83394af209",
+      "input_bytes": 3474300,
+      "canvas_hd": [
+        292,
+        237
+      ],
+      "frame_count": 229,
+      "nonempty_frames": 229,
+      "alpha_visible_frames": 229,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 5046272,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 1024,
+          "height": 616,
+          "rgba_sha256": "53a82bb2ea3311f5e23039fda298cc0caada4ae651a0b7563b98cef79f206896",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "bright",
+          "encoding": "DXT5",
+          "width": 1024,
+          "height": 616,
+          "rgba_sha256": "712d6068e6448444cf9c4efbbcd0a4cc9a4bf2212845b2fb4c3012e70710e384",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "teamcolor",
+          "encoding": "DXT1",
+          "width": 1024,
+          "height": 616,
+          "rgba_sha256": "4de5bc86ffc007590c23a1b5e2ebceee3785056de2eb485cf617ed8134357e71",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "emissive",
+          "encoding": "DXT1",
+          "width": 1024,
+          "height": 616,
+          "rgba_sha256": "ef4d4ce4d2583b7b120d8fc6da7b4b3741fc3bb30b552077ef1723f9e368359e",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "normal",
+          "encoding": "DXT5",
+          "width": 1024,
+          "height": 616,
+          "rgba_sha256": "7c39882a874126d1162019609d6ef730e940c893646f4e8164babc35509cd51d",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "specular",
+          "encoding": "DXT1",
+          "width": 1024,
+          "height": 616,
+          "rgba_sha256": "d573976204338ad5c18c8428cd9f06cb3d46c40556c9728957c56629671fe4ca",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "ao_depth",
+          "encoding": "DXT5",
+          "width": 1024,
+          "height": 616,
+          "rgba_sha256": "ffd087a23c50a1bd5fe5a8c94c6a9bfb0f4df973e00aa2ef188205f6770ab412",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "7689c4640c415b3463a91bd090ab540bc6d2828e4df24d73713e7053cca55268",
+        "red": "592216bf9d197d7979106d8957506be42634a4d35e3a993e749407146a1dd534",
+        "blue": "00ab0afb77929985bb77891f8a883951ccd1ae28c9b5648c598b23de9e22de70"
+      }
+    },
+    {
+      "file": "main_325.anim",
+      "input_sha256": "631ba0ce8a0cae10c72e440c749a139b304d54708d4df750186236e3ee124df9",
+      "input_bytes": 382716,
+      "canvas_hd": [
+        621,
+        519
+      ],
+      "frame_count": 3,
+      "nonempty_frames": 3,
+      "alpha_visible_frames": 3,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 339200,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 400,
+          "height": 212,
+          "rgba_sha256": "cb70c07b70af0b60bf16f54141a413a11b69d47c7f6a6d0c933df8f8767b46f1",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "bright",
+          "encoding": "DXT5",
+          "width": 400,
+          "height": 212,
+          "rgba_sha256": "fde62a63b7b2f44ac23cd921d35df9b988d87e761cbf9fe610a2a2b0ebf67965",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "normal",
+          "encoding": "DXT5",
+          "width": 400,
+          "height": 212,
+          "rgba_sha256": "2a4fe250730cfc0d911c8e2bce568ffc588c46421f5ca73a60d9b077d7559550",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "specular",
+          "encoding": "DXT1",
+          "width": 400,
+          "height": 212,
+          "rgba_sha256": "6789987e3ea236eb9a5275d0ecf419537baaefc4f8d85af625eb89aa66fa26ba",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        },
+        {
+          "name": "ao_depth",
+          "encoding": "DXT5",
+          "width": 400,
+          "height": 212,
+          "rgba_sha256": "62dedf7263cb4aa23eba69103293ac98f1cb60adba1ab7d32efc2b2e8937807f",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "35b8c45f172fa4455f21f5eba81661d4401678208745d8ae1a7d7c54702416f1",
+        "red": "35b8c45f172fa4455f21f5eba81661d4401678208745d8ae1a7d7c54702416f1",
+        "blue": "35b8c45f172fa4455f21f5eba81661d4401678208745d8ae1a7d7c54702416f1"
+      }
+    },
+    {
+      "file": "main_348.anim",
+      "input_sha256": "a913fd25ed7221fdcfb73841370da649db030c435bfe80719b0b2cc5958bc9bb",
+      "input_bytes": 53868,
+      "canvas_hd": [
+        262,
+        391
+      ],
+      "frame_count": 4,
+      "nonempty_frames": 4,
+      "alpha_visible_frames": 4,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 212992,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 256,
+          "height": 208,
+          "rgba_sha256": "da31de1ace57ac9242540d50978ffbf9cbc334973de8623f30247be92ebaa535",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "89a97eaf5e89e9c3d1f33b0b7dfbdfe56a90b1021f7829be7529a3a636c4de13",
+        "red": "89a97eaf5e89e9c3d1f33b0b7dfbdfe56a90b1021f7829be7529a3a636c4de13",
+        "blue": "89a97eaf5e89e9c3d1f33b0b7dfbdfe56a90b1021f7829be7529a3a636c4de13"
+      }
+    },
+    {
+      "file": "main_361.anim",
+      "input_sha256": "064db78a91dfdb034f45c706fd91b93ff63f083736a39871e4a2c11770c8332f",
+      "input_bytes": 229228,
+      "canvas_hd": [
+        345,
+        406
+      ],
+      "frame_count": 14,
+      "nonempty_frames": 14,
+      "alpha_visible_frames": 14,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 913792,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 472,
+          "height": 484,
+          "rgba_sha256": "ed0e5724bb925bec64bc043637b92b7e4a3e040c2441343bde9ccb3cb946e791",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "47ea80ba65bfc10fa6faccdb3f995b008df1915ac6726b479814d7f3890f333a",
+        "red": "47ea80ba65bfc10fa6faccdb3f995b008df1915ac6726b479814d7f3890f333a",
+        "blue": "47ea80ba65bfc10fa6faccdb3f995b008df1915ac6726b479814d7f3890f333a"
+      }
+    },
+    {
+      "file": "main_508.anim",
+      "input_sha256": "d9a75ce009d52e80bb39d52dc7f4632faa4a6a101e701f0f8e8e3cd00a42d9b0",
+      "input_bytes": 76764,
+      "canvas_hd": [
+        278,
+        251
+      ],
+      "frame_count": 13,
+      "nonempty_frames": 13,
+      "alpha_visible_frames": 13,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 304000,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 500,
+          "height": 152,
+          "rgba_sha256": "c05574e1f886cbe56226d86df3ef16f5dffc61f9552e089fbfa44152f2b0fe4c",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "a2545e7758c08cdee1b86acdcc87dcbaf9002d7aca1cbe0f83a2040e73220223",
+        "red": "a2545e7758c08cdee1b86acdcc87dcbaf9002d7aca1cbe0f83a2040e73220223",
+        "blue": "a2545e7758c08cdee1b86acdcc87dcbaf9002d7aca1cbe0f83a2040e73220223"
+      }
+    },
+    {
+      "file": "main_527.anim",
+      "input_sha256": "6c7e3eda3bf91a38d749066e95941351301f46fb9bc538e179dab71894562e57",
+      "input_bytes": 103068,
+      "canvas_hd": [
+        266,
+        304
+      ],
+      "frame_count": 135,
+      "nonempty_frames": 135,
+      "alpha_visible_frames": 135,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 401408,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 512,
+          "height": 196,
+          "rgba_sha256": "4fadcc0c404df0395e788a8c9d12396a8e51a8078f033c6d2cfdef1e619f9677",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "f3ef70a4a4338b5a21f9f4efec8b7a08c1b37a54bf3454edaba259a689615045",
+        "red": "f3ef70a4a4338b5a21f9f4efec8b7a08c1b37a54bf3454edaba259a689615045",
+        "blue": "f3ef70a4a4338b5a21f9f4efec8b7a08c1b37a54bf3454edaba259a689615045"
+      }
+    },
+    {
+      "file": "main_545.anim",
+      "input_sha256": "0dbe2c37d4d61f07986301b5ef53bb1ed48d76d65a975e5e648dba80ac029e85",
+      "input_bytes": 225420,
+      "canvas_hd": [
+        866,
+        1066
+      ],
+      "frame_count": 18,
+      "nonempty_frames": 18,
+      "alpha_visible_frames": 18,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 898304,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 484,
+          "height": 464,
+          "rgba_sha256": "c4d0a35930f336c8b82ecb4f1c44be6a7b86701a9916a7203ec84b1a61b29df7",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "c7cbd0ca54b69f8ec62fa0c1ad99e6c35f91ab3d8198a3d932fc20c16772f68b",
+        "red": "c7cbd0ca54b69f8ec62fa0c1ad99e6c35f91ab3d8198a3d932fc20c16772f68b",
+        "blue": "c7cbd0ca54b69f8ec62fa0c1ad99e6c35f91ab3d8198a3d932fc20c16772f68b"
+      }
+    },
+    {
+      "file": "main_723.anim",
+      "input_sha256": "759c8f1c4cb733fb3e7125af31409c6a1184e6ed03302c5503858a95a7bffd0b",
+      "input_bytes": 54396,
+      "canvas_hd": [
+        768,
+        896
+      ],
+      "frame_count": 1,
+      "nonempty_frames": 1,
+      "alpha_visible_frames": 1,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 215296,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 232,
+          "height": 232,
+          "rgba_sha256": "81b0db17cfdde454fc2dafe1226eb3511c35f4084dee0b940309a7f9ec0021bd",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "1349183c197dee617142ccf52ab2bdfd9abb0700f27e0be7b997dfff0e73ff04",
+        "red": "1349183c197dee617142ccf52ab2bdfd9abb0700f27e0be7b997dfff0e73ff04",
+        "blue": "1349183c197dee617142ccf52ab2bdfd9abb0700f27e0be7b997dfff0e73ff04"
+      }
+    },
+    {
+      "file": "main_747.anim",
+      "input_sha256": "60a1827cb5defaf083ccd871c67bc53ec6ebcfa17415de53eb0697009c9ad663",
+      "input_bytes": 9724,
+      "canvas_hd": [
+        512,
+        512
+      ],
+      "frame_count": 1,
+      "nonempty_frames": 1,
+      "alpha_visible_frames": 1,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 36608,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 104,
+          "height": 88,
+          "rgba_sha256": "f5b988cfb9480760ce0aa5bb0e7150274533eb2be5382fa9e43ea7b110494ec8",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "d32894b3b34f49b47d8cfcf6ffbb279aea542f24276f0b8d0ddec6c5b4341383",
+        "red": "d32894b3b34f49b47d8cfcf6ffbb279aea542f24276f0b8d0ddec6c5b4341383",
+        "blue": "d32894b3b34f49b47d8cfcf6ffbb279aea542f24276f0b8d0ddec6c5b4341383"
+      }
+    },
+    {
+      "file": "main_758.anim",
+      "input_sha256": "d6e1e1e0dbfec37a840ef09548850de6895b4e322e3c62198dd1f6fae0e0233b",
+      "input_bytes": 25804,
+      "canvas_hd": [
+        512,
+        512
+      ],
+      "frame_count": 3,
+      "nonempty_frames": 3,
+      "alpha_visible_frames": 3,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 100800,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 252,
+          "height": 100,
+          "rgba_sha256": "a6e77c986cbad0408b5b2ce412674f6ce09b570f925e85dc83ffc1e5b9b27fdb",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "7c2623daaaef3e85367ab42561e24c3884da41c116cfb2a705464fb974b69697",
+        "red": "7c2623daaaef3e85367ab42561e24c3884da41c116cfb2a705464fb974b69697",
+        "blue": "7c2623daaaef3e85367ab42561e24c3884da41c116cfb2a705464fb974b69697"
+      }
+    },
+    {
+      "file": "main_862.anim",
+      "input_sha256": "0553aa26b58c5c4b376cc282c950ab2a8807261c20b6e07c719b0055a4a08ecc",
+      "input_bytes": 8188,
+      "canvas_hd": [
+        370,
+        256
+      ],
+      "frame_count": 1,
+      "nonempty_frames": 1,
+      "alpha_visible_frames": 1,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 30464,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 112,
+          "height": 68,
+          "rgba_sha256": "28413d47fc5561baea314e84149af6ec309369caf39bac22fd259dce85cf5d72",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "424cc79f8f0f7cbf86c70d7395cf15aecdaaf531254a1cd476d86c74dfbd490a",
+        "red": "424cc79f8f0f7cbf86c70d7395cf15aecdaaf531254a1cd476d86c74dfbd490a",
+        "blue": "424cc79f8f0f7cbf86c70d7395cf15aecdaaf531254a1cd476d86c74dfbd490a"
+      }
+    },
+    {
+      "file": "main_893.anim",
+      "input_sha256": "710d2031915db26406d68d2b78db36bb6917ce40405137fea3a1bef4ef31f4f1",
+      "input_bytes": 11484,
+      "canvas_hd": [
+        512,
+        512
+      ],
+      "frame_count": 1,
+      "nonempty_frames": 1,
+      "alpha_visible_frames": 1,
+      "empty_frames": 0,
+      "resident_pixel_bytes": 43648,
+      "layers": [
+        {
+          "name": "diffuse",
+          "encoding": "DXT5",
+          "width": 124,
+          "height": 88,
+          "rgba_sha256": "fff6307a129f239e706b2cebcae6ae88367d869295fc529cdc0c2143b0aa6eb0",
+          "reference_max_rgb_delta": 0,
+          "reference_differing_rgb_channels": 0
+        }
+      ],
+      "all_frame_pixels_sha256": {
+        "plain": "49dea75157e740e6289dd16a9b31a64de94f02d3a711ca4a9ccd0ca73346a2f4",
+        "red": "49dea75157e740e6289dd16a9b31a64de94f02d3a711ca4a9ccd0ca73346a2f4",
+        "blue": "49dea75157e740e6289dd16a9b31a64de94f02d3a711ca4a9ccd0ca73346a2f4"
+      }
+    }
+  ],
+  "elapsed_seconds": 4.667,
+  "error": null
+}

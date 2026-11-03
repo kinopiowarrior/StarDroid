@@ -1,6 +1,6 @@
 # Remastered renderer integration plan
 
-The first implementation stage is an offline asset reader and inspection path. It does not enable HD graphics in the Android app. Real Remastered samples are needed to verify the format assumptions and decide the first supported asset subset; synthetic tests alone cannot establish game compatibility.
+The current stage has a real-file-tested asset reader and a host-only HD2 scene prototype. It does not enable HD graphics in the Android app. The supplied 31 animations validate a useful subset; synthetic tests and successful texture decoding alone cannot establish game compatibility. Engine-backed work uses the exact 1.5.2 release source, retaining its trap, Medic and selection fixes.
 
 ## Current rendering path
 
@@ -30,10 +30,39 @@ The dormant `use_new_images` path is not a suitable shortcut. Its queued images 
 
 Graphics packs need a separate import and cache lifecycle. The current document picker routes ZIP files through mission-package installation and MPQs through classic content preparation; it is not a CASC or Remastered importer. Menu art and portraits also have separate Java rendering paths and are outside an initial battlefield milestone.
 
-## Smallest next milestone with real data
+## Completed host prototype
 
-Use one user-owned extracted animation with its embedded layer payloads intact, original archive path, game build, graphics variant and corresponding classic image/frame identity. Prefer a unit with directional frames and visible player colors. Obtain the necessary classic MPQs for the existing renderer harness as well. Do not commit these assets to the repository.
+`tools/remastered_scene.cpp` uses the original engine's sprite ordering and visibility decisions with a separate 2× RGBA target. It replaces the Scourge body from `main_000.anim` and draws a classic Wraith in front of it. Classic image coverage is recorded explicitly, so foreground pixels still cover HD pixels when their palette index happens to equal the background. The world viewport stays 640×480 while the output is 1280×960.
 
-First verify decoded colors, layers, frame rectangles, anchors and flips in an inspection preview against that sample. Then implement one opt-in unit replacement in a deterministic native scene, at the correct draw position and render scale, with classic fallback. Terrain, UI, portraits and a general CASC importer can follow independently. A successful texture decode is not the completion criterion for the renderer milestone.
+The normal scene tint follows the owning player's classic unit palette using a representative shade; explicit red/blue overrides are limited to mask tests. This does not reproduce the retail Remastered color table.
 
-Acceptance checks should cover team colors, overlapping classic/HD images, fog entry and exit, remembered buildings, unsupported modifiers, EUD changes after caching, camera zoom and map edges. Reuse `tests/run_fog115.py` and the native rendering harness pattern, capture the actual RGBA output, and verify that simulation hashes remain unchanged. Keep the standalone malformed-file and resource-limit tests runnable without licensed assets. Record real-sample validation separately from synthetic coverage.
+The scene tests are deliberately limited to unit bodies. They do not draw shadows, overlays, selection circles or the HUD, and do not implement remembered buildings. They verify team colors, mirroring, animation, screen-edge clipping, foreground overlap, hidden enemies, classic fallback and unchanged simulation state during rendering. HD fog shading is a linear preview approximation using the original darkness grid, not a claim of retail lighting equivalence. All EUD maps and unsupported body effects use the classic body pipeline.
+
+`native/remastered/geometry.h` uses the ANIM canvas and signed frame offsets, retaining fractional anchor information until final software pixel placement. The geometry tests compare all supplied frame counts with classic image data and check mirrored placement. They cannot establish retail pixel alignment without a matching retail HD capture.
+
+## Run engine-backed checks
+
+Prepare the exact 1.5.2 source release in a separate directory, then run the prototype's scripts with that directory as `--source-root`:
+
+```sh
+cd /path/to/StarDroid-1.5.2
+python3 scripts/prepare_native.py
+cd /path/to/prototype
+python3 tests/run_remastered_geometry.py \
+  --source-root /path/to/StarDroid-1.5.2 \
+  --stardat /private/StarDat.mpq --broodat /private/BrooDat.mpq \
+  --patch /private/patch_rt.mpq --samples /private/HD2/anim
+python3 tests/run_remastered_scene.py \
+  --source-root /path/to/StarDroid-1.5.2 \
+  --stardat /private/StarDat.mpq --broodat /private/BrooDat.mpq \
+  --patch /private/patch_rt.mpq --anim /private/HD2/anim/main_000.anim \
+  --output /private/hd2-scene
+```
+
+The geometry runner supports `--previews` for diagnostic captures. Captures contain caller-owned artwork and must stay private. Reports contain hashes and numerical results only. The scene runner is a host C++ experiment, not an Android build step.
+
+## Next Android milestone
+
+Integrate ordered RGBA composition into the app's actual renderer, preserving the full image stack and fog/UI order described above. Add a separate render scale without changing touch coordinates or the world viewport, then implement a bounded graphics-pack import/cache lifecycle. Use classic rendering for unsupported assets, modifiers and EUD changes. No release toggle should be exposed until these paths work together.
+
+Acceptance checks must add shadows, selection and other overlays, remembered buildings, cloak/distortion effects, viewport zoom, save/load and live data replacement. Compare a matching retail HD scene and measure device frame time/memory. The current host body scene is useful evidence for one subset, not completion of this Android milestone.

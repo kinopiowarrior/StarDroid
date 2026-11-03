@@ -1,6 +1,8 @@
-# Remastered graphics: asset reader prototype
+# Remastered graphics: HD2 prototype
 
-This is the first implementation stage, built against the supplied StarDroid 1.5 source. It adds a standalone native sprite reader and a developer inspection tool. It does **not** enable Remastered graphics in the Android app, change the simulation, or produce a new playable APK.
+This development branch contains an asset reader and host-only rendering experiments. The supplied HD2 animations from game build **1.23.10.13515** have now been tested with the **StarDroid 1.5.2** source. The Android release remains 1.5.2; this branch does not provide a playable HD build.
+
+The reader and its synthetic tests are standalone. Engine-backed checks require the exact [1.5.2 source ZIP](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.5.2/StarDroid-1.5.2-source.zip), SHA-256 `c8a7bf291ccf71dca22c559b5f98f15398bf876f125ade3e14e030355517db96`. The older application code on GitHub main is not that source snapshot. Pass the extracted source directory through `--source-root` to engine-backed test runners.
 
 ## Implemented
 
@@ -10,8 +12,9 @@ This is the first implementation stage, built against the supplied StarDroid 1.5
 - Diffuse frame extraction and optional team-color mask composition for an unlit preview. Empty frames remain empty and are reported without inventing image dimensions.
 - Bounds checks, input/allocation limits, explicit unsupported-format errors, and synthetic decoder/CLI tests.
 - JSON inspection output and an optional PAM image export that retains alpha.
+- `DecodedSprite`, which retains decoded diffuse/team-color atlases and frame metadata without retaining the input ANIM. Renderers can sample the atlases directly; animation does not require repeated decompression.
 
-Metadata parsing validates table and payload ranges. Pixel payloads are decoded when requested; inspecting one frame is not verification of every other layer. The implementation has not yet been checked against the user's Remastered files.
+Metadata parsing validates table and payload ranges. Pixel payloads are decoded when requested; inspecting one frame is not verification of every other layer. The real-file validation separately checks every supplied frame and every present layer. Independent texture comparisons cover all 89 layers in the 31 supplied animations, totaling 42,461,360 pixels.
 
 Default limits are 128 MiB per input, 16 million pixels per decoded image, 32 million working pixels per composed preview, 16,384 pixels per texture dimension, and 8,192 frames. These are development-reader limits, not an Android texture-cache budget. Invalid data is rejected before pixel access or allocation.
 
@@ -30,6 +33,24 @@ The tests generate their own small textures and ANIM containers. They contain no
 
 The sanitizer run enables AddressSanitizer and UndefinedBehaviorSanitizer. LeakSanitizer is disabled because the development workspace's process supervisor is incompatible with it; leak testing is not claimed.
 
+## Validation with supplied files
+
+The optimized and AddressSanitizer/UndefinedBehaviorSanitizer runs passed **655 synthetic checks**, then validated **31 HD2 files, 1,993 frames and 89 texture layers**. Every decoded layer matched Pillow exactly; every frame crop and red/blue mask composition matched the independent NumPy reference. The reports retain source hashes and input hashes, not artwork or installation credentials.
+
+```sh
+python3 tests/run_remastered_real_assets.py \
+  --samples /private/HD2/anim --game-build 1.23.10.13515 \
+  --previews /private/hd2-previews
+python3 tests/run_remastered_real_assets.py \
+  --samples /private/HD2/anim --game-build 1.23.10.13515 --sanitize \
+  --output-dir build-native/remastered-real-assets-sanitized \
+  --report validation/remastered-real-assets-sanitized.json
+```
+
+These checks require Python 3.9+, Pillow and NumPy. `--previews` is optional and must point outside the repository. The largest supplied diffuse/team-color pair occupies 15,073,280 decoded pixel bytes. This is a single-asset measurement, not an Android cache or performance result.
+
+Reports: [geometry](../validation/remastered-geometry.json), [host scene](../validation/remastered-scene.json), [synthetic](../validation/remastered-assets.json), [synthetic sanitizers](../validation/remastered-assets-sanitized.json), [real files](../validation/remastered-real-assets.json), [real-file sanitizers](../validation/remastered-real-assets-sanitized.json).
+
 ## Inspect an extracted sprite
 
 Use a copy extracted from your own installation, kept outside the repository:
@@ -40,25 +61,25 @@ build-native/remastered-assets/remastered-inspect /path/to/main_000.anim \
   --frame 0 --team-color ff0000 --preview /path/to/frame.pam
 ```
 
-Frame indices start at zero. The JSON reports texture-pixel offsets and crop dimensions; these are not yet verified world-space unit anchors. PAM stores four-channel RGBA and can be opened or converted by image tools supporting Netpbm PAM. The tool refuses to overwrite the input with a preview, and refuses to export an invalid zero-sized PAM for an empty frame.
+Frame indices start at zero. The JSON reports texture-pixel offsets and crop dimensions. Cropping alone does not place a sprite in the world: the prototype also uses the ANIM canvas, image origin and flip state. Some ANIM canvases differ from the classic GRP canvas, including Broodling and Ghost. PAM stores four-channel RGBA and can be opened or converted by image tools supporting Netpbm PAM. The tool refuses to overwrite the input with a preview, and refuses to export an invalid zero-sized PAM for an empty frame.
 
-## Files needed for the next stage
+## Supplied data and remaining coverage
 
-For the first sprite test, provide two or three extracted files from **`HD2/anim/main_*.anim`**, retaining their original paths. Include the game build or `.build.info` if available. These ANIM files normally contain their own texture layers. A sprite with visible player colors and directional frames is particularly useful. Root **`anim/main_*.anim`** files are the higher-resolution 4× variant.
+The 31 supplied `HD2/anim/main_*.anim` files are sufficient for this stage. They include Scourge, Broodling, Defiler, Larva, Dragoon, Ghost and several effects/building images. No complete game installation needs to be transferred for these checks.
 
-For a later terrain stage, useful samples are **`HD2/tileset/*.dds.vr4`** and the corresponding tileset tables. Terrain containers are not supported by this first reader.
+All 31 animation frame counts match their corresponding classic image entries, covering 1,993 frames. This validates counts for the direct sample mappings, not support for every `images.rel` reference or every unit in the game. Use the ANIM canvas when calculating HD frame origins; it need not equal four times the classic GRP canvas. The separate geometry check records both sizes and mirrored placement. A retail HD game capture is still needed as a visual positioning oracle.
 
-If no files have been extracted, the source is the installed game's **entire `Data` directory, together with `.build.info`** from the installation root. Preserve `Data/config`, indices, and the original folder structure. A single `data.xxx` chunk is not a standalone archive. Use an installation with its Remastered graphics downloaded. For a large installation, a folder listing and `.build.info` can establish what is available before transferring the complete data.
+A complete sprite import will need the remaining `HD2/anim` files and applicable image-reference data. A later terrain stage needs `HD2/tileset/*.dds.vr4` and corresponding tileset tables. Terrain containers are not supported here.
 
-Keep supplied assets and generated previews private and outside version control. The code does not download game files, extract CASC storage, or bundle artwork.
+Supplied assets, installation metadata and generated captures stay outside version control. The code does not download game files or bundle artwork.
 
 ## Still to implement
 
 - CASC import/extraction and graphics-pack caching on Android.
-- Matching an engine image and frame to the correct sprite, including `images.rel` references and classic GRP anchors.
-- Drawing HD sprites in the correct depth and fog order, with a separate render resolution and safe classic fallback for EUD-modified graphics.
+- Full image/frame mapping, including `images.rel` references, and comparison of the prototype's HD anchor convention against retail captures.
+- Bringing the prototype's ordered HD sprites into the complete Android renderer, including fog/UI composition, independent render resolution and safe classic fallback for EUD-modified graphics.
 - Terrain, interface artwork, wireframes, portraits, video, real-time lighting, and the other rendering effects.
-- Real-file decoding checks, actual render comparisons, and Android memory/performance measurements.
+- Retail HD capture comparisons and Android memory/performance measurements.
 
 SD ANIM, multi-entry/reference containers, other DDS codecs, DX10 textures, cubemaps, and volume textures are rejected explicitly. Extra lighting layers may be decoded if they use a supported texture encoding, but this prototype does not apply their lighting semantics.
 
@@ -71,7 +92,9 @@ The reader is independently implemented from format facts; no third-party implem
 - [Animosity `anim.rs`](https://github.com/neivv/animosity/blob/895eaccfc1ba49a5815799e25041926df23bd46b/src/anim.rs): ANIM container/texture/frame layouts and embedded texture encodings.
 - [Animosity `frame_export.rs`](https://github.com/neivv/animosity/blob/895eaccfc1ba49a5815799e25041926df23bd46b/src/frame_export.rs): HD2 coordinate conversion and signed-offset rounding.
 - [Animosity format overview](https://github.com/neivv/animosity/blob/895eaccfc1ba49a5815799e25041926df23bd46b/Readme.md): layer meanings and dependencies on classic frame geometry.
+- [SCR-Graphics ANIM placement](https://github.com/saintofidiocy/SCR-Graphics/blob/0e73040f7343489486cdfdabad56a67e0e870ec9/anim.c): ANIM-canvas origins for HD sprites.
+- [scmapanalyzer HD2 parser](https://github.com/marianogappa/scmapanalyzer/blob/dc1cfc0152db16c2f9630912debc89249f4a4a51/tools/hdbake/anim.go): independent ANIM-canvas positioning reference.
 - [SCR-Graphics sprite rendering](https://github.com/saintofidiocy/SCR-Graphics/blob/0e73040f7343489486cdfdabad56a67e0e870ec9/shaders/sprite.txt): diffuse/team-color preview behavior.
 - [CascLib storage documentation](https://www.zezula.net/en/casc/main.html): installation files that must be retained for extraction.
 
-Recorded synthetic checks apply only to the files and hashes listed in their validation reports. They do not validate a real installation, hardware display, full scene, or Android renderer.
+Validation reports bind their results to the listed source and input hashes. Synthetic tests, real-file decoding, geometry checks and host scenes are separate evidence; none establish full Android renderer compatibility or device performance.

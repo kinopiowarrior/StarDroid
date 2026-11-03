@@ -59,6 +59,63 @@ struct FrameRegion {
     int32_t x_off = 0, y_off = 0;
 };
 
+// Owns only decoded preview layers and frame metadata, never the ANIM input.
+// Construct once outside the render loop. Read-only atlas access lets a renderer
+// draw crops without allocating an intermediate image for every frame.
+class DecodedSprite {
+public:
+    uint8_t scale() const { return scale_; }
+    uint16_t canvas_width_hd() const { return canvas_width_; }
+    uint16_t canvas_height_hd() const { return canvas_height_; }
+    const std::vector<FrameRegion>& frames() const { return frames_; }
+    const Image& diffuse() const { return diffuse_; }
+    const Image* teamcolor() const { return teamcolor_.rgba.empty() ? nullptr : &teamcolor_; }
+    // Pixel payload bytes only; excludes vector/metadata allocator overhead.
+    uint64_t resident_bytes() const { return uint64_t(diffuse_.rgba.size()) + teamcolor_.rgba.size(); }
+    FrameRegion frame_bounds(size_t index) const {
+        if (index >= frames_.size()) throw FormatError("ANIM frame index out of range");
+        return frames_[index];
+    }
+    // Unlit, straight-alpha preview. Team colors multiply the diffuse RGB under
+    // the teamcolor red-channel mask, preserving diffuse alpha.
+    Image frame_image(size_t index,
+        std::optional<std::array<uint8_t, 3>> team_color = std::nullopt) const {
+        const FrameRegion r = frame_bounds(index);
+        if (!r.width || !r.height) return {};
+        const uint64_t output_pixels = uint64_t(r.width) * r.height;
+        if (resident_bytes() / 4 + output_pixels > max_working_pixels_)
+            throw FormatError("ANIM preview exceeds working pixel limit");
+        Image out{r.width, r.height, std::vector<uint8_t>(size_t(output_pixels) * 4)};
+        const Image* mask = team_color ? teamcolor() : nullptr;
+        for (uint32_t y = 0; y < r.height; ++y) {
+            for (uint32_t x = 0; x < r.width; ++x) {
+                const size_t src = (size_t(r.tex_y + y) * diffuse_.width + r.tex_x + x) * 4;
+                const size_t dst = (size_t(y) * out.width + x) * 4;
+                for (unsigned c = 0; c < 4; ++c) out.rgba[dst + c] = diffuse_.rgba[src + c];
+                if (mask) {
+                    const size_t at = (size_t(r.tex_y + y) * mask->width + r.tex_x + x) * 4;
+                    const unsigned amount = mask->rgba[at];
+                    for (unsigned c = 0; c < 3; ++c) {
+                        const unsigned original = diffuse_.rgba[src + c];
+                        const unsigned factor = 255 * (255 - amount) + (*team_color)[c] * amount;
+                        out.rgba[dst + c] = uint8_t((original * factor + 32512) / 65025);
+                    }
+                }
+            }
+        }
+        return out;
+    }
+
+private:
+    friend class Anim;
+    DecodedSprite() = default;
+    uint8_t scale_ = 0;
+    uint16_t canvas_width_ = 0, canvas_height_ = 0;
+    uint64_t max_working_pixels_ = 0;
+    std::vector<FrameRegion> frames_;
+    Image diffuse_, teamcolor_;
+};
+
 class Anim {
 public:
     static Anim parse(std::vector<uint8_t> data, Limits limits = {}) {
@@ -87,44 +144,35 @@ public:
         return decode_texture(layer_index(name));
     }
 
-    // Non-RTL diffuse preview. The optional team color multiplies diffuse RGB
-    // under the teamcolor red-channel mask, retaining the original alpha.
-    Image frame_image(size_t index,
-        std::optional<std::array<uint8_t, 3>> team_color = std::nullopt) const {
-        const FrameRegion region = frame_bounds(index);
-        if (region.width == 0 || region.height == 0) return {};
+    DecodedSprite decode_sprite(bool include_teamcolor = true) const {
         const size_t diffuse_id = layer_index("diffuse");
-        const Texture& dt = textures_[diffuse_id];
         size_t team_id = names_.size();
-        if (team_color) {
+        if (include_teamcolor) {
             for (size_t i = 0; i < names_.size(); ++i)
                 if (names_[i] == "teamcolor" && textures_[i].present()) team_id = i;
         }
-        uint64_t working = uint64_t(dt.width) * dt.height + uint64_t(region.width) * region.height;
-        if (team_id < names_.size()) working += uint64_t(textures_[team_id].width) * textures_[team_id].height;
-        if (working > limits_.max_working_pixels) throw FormatError("ANIM preview exceeds working pixel limit");
-        const Image diffuse = decode_texture(diffuse_id);
-        Image team;
-        if (team_id < names_.size()) team = decode_texture(team_id);
-        Image result = allocate(region.width, region.height);
-        for (uint32_t y = 0; y < region.height; ++y) {
-            for (uint32_t x = 0; x < region.width; ++x) {
-                const size_t src = (size_t(region.tex_y + y) * diffuse.width + region.tex_x + x) * 4;
-                const size_t dst = (size_t(y) * result.width + x) * 4;
-                for (unsigned c = 0; c < 4; ++c) result.rgba[dst + c] = diffuse.rgba[src + c];
-                if (team_id < names_.size()) {
-                    const size_t mask_at = (size_t(region.tex_y + y) * team.width + region.tex_x + x) * 4;
-                    const unsigned mask = team.rgba[mask_at];
-                    for (unsigned c = 0; c < 3; ++c) {
-                        const unsigned original = diffuse.rgba[src + c];
-                        const unsigned factor = 255 * (255 - mask) + (*team_color)[c] * mask;
-                        // Quantize once after mix(diffuse, diffuse * team, mask).
-                        result.rgba[dst + c] = uint8_t((original * factor + 32512) / 65025);
-                    }
-                }
-            }
-        }
-        return result;
+        uint64_t pixels = uint64_t(textures_[diffuse_id].width) * textures_[diffuse_id].height;
+        if (team_id < names_.size()) pixels += uint64_t(textures_[team_id].width) * textures_[team_id].height;
+        if (pixels > limits_.max_working_pixels)
+            throw FormatError("ANIM decoded sprite exceeds working pixel limit");
+        DecodedSprite out;
+        out.scale_ = scale_;
+        out.canvas_width_ = canvas_width_; out.canvas_height_ = canvas_height_;
+        out.max_working_pixels_ = limits_.max_working_pixels;
+        out.frames_.reserve(frames_.size());
+        for (size_t i = 0; i < frames_.size(); ++i) out.frames_.push_back(frame_bounds(i));
+        out.diffuse_ = decode_texture(diffuse_id);
+        if (team_id < names_.size()) out.teamcolor_ = decode_texture(team_id);
+        return out;
+    }
+
+    // Convenience path for a single preview. For animation or rendering, retain
+    // decode_sprite() instead so the atlases are not decompressed every frame.
+    Image frame_image(size_t index,
+        std::optional<std::array<uint8_t, 3>> team_color = std::nullopt) const {
+        const FrameRegion region = frame_bounds(index);
+        if (!region.width || !region.height) return {};
+        return decode_sprite(bool(team_color)).frame_image(index, team_color);
     }
 
 private:
