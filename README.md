@@ -4,17 +4,18 @@
 
 **Classic StarCraft and Brood War on Android.**
 
-**Latest release: 1.5.1 · Android 8.0+ · ARM64 and x86-64**
+**Latest release: 1.5.2 · Android 8.0+ · ARM64 and x86-64**
 
-[Download APK](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.5.1/StarDroid-1.5.1.apk) · [Release notes](https://github.com/kinopiowarrior/StarDroid/releases/tag/v1.5.1) · [Source ZIP](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.5.1/StarDroid-1.5.1-source.zip) · [Discord](https://discord.gg/F2FnjUrtQ)
+[Download APK](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.5.2/StarDroid-1.5.2.apk) · [Release notes](https://github.com/kinopiowarrior/StarDroid/releases/tag/v1.5.2) · [Source ZIP](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.5.2/StarDroid-1.5.2-source.zip) · [Discord](https://discord.gg/F2FnjUrtQ)
 
-## New in 1.5.1
+## New in 1.5.2
 
-- Selection boxes stay active when dragged over the HUD and can select units beneath UI panels.
-- Releasing over the UI completes the selection without activating the control underneath.
-- Taps and clicks that start on the UI still operate the UI and cannot select units behind it.
+- Inactive traps stay hidden until they reveal themselves. Covers all six floor and wall trap types.
+- Medic abilities use the original bottom-row positions: **Heal · Restoration · Optical Flare**. Heal uses its original **A** hotkey, and Restoration has the correct cast icon.
+- Verified **Patriot’s Blood**: Heal and Restoration are enabled; Optical Flare (Blind) is disabled by the mission.
+- Includes the 1.5.1 fix allowing selection boxes to continue across the HUD and select units beneath it.
 
-Applies to touch, mouse, and controller selection. [1.5.1 changes and validation](docs/CHANGES-1.5.1.md).
+[1.5.2 changes and validation](docs/CHANGES-1.5.2.md).
 
 ## Included from 1.5
 
@@ -65,7 +66,7 @@ Version 1.5 includes **UMS support and common EUD support**, plus the changes de
 
 ## Install
 
-1. Download and open **[StarDroid-1.5.1.apk](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.5.1/StarDroid-1.5.1.apk)**.
+1. Download and open **[StarDroid-1.5.2.apk](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.5.2/StarDroid-1.5.2.apk)**.
 2. Import your own `StarDat.mpq`, `BrooDat.mpq`, and `Patch_rt.mpq`.
 3. Import `StarCraft.mpq` and `BroodWar.mpq` from the original installation media for campaigns and movies.
 
@@ -73,16 +74,17 @@ To update, install over the existing app **without uninstalling**. Use the same 
 
 **Game data is not included.** This is an unofficial fan project, not affiliated with Blizzard Entertainment.
 
-[Player guide](docs/PLAYER-GUIDE.md) · [Download checksums](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.5.1/SHA256SUMS.txt) · [Report a bug](https://github.com/kinopiowarrior/StarDroid/issues/new/choose)
+[Player guide](docs/PLAYER-GUIDE.md) · [Download checksums](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.5.2/SHA256SUMS.txt) · [Report a bug](https://github.com/kinopiowarrior/StarDroid/issues/new/choose)
 
 ## Development
 
-The **[1.5.1 source ZIP](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.5.1/StarDroid-1.5.1-source.zip)** contains the matching code, build instructions, and validation records. The repository code snapshot remains at 1.1.1.
+The **[1.5.2 source ZIP](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.5.2/StarDroid-1.5.2-source.zip)** contains the matching code, build instructions, and validation records. The repository code snapshot remains at 1.1.1.
 
-Version 1.5.1 builds on 1.5 with a targeted selection fix and rebuilt ARM64/x86-64 native libraries. Host regression and APK checks passed; physical-device testing remains ongoing.
+Version 1.5.2 builds on 1.5.1 with trap-visibility and Medic command-card fixes, plus rebuilt ARM64/x86-64 native libraries. See the matching source ZIP for build instructions and validation records.
 
 ## Credits
 
 Put together by **ToadWarrior**, using [OpenBW](https://github.com/OpenBW/openbw) and community projects. See [third-party credits](THIRD_PARTY.md) and [contributing](CONTRIBUTING.md).
 
 StarCraft and Brood War belong to Blizzard Entertainment.
+
