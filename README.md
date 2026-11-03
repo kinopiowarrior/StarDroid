@@ -10,12 +10,42 @@
 
 ## New in 1.5
 
-- UMS support and common EUD support.
-- Better custom-map compatibility, map audio, and language support.
-- Improved AI expansion defense and transport recovery.
-- Bot difficulty shown on the score screen.
-- Game-data patch detection in App Options, including repacked archives.
-- Additional gameplay and interface fixes.
+Version 1.5 includes **UMS support and common EUD support**, plus the changes developed since the public 1.1.1 release.
+
+### Custom maps and EUD
+
+- **Use Map Settings** respects scenario slots, races, teams, alliances, custom unit data, technology restrictions, and triggers.
+- Common EUD features include supported memory conditions/actions, dynamic triggers, and live changes to units, data tables, command buttons, wireframes, animations, terrain, and camera behavior.
+- Improved map-defined names, text refresh, objectives, shared vision, stacking-map behavior, protected archives, and newer terrain movement/placement data.
+- **Map keys** supplies touch keyboard and mouse controls defined by a map. **EUD options** provides timing and wireframe compatibility choices.
+- Solo scenarios can advance to an already imported next map after victory. EUD support remains partial; not every map or Windows-specific extension works.
+
+### Map browser and multiplayer
+
+- Thumbnail popups show enlarged minimaps and scrollable descriptions. Map/ZIP imports show progress and a final result.
+- **List options** adds map-type filters, sorting, imported-map deletion, and a count of the listed maps.
+- Better Classic/Brood War map classification, non-UMS player-color selection, and clearer team labels.
+- Non-UMS **Match Options** combines Hero Mode with expanded larva selection, one-larva morphing, initial worker harvesting, and smart casting. Hosts choose the shared rules before starting.
+
+### AI and gameplay
+
+- Added **Original** CPU difficulty based on the imported game scripts.
+- Improved native skirmish attack waves, distant expansion defense, and idle transport return.
+- Score screens show bot difficulty after the race, such as **Terran (Normal)**.
+- Fixed SCV construction/repair commands, repeated Lurker unburrowing, Drone selection after canceled construction, and several campaign/scenario behaviors.
+
+### Interface, languages, and audio
+
+- Portrait taps center the camera; minimap rendering/input stays consistent across zoom levels.
+- Improved large-text layouts, HUD input handling, prerequisites, and campaign command visibility. Fixed detached effects showing through fog.
+- Added Simplified Chinese, Traditional Chinese, Korean, and Japanese, bringing the interface to **nine languages**.
+- Added **WAV49/codec 49** audio support, improved text decoding, and prevented missing or damaged optional sounds from interrupting scenario triggers.
+
+### Patch identification
+
+**App Options → Game-data patch** now identifies recognized classic patch-data families from **1.02 through 1.17.0**, including repacked archives with matching contents. Detection is offline and shows a range when several versions share the same data.
+
+[Full 1.5 changes and compatibility notes](docs/CHANGES-1.5.md)
 
 ## Features
 
