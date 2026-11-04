@@ -1,0 +1,24 @@
+StarDroid 1.5.4-hd2-preview1 (Android build 124)
+
+This development APK is based on the 1.5.4 release. See
+  docs/HD2-ANDROID-PREVIEW.md
+for the graphics it can display and the files it reads. User-supplied game files
+are imported by the app and are not part of these sources.
+
+Build using Android NDK r27d, SDK 35, Build Tools 35.0.0, GNU patch and JDK 17.
+From the extracted source root, run:
+
+  python3 scripts/prepare_native.py
+  STARDROID_ANDROID_TOOLS=/path/to/tools python3 scripts/build_native_engine.py arm64-v8a --skip-prepare
+  STARDROID_ANDROID_TOOLS=/path/to/tools python3 scripts/build_native_engine.py x86_64 --skip-prepare
+  python3 scripts/package_android_offline.py --tools /path/to/tools --java-home /path/to/jdk --output /path/to/unsigned.apk
+
+Sign the aligned package with apksigner. Android requires the same signer to
+update an existing install. The supplied preview APK shares its application ID,
+signing certificate and version code with 1.5.4. It uses the 1.5.4 simulation,
+replay and multiplayer versions. Stable 1.5.4 build instructions and test results
+inherited from the base archive describe that earlier version.
+
+SOURCE-SNAPSHOT.json inventories the source files. NATIVE-BUILD.json identifies
+the build and tests for this preview. The two platform-specific libopenbw.so
+libraries in this source ZIP match the two engine binaries inside the APK.

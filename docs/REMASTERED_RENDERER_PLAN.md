@@ -1,6 +1,6 @@
 # Remastered renderer integration plan
 
-The current stage has a real-file-tested asset reader and a host-only HD2 scene prototype. It does not enable HD graphics in the Android app. The supplied 31 animations validate a useful subset; synthetic tests and successful texture decoding alone cannot establish game compatibility. Engine-backed work uses the exact 1.5.2 release source, retaining its trap, Medic and selection fixes.
+This plan records the original 2× host prototype and the requirements for a full-color renderer. The [1.5.4 Android preview](HD2-ANDROID-PREVIEW.md) implements an intermediate step using the existing indexed battlefield surface. It can import and draw five unit bodies in normal gameplay.
 
 ## Current rendering path
 
@@ -61,7 +61,7 @@ python3 tests/run_remastered_scene.py \
 
 The geometry runner supports `--previews` for diagnostic captures. Captures contain caller-owned artwork and must stay private. Reports contain hashes and numerical results only. The scene runner is a host C++ experiment, not an Android build step.
 
-## Next Android milestone
+## Higher-resolution Android milestone
 
 Integrate ordered RGBA composition into the app's actual renderer, preserving the full image stack and fog/UI order described above. Add a separate render scale without changing touch coordinates or the world viewport, then implement a bounded graphics-pack import/cache lifecycle. Use classic rendering for unsupported assets, modifiers and EUD changes. No release toggle should be exposed until these paths work together.
 

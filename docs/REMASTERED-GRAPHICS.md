@@ -1,6 +1,8 @@
 # Remastered graphics: HD2 prototype
 
-This development branch contains an asset reader and host-only rendering experiments. The supplied HD2 animations from game build **1.23.10.13515** have now been tested with the **StarDroid 1.5.2** source. The Android release remains 1.5.2; this branch does not provide a playable HD build.
+For the playable Android preview based on StarDroid 1.5.4, see [installation and supported unit files](HD2-ANDROID-PREVIEW.md). It uses five imported HD2 unit bodies in the regular game renderer.
+
+The following reader and host-scene results were recorded during the earlier 1.5.2 prototype using assets from StarCraft build **1.23.10.13515**.
 
 The reader and its synthetic tests are standalone. Engine-backed checks require the exact [1.5.2 source ZIP](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.5.2/StarDroid-1.5.2-source.zip), SHA-256 `c8a7bf291ccf71dca22c559b5f98f15398bf876f125ade3e14e030355517db96`. The older application code on GitHub main is not that source snapshot. Pass the extracted source directory through `--source-root` to engine-backed test runners.
 
@@ -73,11 +75,11 @@ A complete sprite import will need the remaining `HD2/anim` files and applicable
 
 Supplied assets, installation metadata and generated captures stay outside version control. The code does not download game files or bundle artwork.
 
-## Still to implement
+## Follow-up work
 
-- CASC import/extraction and graphics-pack caching on Android.
+- Direct CASC extraction, broader graphics-pack support and on-device performance measurements.
 - Full image/frame mapping, including `images.rel` references, and comparison of the prototype's HD anchor convention against retail captures.
-- Bringing the prototype's ordered HD sprites into the complete Android renderer, including fog/UI composition, independent render resolution and safe classic fallback for EUD-modified graphics.
+- A higher-resolution, full-color Android battlefield. The Android preview currently draws supported bodies at the engine’s existing battlefield resolution and uses its tileset palette.
 - Terrain, interface artwork, wireframes, portraits, video, real-time lighting, and the other rendering effects.
 - Retail HD capture comparisons and Android memory/performance measurements.
 

@@ -1,0 +1,245 @@
+--- a/app/build.gradle
++++ b/app/build.gradle
+@@ -11,7 +11,7 @@
+     namespace 'org.openbw.androidtest'
+     compileSdk 35
+     buildToolsVersion '35.0.0'
+-    defaultConfig { applicationId 'org.openbw.androidtest'; minSdk 26; targetSdk 35; versionCode 124; versionName '1.5.4' }
++    defaultConfig { applicationId 'org.openbw.androidtest'; minSdk 26; targetSdk 35; versionCode 124; versionName '1.5.4-hd2-preview1' }
+     buildFeatures { buildConfig true }
+     signingConfigs {
+         if (releaseKeyPath) {
+--- a/app/src/main/AndroidManifest.xml
++++ b/app/src/main/AndroidManifest.xml
+@@ -1,5 +1,5 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.openbw.androidtest" android:versionCode="124" android:versionName="1.5.4">
++<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.openbw.androidtest" android:versionCode="124" android:versionName="1.5.4-hd2-preview1">
+     <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="35" />
+     <uses-permission android:name="android.permission.INTERNET" />
+     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+--- a/app/src/main/java/org/openbw/androidtest/MainActivity.java
++++ b/app/src/main/java/org/openbw/androidtest/MainActivity.java
+@@ -46,7 +46,7 @@
+ /** Offline Android host with a native C++ game engine and Android rendering. */
+ public final class MainActivity extends Activity {
+   private static final String[] MPQS = {"STARDAT.MPQ", "BROODAT.MPQ", "patch_rt.mpq"};
+-  private static final int PICK_DATA = 10, PICK_MAP = 11, PICK_REPLAY = 12, IMPORT_REPLAY = 13;
++  private static final int PICK_DATA = 10, PICK_MAP = 11, PICK_REPLAY = 12, IMPORT_REPLAY = 13, PICK_HD2_SPRITES = 14;
+   private NativeNearby nearbyPermissionRequest;
+   private NativeNearby nearbyBluetoothRequest;
+   void requestNearbyBluetooth(NativeNearby owner,boolean discoverable) {
+@@ -288,6 +288,7 @@
+         0xffc5cfeb);
+     button(setup, importing ? "Importing…" : "Import game files", () -> pickData())
+         .setEnabled(!busy() && GameDataStorage.available(this));
++    showUnitGraphics(panel);
+     LinearLayout installed = section(panel, "Installed content");
+     for (String name : MPQS)
+       text(
+@@ -524,6 +525,75 @@
+     }
+   }
+ 
++  File hd2SpriteRoot() { return new File(getFilesDir(), "hd2-unit-sprites"); }
++
++  private void showUnitGraphics(LinearLayout parent) {
++    LinearLayout panel = section(parent, "Unit graphics");
++    final File root = hd2SpriteRoot();
++    int count = Hd2SpritePack.installedCount(root);
++    boolean enabled = Hd2SpritePack.enabled(root);
++    text(panel, (enabled ? "HD2" : "Classic") + " · " + count + " of 5 HD2 unit sprites installed", 15, 0xffc5cfeb);
++    text(panel, "Import a ZIP containing HD2/anim to use Scourge, Broodling, Defiler, Dragoon and Ghost sprites.",
++        13, 0xff8da4cf);
++    button(panel, "Import HD2 sprite ZIP", this::pickHd2Sprites).setEnabled(!busy());
++    button(panel, enabled ? "Use classic unit sprites" : "Use HD2 unit sprites", () -> {
++      if (busy()) return;
++      try {
++        Hd2SpritePack.setEnabled(root, !enabled);
++        notice = enabled ? "Classic unit sprites selected." : "HD2 unit sprites selected.";
++      } catch (IOException error) {
++        notice = "Could not change unit graphics: " + error.getMessage();
++      }
++      showHome();
++    }).setEnabled(count > 0 && !busy());
++  }
++
++  private void pickHd2Sprites() {
++    if (busy()) return;
++    Intent pick = new Intent(Intent.ACTION_OPEN_DOCUMENT).setType("*/*").addCategory(Intent.CATEGORY_OPENABLE);
++    try {
++      startActivityForResult(pick, PICK_HD2_SPRITES);
++    } catch (android.content.ActivityNotFoundException unavailable) {
++      notice = "No file picker is available.";
++      showHome();
++    }
++  }
++
++  private void importHd2Sprites(Uri uri) {
++    if (busy()) return;
++    final GameDataOperation.Lease lease = GameDataOperation.begin("Importing HD2 sprites…");
++    if (lease == null) return;
++    showHome();
++    io.execute(() -> {
++      String result = "HD2 import interrupted.";
++      try (InputStream input = getContentResolver().openInputStream(uri)) {
++        if (input == null) throw new IOException("Cannot read selected ZIP.");
++        int count = Hd2SpritePack.install(hd2SpriteRoot(), input,
++            directory -> NativeBridge.validateHd2Sprites(directory.getAbsolutePath()));
++        result = "HD2 unit graphics selected. Imported " + count + " of 5 supported sprites.";
++      } catch (IOException | RuntimeException error) {
++        result = "HD2 import failed: " + error.getMessage();
++      } finally {
++        GameDataOperation.finish(lease, result);
++      }
++      final String message = result;
++      runOnUiThread(() -> {
++        if (isDestroyed()) return;
++        notice = message;
++        showHome();
++      });
++    });
++  }
++
++  void hd2Unavailable() {
++    runOnUiThread(() -> {
++      if (isDestroyed()) return;
++      notice = "Could not load HD2 sprites. Using classic graphics. Re-import the sprite ZIP in App Options.";
++      if (optionsVisible) showHome();
++      else Toast.makeText(this, notice, Toast.LENGTH_LONG).show();
++    });
++  }
++
+   private void pickData() {
+     if(busy()||!GameDataStorage.available(this))return;
+     Intent pick = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+@@ -606,6 +676,10 @@
+     if(request==48 || request==49) {
+       NativeNearby owner=nearbyBluetoothRequest;nearbyBluetoothRequest=null;
+       if(owner!=null)owner.bluetoothResult(request==49,request==49?result>0:result==RESULT_OK);
++      return;
++    }
++    if (request == PICK_HD2_SPRITES) {
++      if (result == RESULT_OK && data != null && data.getData() != null) importHd2Sprites(data.getData());
+       return;
+     }
+     if (request == IMPORT_REPLAY) {
+--- a/app/src/main/java/org/openbw/androidtest/NativeBridge.java
++++ b/app/src/main/java/org/openbw/androidtest/NativeBridge.java
+@@ -9,6 +9,10 @@
+   }
+ 
+   static native void open(int slot, String path);
++
++  // Both accept a private generation directory of flat HD2 main_NNN.anim files.
++  static native int validateHd2Sprites(String directory);
++  static native int setHd2Sprites(String directory, boolean enabled);
+ 
+   static native void close();
+ 
+--- a/app/src/main/java/org/openbw/androidtest/NativeSurface.java
++++ b/app/src/main/java/org/openbw/androidtest/NativeSurface.java
+@@ -16,6 +16,7 @@
+   private final MainActivity activity;
+   private final File files, gameFiles, cache;
+   private final SharedPreferences prefs;
++  private String activeHd2Directory;
+   private final ControlSettings controls = new ControlSettings();
+   private final GamepadControls gamepad = new GamepadControls();
+   private final DesktopSettings desktopSettings = new DesktopSettings();
+@@ -298,10 +299,31 @@
+     NativeArt.setSmoothGraphics(smoothGraphics);
+   }
+ 
++  private void applyHd2Selection() {
++    // Serialize activation with generation replacement. No file access occurs in the draw loop.
++    synchronized (Hd2SpritePack.class) {
++      File root = activity.hd2SpriteRoot();
++      Hd2SpritePack.Selection selected = Hd2SpritePack.selection(root);
++      String path = selected.enabled ? selected.directory.getAbsolutePath() : "";
++      if (path.equals(activeHd2Directory)) return;
++      int loaded = NativeBridge.setHd2Sprites(path, selected.enabled);
++      if (selected.enabled && loaded <= 0) {
++        NativeBridge.setHd2Sprites("", false);
++        try { Hd2SpritePack.setEnabled(root, false); }
++        catch (IOException error) { AppDiagnostics.recordFailure("HD2 sprite selection", error); }
++        activeHd2Directory = "";
++        activity.hd2Unavailable();
++        return;
++      }
++      activeHd2Directory = path;
++    }
++  }
++
+   void resume() {
+     foreground = true;
+     enqueue(
+         () -> {
++          applyHd2Selection();
+           lastTime = 0;
+           if (audio != null) audio.foreground(true);
+           syncAudio();
+@@ -535,6 +557,7 @@
+       if (hud != null) hud.close();
+       closeGlue();
+       closeBriefMovies();
++      NativeBridge.setHd2Sprites("", false);
+       NativeBridge.close();
+     }
+   }
+--- a/native/runtime.cpp
++++ b/native/runtime.cpp
+@@ -45,7 +45,24 @@
+ void js_sound_stop(int ch){naudio::stop(ch);}
+ void js_sound_set_volume(int ch,int vol){std::lock_guard<std::mutex> l(naudio::mutex);if(ch>=0&&ch<64)naudio::voices[ch].left=naudio::voices[ch].right=vol/128.f;}
+ }
++#include "remastered/runtime.h"
++#define STARDROID_HD2_RUNTIME 1
+ #include "generated/wasm_main.cpp"
++
++// Validation runs on the importer thread and never touches engine state.
++static int validate_hd2_sprites(const std::string& directory) {
++    return stardroid::remastered::live::configure(directory, false);
++}
++// Activation and palette changes use the same engine thread as frame().
++static int set_hd2_sprites(const std::string& directory, bool enabled) {
++    int count = 0;
++    if (enabled) count = stardroid::remastered::live::configure(directory, true);
++    else std::atomic_store(&stardroid::remastered::live::active_pack,
++                           std::shared_ptr<const stardroid::remastered::live::Pack>());
++    if (count >= 0 && g_ui) g_ui->prepare_hd2_palette();
++    return count;
++}
++
+ #include "patch_probe119.h"
+ #include "optional_audio102.h"
+ #include "hero_mode.h"
+@@ -310,8 +327,16 @@
+ static std::string utf(JNIEnv* e,jstring s){if(!s)return "";const char* p=e->GetStringUTFChars(s,nullptr);std::string out(p);e->ReleaseStringUTFChars(s,p);return out;}
+ static jbyteArray bytes(JNIEnv* e,const uint8_t* p,size_t n){jbyteArray a=e->NewByteArray(n);if(n)e->SetByteArrayRegion(a,0,n,(const jbyte*)p);return a;}
+ static void bitmap(JNIEnv* e,jobject target,const uint8_t* p,int w,int h){if(!target||!p)return;AndroidBitmapInfo info;if(AndroidBitmap_getInfo(e,target,&info)||info.width!=unsigned(w)||info.height!=unsigned(h)||info.format!=ANDROID_BITMAP_FORMAT_RGBA_8888)throw std::runtime_error("Bitmap dimensions differ");void* out=nullptr;if(AndroidBitmap_lockPixels(e,target,&out))throw std::runtime_error("Bitmap is unavailable");for(int y=0;y<h;y++)memcpy((uint8_t*)out+y*info.stride,p+size_t(y)*w*4,size_t(w)*4);AndroidBitmap_unlockPixels(e,target);}
++JNI(validateHd2Sprites) jint JNICALL Java_org_openbw_androidtest_NativeBridge_validateHd2Sprites(JNIEnv* e, jclass, jstring directory) {
++    try { return validate_hd2_sprites(utf(e, directory)); }
++    catch (const std::exception& error) { fail(e, error); return -1; }
++}
++JNI(setHd2Sprites) jint JNICALL Java_org_openbw_androidtest_NativeBridge_setHd2Sprites(JNIEnv* e, jclass, jstring directory, jboolean enabled) {
++    try { return set_hd2_sprites(utf(e, directory), enabled == JNI_TRUE); }
++    catch (const std::exception& error) { fail(e, error); return -1; }
++}
+ JNI(open) void JNICALL Java_org_openbw_androidtest_NativeBridge_open(JNIEnv* e,jclass,jint i,jstring path){try{open_archive(i,utf(e,path));}catch(const std::exception& x){fail(e,x);}}
+-JNI(close) void JNICALL Java_org_openbw_androidtest_NativeBridge_close(JNIEnv*,jclass){close_game();for(auto& m:movies)m.reset();for(int i=0;i<11;i++){readers[i].reset();archives[i].close();}naudio::clear();}
++JNI(close) void JNICALL Java_org_openbw_androidtest_NativeBridge_close(JNIEnv*,jclass){close_game();set_hd2_sprites("",false);for(auto& m:movies)m.reset();for(int i=0;i<11;i++){readers[i].reset();archives[i].close();}naudio::clear();}
+ JNI(init) void JNICALL Java_org_openbw_androidtest_NativeBridge_init(JNIEnv* e,jclass,jint w,jint h,jint code,jint race){try{close_game();if(code>0)openbw_init_campaign(w,h,code);else {
+  if(custom_bot_slot>0)openbw_init_race_ai(w,h,race,custom_bot_slot,custom_ai_race);
+  else openbw_init(w,h,race,0);
+--- a/scripts/prepare_native.py
++++ b/scripts/prepare_native.py
+@@ -120,7 +120,7 @@
+     p=fresh/'ui/ui.h';s=p.read_text();anchor='\t\tif (minimap_scale > 0 && minimap_scale != 1) {'
+     if 'OPENBW_NATIVE_MINIMAP' not in s:s=s.replace(anchor,'\t\t// OPENBW_NATIVE_MINIMAP\n\t\tconst size_t largest = std::max(minimap_width, minimap_height);\n\t\tminimap_width = (minimap_width * 128 + largest / 2) / largest;\n\t\tminimap_height = (minimap_height * 128 + largest / 2) / largest;\n'+anchor,1)
+     write(p,s)
+-    for name in ('native-owners94.patch', 'native-terrain94.patch', 'native-minimap94.patch', 'native-eud95.patch', 'native-eud96.patch', 'native-eud97.patch', 'native-eud98.patch', 'native-eud99.patch', 'native-eud100.patch', 'native-eud101.patch', 'native-eud102.patch', 'native-eud-sight103.patch', 'native-eud-units103.patch', 'native-eud-grp103.patch', 'native-eud-redraw103.patch', 'native-eud-allocation103.patch', 'native-eud-hallucination103.patch', 'native-eud-palette104.patch', 'native-eud-pause104.patch', 'native-eud-movement105.patch', 'native-eud-mouse105.patch', 'native-eud-gameplay105.patch', 'native-eud-repulse105.patch', 'native-eud-unitbytes105.patch', 'native-eud-memory105.patch', 'native-eud-drop105.patch', 'native-eud-noop105.patch', 'native-eud-player105.patch', 'native-eud-unitbytes-lifecycle105.patch', 'native-eud-player-ui105.patch', 'native-eud-queue105.patch', 'native-eud-pendingstatus105.patch', 'native-eud-fighter-queue105.patch', 'native-eud-wait105.patch', 'native-eud-drone105.patch', 'native-eud-queue-reservation105.patch', 'native-eud-deadunit105.patch', 'native-eud-cloak105.patch', 'native-eud-command105.patch', 'native-eud-command-resume105.patch', 'native-eud-deadmovement105.patch', 'native-eud-image105.patch', 'native-eud-image-empty105.patch', 'native-eud-image-save105.patch', 'native-eud-camera105.patch', 'native-eud-selection105.patch', 'native-eud-client105.patch', 'native-eud-client-lan105.patch', 'native-eud-location105.patch', 'native-eud-beacon105.patch', 'native-eud-placement105.patch', 'native-eud-text106.patch', 'native-eud-status108.patch', 'native-eud-commands108.patch', 'native-eud-graphics108.patch', 'native-eud-options109.patch', 'native-eud-repulse-layout109.patch', 'native-eud-wireframe109.patch', 'native-eud-ai109.patch', 'native-eud-ai-debug109.patch', 'native-eud-common109.patch', 'native-eud-shield-rate109.patch', 'native-eud-hotkeys109.patch', 'native-terrain110.patch', 'native-terrain110-fullgate.patch', 'native-terrain110-render-scope.patch', 'native-eud-commands110.patch', 'native-eud-flags110.patch', 'native-ums-bring110.patch', 'native-static-vector110.patch', 'native-ums-buttons111.patch', 'native-ums-powerups111.patch', 'native-ums-ctf111.patch', 'native-ums-ai111.patch', 'native-ums-triggerflow111.patch', 'native-ums-result-input111.patch', 'native-ums-cinematic111.patch', 'native-ums-center111.patch', 'native-ai-difficulty112.patch', 'native-ums-requests112.patch', 'native-ums-regions112.patch', 'native-ums-accounting112.patch', 'native-ums-presentation112.patch', 'native-gameplay113.patch', 'native-prerequisites113.patch', 'native-match-options113.patch', 'native-ui113.patch', 'native-campaign-buttons114.patch', 'native-ai-stall115.patch', 'native-fog115.patch', 'native-cjk116.patch', 'native-score-difficulty117.patch', 'native-transports117.patch', 'native-expansion117.patch', 'native-selection121.patch', 'native-traps122.patch', 'native-medic122.patch', 'native-command-census123.patch'):
++    for name in ('native-owners94.patch', 'native-terrain94.patch', 'native-minimap94.patch', 'native-eud95.patch', 'native-eud96.patch', 'native-eud97.patch', 'native-eud98.patch', 'native-eud99.patch', 'native-eud100.patch', 'native-eud101.patch', 'native-eud102.patch', 'native-eud-sight103.patch', 'native-eud-units103.patch', 'native-eud-grp103.patch', 'native-eud-redraw103.patch', 'native-eud-allocation103.patch', 'native-eud-hallucination103.patch', 'native-eud-palette104.patch', 'native-eud-pause104.patch', 'native-eud-movement105.patch', 'native-eud-mouse105.patch', 'native-eud-gameplay105.patch', 'native-eud-repulse105.patch', 'native-eud-unitbytes105.patch', 'native-eud-memory105.patch', 'native-eud-drop105.patch', 'native-eud-noop105.patch', 'native-eud-player105.patch', 'native-eud-unitbytes-lifecycle105.patch', 'native-eud-player-ui105.patch', 'native-eud-queue105.patch', 'native-eud-pendingstatus105.patch', 'native-eud-fighter-queue105.patch', 'native-eud-wait105.patch', 'native-eud-drone105.patch', 'native-eud-queue-reservation105.patch', 'native-eud-deadunit105.patch', 'native-eud-cloak105.patch', 'native-eud-command105.patch', 'native-eud-command-resume105.patch', 'native-eud-deadmovement105.patch', 'native-eud-image105.patch', 'native-eud-image-empty105.patch', 'native-eud-image-save105.patch', 'native-eud-camera105.patch', 'native-eud-selection105.patch', 'native-eud-client105.patch', 'native-eud-client-lan105.patch', 'native-eud-location105.patch', 'native-eud-beacon105.patch', 'native-eud-placement105.patch', 'native-eud-text106.patch', 'native-eud-status108.patch', 'native-eud-commands108.patch', 'native-eud-graphics108.patch', 'native-eud-options109.patch', 'native-eud-repulse-layout109.patch', 'native-eud-wireframe109.patch', 'native-eud-ai109.patch', 'native-eud-ai-debug109.patch', 'native-eud-common109.patch', 'native-eud-shield-rate109.patch', 'native-eud-hotkeys109.patch', 'native-terrain110.patch', 'native-terrain110-fullgate.patch', 'native-terrain110-render-scope.patch', 'native-eud-commands110.patch', 'native-eud-flags110.patch', 'native-ums-bring110.patch', 'native-static-vector110.patch', 'native-ums-buttons111.patch', 'native-ums-powerups111.patch', 'native-ums-ctf111.patch', 'native-ums-ai111.patch', 'native-ums-triggerflow111.patch', 'native-ums-result-input111.patch', 'native-ums-cinematic111.patch', 'native-ums-center111.patch', 'native-ai-difficulty112.patch', 'native-ums-requests112.patch', 'native-ums-regions112.patch', 'native-ums-accounting112.patch', 'native-ums-presentation112.patch', 'native-gameplay113.patch', 'native-prerequisites113.patch', 'native-match-options113.patch', 'native-ui113.patch', 'native-campaign-buttons114.patch', 'native-ai-stall115.patch', 'native-fog115.patch', 'native-cjk116.patch', 'native-score-difficulty117.patch', 'native-transports117.patch', 'native-expansion117.patch', 'native-selection121.patch', 'native-traps122.patch', 'native-medic122.patch', 'native-command-census123.patch', 'native-hd2-bodies.patch'):
+         apply_source_patch(fresh, name)
+     for source in fresh.rglob('*'):
+         if not source.is_file(): continue

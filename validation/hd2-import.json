@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "sourceSha256": {
+    "app/src/main/java/org/openbw/androidtest/Hd2SpritePack.java": "c3fafd3e09c8c75240453e168afb735325f72aa05cc3d0d332511b194600fdba",
+    "tests/Hd2SpritePackTest.java": "07871f2e6835ad3935d549fa03006e32cd9f8d6e329bafa081828db2a5affb90",
+    "tests/run_hd2_import.py": "8967badbdff0ac004c2e8c9994a207da22be0cdbef63a7620ff9dbd290176715"
+  },
+  "sampleZipSha256": "cc6da64d9b880403bfb82790c384d7429002c28b44766cc74fc8566eec7104a6",
+  "acceptedSampleImageIds": [
+    0,
+    5,
+    13,
+    122,
+    228
+  ],
+  "result": "PASS HD2 real ZIP, malformed inputs and replacement rollback (81 checks)",
+  "scope": "Production Java ZIP importer on the host JVM with a test validation callback. Checks five real sample bodies, six malformed/unsupported archives, failed validation and pointer commit, atomic subset replacement and Classic/HD2 persistence across fresh JVM processes. The Android picker, native image decode and on-device filesystem are separate checks."
+}

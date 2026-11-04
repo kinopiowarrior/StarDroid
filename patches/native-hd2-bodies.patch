@@ -1,0 +1,64 @@
+--- a/ui/ui.h
++++ b/ui/ui.h
+@@ -1227,11 +1227,51 @@
+ 	a_vector<uint8_t> temporary_warp_texture_buffer;
+ 	a_vector<uint8_t> temporary_cloak_background;
+ 
++#ifdef STARDROID_HD2_RUNTIME
++    stardroid::remastered::live::Palette hd2_palette;
++
++    void prepare_hd2_palette() {
++        hd2_palette.ready = false;
++        if (tileset_img.wpe.size() == 1024 && std::atomic_load(&stardroid::remastered::live::active_pack))
++            hd2_palette.prepare(tileset_img.wpe.data());
++    }
++
++    bool draw_hd2_body(const image_t* image, uint8_t* data, size_t pitch, size_t player_color) {
++        namespace hd2 = stardroid::remastered::live;
++        if (!hd2_palette.ready || game_st.eud_enabled95 || image != image->sprite->main_image ||
++            image->iscript_state.raw_mode98 || (image->flags & (image_t::flag_hidden | image_t::flag_y_frozen)) ||
++            (image->modifier != 0 && image->modifier != 1)) return false;
++
++        const unsigned id = unsigned(image->image_type->id);
++        size_t slot = 0;
++        while (slot < hd2::body_count && hd2::bodies[slot].id != id) ++slot;
++        if (slot == hd2::body_count || image->grp != global_st.image_grp[id]) return false;
++        const auto& expected = hd2::bodies[slot];
++        if (image->grp->width != expected.grp_width || image->grp->height != expected.grp_height ||
++            image->grp->frames.size() != expected.frames || image->frame_index >= expected.frames) return false;
++        const auto pack = std::atomic_load(&hd2::active_pack);
++        if (!pack || pack->poses[slot].empty()) return false;
++        const auto& pose = pack->poses[slot][image->frame_index];
++        if (pose.pixels.empty()) return false;
++
++        const auto center = get_image_center_map_position(image) - screen_pos;
++        const auto owner = image->sprite->owner;
++        const auto ramp = unit_player_colors101(owner, display_player_color(player_color, owner));
++        const auto* colors = tileset_img.wpe.data();
++        hd2::blit(pose, center.x, center.y, i_flag(image, image_t::flag_horizontally_flipped),
++                  colors + size_t(ramp[4]) * 4, hd2_palette, colors, data, pitch, int(screen_width), int(screen_height));
++        return true;
++    }
++#endif
++
+ 	void draw_image(const image_t* image, uint8_t* data, size_t data_pitch, size_t color_index, bool cloak_shimmer = false) {
+         const auto& source_frame105=image->grp->frame_at105(image->frame_index);
+         // Retail drawSprites tests the prepared width/height before calling
+         // any image drawing function. Empty source geometry needs no pixels.
+         if(!source_frame105.size.x||!source_frame105.size.y)return;
++#ifdef STARDROID_HD2_RUNTIME
++        if (!cloak_shimmer && draw_hd2_body(image, data, data_pitch, color_index)) return;
++#endif
+ 
+ 		if (is_new_image(image)) {
+ 			image_draw_queue.push_back(image);
+@@ -2729,6 +2769,9 @@
+ 			palette_colors[i].a = tileset_img.wpe[4 * i + 3];
+ 		}
+ 		palette->set_colors(palette_colors);
++#ifdef STARDROID_HD2_RUNTIME
++        prepare_hd2_palette();
++#endif
+ 	}
+ 
+ 	void reset() {
