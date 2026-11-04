@@ -5,7 +5,7 @@
      compileSdk 35
      buildToolsVersion '35.0.0'
 -    defaultConfig { applicationId 'org.openbw.androidtest'; minSdk 26; targetSdk 35; versionCode 124; versionName '1.5.4' }
-+    defaultConfig { applicationId 'org.openbw.androidtest'; minSdk 26; targetSdk 35; versionCode 124; versionName '1.5.4-hd2-preview1' }
++    defaultConfig { applicationId 'org.openbw.androidtest'; minSdk 26; targetSdk 35; versionCode 124; versionName '1.5.4-hd2-preview2' }
      buildFeatures { buildConfig true }
      signingConfigs {
          if (releaseKeyPath) {
@@ -14,7 +14,7 @@
 @@ -1,5 +1,5 @@
  <?xml version="1.0" encoding="utf-8"?>
 -<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.openbw.androidtest" android:versionCode="124" android:versionName="1.5.4">
-+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.openbw.androidtest" android:versionCode="124" android:versionName="1.5.4-hd2-preview1">
++<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.openbw.androidtest" android:versionCode="124" android:versionName="1.5.4-hd2-preview2">
      <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="35" />
      <uses-permission android:name="android.permission.INTERNET" />
      <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -147,7 +147,17 @@
    private final ControlSettings controls = new ControlSettings();
    private final GamepadControls gamepad = new GamepadControls();
    private final DesktopSettings desktopSettings = new DesktopSettings();
-@@ -298,10 +299,31 @@
+@@ -46,6 +47,9 @@
+   private JSONArray missions;
+   private JSONObject commandMaps, currentMission;
+   private Bitmap world;
++  private int worldWidth, worldHeight;
++  // Updated from the actual hardware Canvas before a mission normally starts.
++  private int maxBitmapWidth = 2048, maxBitmapHeight = 2048;
+   private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+   private int lobbyColorSlot=-1;
+   private boolean lobbyColorRoom;
+@@ -298,10 +302,32 @@
      NativeArt.setSmoothGraphics(smoothGraphics);
    }
  
@@ -165,9 +175,10 @@
 +        catch (IOException error) { AppDiagnostics.recordFailure("HD2 sprite selection", error); }
 +        activeHd2Directory = "";
 +        activity.hd2Unavailable();
-+        return;
++      } else {
++        activeHd2Directory = path;
 +      }
-+      activeHd2Directory = path;
++      if (activeGame && world != null) allocateWorldBitmap();
 +    }
 +  }
 +
@@ -179,7 +190,7 @@
            lastTime = 0;
            if (audio != null) audio.foreground(true);
            syncAudio();
-@@ -535,6 +557,7 @@
+@@ -535,6 +561,7 @@
        if (hud != null) hud.close();
        closeGlue();
        closeBriefMovies();
@@ -187,9 +198,61 @@
        NativeBridge.close();
      }
    }
+@@ -1355,6 +1382,21 @@
+   }
+ 
+   private void renderCanvas(Canvas c, double dt) {
++    int maxW = c.getMaximumBitmapWidth(), maxH = c.getMaximumBitmapHeight();
++    if (maxW != maxBitmapWidth || maxH != maxBitmapHeight) {
++      maxBitmapWidth = maxW;
++      maxBitmapHeight = maxH;
++      if (activeGame && world != null) {
++        Bitmap previous = world;
++        allocateWorldBitmap();
++        if (world != previous) {
++          // A new surface can have different texture limits. Keep this already
++          // rendered frame until the next tick, without running the UI twice.
++          new Canvas(world).drawBitmap(previous, null,
++              new Rect(0, 0, world.getWidth(), world.getHeight()), NativeArt.PIXELS);
++        }
++      }
++    }
+     c.drawColor(Color.BLACK);
+     float scale = Math.min(c.getWidth() / (float)logicalWidth, c.getHeight() / 480f);
+     int save = c.save();
+@@ -3996,8 +4038,28 @@
+     NativeBridge.resize(w, h, zoom);
+     syncControls();
+     NativeBridge.command(21, Math.round((480 - NativeHud.WORLD_BOTTOM) / zoom), 0, 0, 0);
+-    world = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
++    worldWidth = w;
++    worldHeight = h;
++    allocateWorldBitmap();
+     accumulator = 0;
++  }
++
++  private void allocateWorldBitmap() {
++    boolean hd = activeHd2Directory != null && !activeHd2Directory.isEmpty()
++        && NativeBridge.value(41, 0) == 0;  // EUD maps use their original indexed graphics.
++    int scale = Hd2FrameSize.scale(hd, worldWidth, worldHeight, maxBitmapWidth, maxBitmapHeight);
++    int w = worldWidth * scale, h = worldHeight * scale;
++    if (world != null && world.getWidth() == w && world.getHeight() == h) return;
++    if (scale == 2) {
++      try {
++        world = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
++        return;
++      } catch (OutOfMemoryError allocationFailed) {
++        // Keep the same camera and touch mapping on memory-constrained phones.
++        if (world != null && world.getWidth() == worldWidth && world.getHeight() == worldHeight) return;
++      }
++    }
++    world = Bitmap.createBitmap(worldWidth, worldHeight, Bitmap.Config.ARGB_8888);
+   }
+ 
+   private void loadMission(JSONObject mission) {
 --- a/native/runtime.cpp
 +++ b/native/runtime.cpp
-@@ -45,7 +45,24 @@
+@@ -45,7 +45,54 @@
  void js_sound_stop(int ch){naudio::stop(ch);}
  void js_sound_set_volume(int ch,int vol){std::lock_guard<std::mutex> l(naudio::mutex);if(ch>=0&&ch<64)naudio::voices[ch].left=naudio::voices[ch].right=vol/128.f;}
  }
@@ -211,10 +274,40 @@
 +    return count;
 +}
 +
++// The game window and all input coordinates are logical world pixels. Only the
++// Android output target can be twice as dense. Resolve directly into its rows
++// after one UI update, preserving alpha byte order and the client's row padding.
++static void render_world_pixels(uint8_t* dst, size_t stride_bytes, unsigned width,
++                                unsigned height, double now_ms) {
++    if (!g_ui) return;
++    const int logical_width = openbw_framebuffer_width();
++    const int logical_height = openbw_framebuffer_height();
++    if (logical_width <= 0 || logical_height <= 0) return;
++    const bool doubled = dst && uint64_t(logical_width) * 2 == width &&
++                                uint64_t(logical_height) * 2 == height;
++    if (dst) {
++        const bool logical = width == unsigned(logical_width) && height == unsigned(logical_height);
++        if ((!logical && !doubled) || (doubled && uint64_t(width) * height > 16u * 1024u * 1024u))
++            throw std::runtime_error("Unexpected battlefield bitmap dimensions");
++        if (stride_bytes < size_t(width) * 4 || stride_bytes > std::numeric_limits<size_t>::max() / height)
++            throw std::runtime_error("Invalid battlefield bitmap stride");
++    }
++    g_ui->external_minimap = true;
++    g_ui->hd2_output_requested = doubled;
++    openbw_render(now_ms);
++    const uint8_t* classic = openbw_framebuffer();
++    if (!dst || !classic) return;
++    const size_t classic_pitch = size_t(logical_width) * 4;
++    if (doubled) g_ui->present_hd2(dst, stride_bytes, classic, classic_pitch);
++    else if (stride_bytes == classic_pitch) std::memcpy(dst, classic, classic_pitch * height);
++    else for (unsigned y = 0; y < height; ++y)
++        std::memcpy(dst + y * stride_bytes, classic + y * classic_pitch, classic_pitch);
++}
++
  #include "patch_probe119.h"
  #include "optional_audio102.h"
  #include "hero_mode.h"
-@@ -310,8 +327,16 @@
+@@ -310,8 +357,16 @@
  static std::string utf(JNIEnv* e,jstring s){if(!s)return "";const char* p=e->GetStringUTFChars(s,nullptr);std::string out(p);e->ReleaseStringUTFChars(s,p);return out;}
  static jbyteArray bytes(JNIEnv* e,const uint8_t* p,size_t n){jbyteArray a=e->NewByteArray(n);if(n)e->SetByteArrayRegion(a,0,n,(const jbyte*)p);return a;}
  static void bitmap(JNIEnv* e,jobject target,const uint8_t* p,int w,int h){if(!target||!p)return;AndroidBitmapInfo info;if(AndroidBitmap_getInfo(e,target,&info)||info.width!=unsigned(w)||info.height!=unsigned(h)||info.format!=ANDROID_BITMAP_FORMAT_RGBA_8888)throw std::runtime_error("Bitmap dimensions differ");void* out=nullptr;if(AndroidBitmap_lockPixels(e,target,&out))throw std::runtime_error("Bitmap is unavailable");for(int y=0;y<h;y++)memcpy((uint8_t*)out+y*info.stride,p+size_t(y)*w*4,size_t(w)*4);AndroidBitmap_unlockPixels(e,target);}
@@ -232,6 +325,34 @@
  JNI(init) void JNICALL Java_org_openbw_androidtest_NativeBridge_init(JNIEnv* e,jclass,jint w,jint h,jint code,jint race){try{close_game();if(code>0)openbw_init_campaign(w,h,code);else {
   if(custom_bot_slot>0)openbw_init_race_ai(w,h,race,custom_bot_slot,custom_ai_race);
   else openbw_init(w,h,race,0);
+@@ -369,7 +424,26 @@
+ JNI(multiplayerPeerLeft) void JNICALL Java_org_openbw_androidtest_NativeBridge_multiplayerPeerLeft(JNIEnv* e,jclass){try{net_peer_left();}catch(const std::exception& x){fail(e,x);}}
+ JNI(resize) void JNICALL Java_org_openbw_androidtest_NativeBridge_resize(JNIEnv* e,jclass,jint w,jint h,jdouble scale){try{openbw_resize(w,h);openbw_set_view_scale(scale);}catch(const std::exception& x){fail(e,x);}}
+ JNI(step) void JNICALL Java_org_openbw_androidtest_NativeBridge_step(JNIEnv* e,jclass){try{if(!native_replay::seeking)native_step();}catch(const std::exception& x){fail(e,x);}}
+-JNI(frame) void JNICALL Java_org_openbw_androidtest_NativeBridge_frame(JNIEnv* e,jclass,jobject b,jint steps,jdouble time){try{if(native_replay::seeking)native_replay::pump_seek();else for(int i=0;i<steps;i++)native_step();if(g_ui)g_ui->external_minimap=true;openbw_render(time);bitmap(e,b,openbw_framebuffer(),openbw_framebuffer_width(),openbw_framebuffer_height());}catch(const std::exception& x){fail(e,x);}}
++JNI(frame) void JNICALL Java_org_openbw_androidtest_NativeBridge_frame(JNIEnv* e, jclass, jobject target,
++                                                                       jint steps, jdouble time) {
++    try {
++        if (native_replay::seeking) native_replay::pump_seek();
++        else for (int i = 0; i < steps; ++i) native_step();
++        if (!target || !g_ui) { render_world_pixels(nullptr, 0, 0, 0, time); return; }
++        AndroidBitmapInfo info{};
++        if (AndroidBitmap_getInfo(e, target, &info) || info.format != ANDROID_BITMAP_FORMAT_RGBA_8888)
++            throw std::runtime_error("Battlefield needs an RGBA bitmap");
++        void* pixels = nullptr;
++        if (AndroidBitmap_lockPixels(e, target, &pixels)) throw std::runtime_error("Battlefield bitmap is unavailable");
++        try {
++            render_world_pixels(static_cast<uint8_t*>(pixels), info.stride, info.width, info.height, time);
++        } catch (...) {
++            AndroidBitmap_unlockPixels(e, target);
++            throw;
++        }
++        AndroidBitmap_unlockPixels(e, target);
++    } catch (const std::exception& ex) { fail(e, ex); }
++}
+ JNI(text) jstring JNICALL Java_org_openbw_androidtest_NativeBridge_text(JNIEnv* e,jclass,jint id){try{return e->NewStringUTF(text_query(id));}catch(const std::exception& x){fail(e,x);return nullptr;}}
+ JNI(rawText) jbyteArray JNICALL Java_org_openbw_androidtest_NativeBridge_rawText(JNIEnv* e,jclass,jint id){try{const char* s=text_query(id);return bytes(e,reinterpret_cast<const uint8_t*>(s),strlen(s));}catch(const std::exception& x){fail(e,x);return nullptr;}}
+ // Independent reader: background map imports never replace the live game's archive.
 --- a/scripts/prepare_native.py
 +++ b/scripts/prepare_native.py
 @@ -120,7 +120,7 @@
@@ -239,7 +360,7 @@
      if 'OPENBW_NATIVE_MINIMAP' not in s:s=s.replace(anchor,'\t\t// OPENBW_NATIVE_MINIMAP\n\t\tconst size_t largest = std::max(minimap_width, minimap_height);\n\t\tminimap_width = (minimap_width * 128 + largest / 2) / largest;\n\t\tminimap_height = (minimap_height * 128 + largest / 2) / largest;\n'+anchor,1)
      write(p,s)
 -    for name in ('native-owners94.patch', 'native-terrain94.patch', 'native-minimap94.patch', 'native-eud95.patch', 'native-eud96.patch', 'native-eud97.patch', 'native-eud98.patch', 'native-eud99.patch', 'native-eud100.patch', 'native-eud101.patch', 'native-eud102.patch', 'native-eud-sight103.patch', 'native-eud-units103.patch', 'native-eud-grp103.patch', 'native-eud-redraw103.patch', 'native-eud-allocation103.patch', 'native-eud-hallucination103.patch', 'native-eud-palette104.patch', 'native-eud-pause104.patch', 'native-eud-movement105.patch', 'native-eud-mouse105.patch', 'native-eud-gameplay105.patch', 'native-eud-repulse105.patch', 'native-eud-unitbytes105.patch', 'native-eud-memory105.patch', 'native-eud-drop105.patch', 'native-eud-noop105.patch', 'native-eud-player105.patch', 'native-eud-unitbytes-lifecycle105.patch', 'native-eud-player-ui105.patch', 'native-eud-queue105.patch', 'native-eud-pendingstatus105.patch', 'native-eud-fighter-queue105.patch', 'native-eud-wait105.patch', 'native-eud-drone105.patch', 'native-eud-queue-reservation105.patch', 'native-eud-deadunit105.patch', 'native-eud-cloak105.patch', 'native-eud-command105.patch', 'native-eud-command-resume105.patch', 'native-eud-deadmovement105.patch', 'native-eud-image105.patch', 'native-eud-image-empty105.patch', 'native-eud-image-save105.patch', 'native-eud-camera105.patch', 'native-eud-selection105.patch', 'native-eud-client105.patch', 'native-eud-client-lan105.patch', 'native-eud-location105.patch', 'native-eud-beacon105.patch', 'native-eud-placement105.patch', 'native-eud-text106.patch', 'native-eud-status108.patch', 'native-eud-commands108.patch', 'native-eud-graphics108.patch', 'native-eud-options109.patch', 'native-eud-repulse-layout109.patch', 'native-eud-wireframe109.patch', 'native-eud-ai109.patch', 'native-eud-ai-debug109.patch', 'native-eud-common109.patch', 'native-eud-shield-rate109.patch', 'native-eud-hotkeys109.patch', 'native-terrain110.patch', 'native-terrain110-fullgate.patch', 'native-terrain110-render-scope.patch', 'native-eud-commands110.patch', 'native-eud-flags110.patch', 'native-ums-bring110.patch', 'native-static-vector110.patch', 'native-ums-buttons111.patch', 'native-ums-powerups111.patch', 'native-ums-ctf111.patch', 'native-ums-ai111.patch', 'native-ums-triggerflow111.patch', 'native-ums-result-input111.patch', 'native-ums-cinematic111.patch', 'native-ums-center111.patch', 'native-ai-difficulty112.patch', 'native-ums-requests112.patch', 'native-ums-regions112.patch', 'native-ums-accounting112.patch', 'native-ums-presentation112.patch', 'native-gameplay113.patch', 'native-prerequisites113.patch', 'native-match-options113.patch', 'native-ui113.patch', 'native-campaign-buttons114.patch', 'native-ai-stall115.patch', 'native-fog115.patch', 'native-cjk116.patch', 'native-score-difficulty117.patch', 'native-transports117.patch', 'native-expansion117.patch', 'native-selection121.patch', 'native-traps122.patch', 'native-medic122.patch', 'native-command-census123.patch'):
-+    for name in ('native-owners94.patch', 'native-terrain94.patch', 'native-minimap94.patch', 'native-eud95.patch', 'native-eud96.patch', 'native-eud97.patch', 'native-eud98.patch', 'native-eud99.patch', 'native-eud100.patch', 'native-eud101.patch', 'native-eud102.patch', 'native-eud-sight103.patch', 'native-eud-units103.patch', 'native-eud-grp103.patch', 'native-eud-redraw103.patch', 'native-eud-allocation103.patch', 'native-eud-hallucination103.patch', 'native-eud-palette104.patch', 'native-eud-pause104.patch', 'native-eud-movement105.patch', 'native-eud-mouse105.patch', 'native-eud-gameplay105.patch', 'native-eud-repulse105.patch', 'native-eud-unitbytes105.patch', 'native-eud-memory105.patch', 'native-eud-drop105.patch', 'native-eud-noop105.patch', 'native-eud-player105.patch', 'native-eud-unitbytes-lifecycle105.patch', 'native-eud-player-ui105.patch', 'native-eud-queue105.patch', 'native-eud-pendingstatus105.patch', 'native-eud-fighter-queue105.patch', 'native-eud-wait105.patch', 'native-eud-drone105.patch', 'native-eud-queue-reservation105.patch', 'native-eud-deadunit105.patch', 'native-eud-cloak105.patch', 'native-eud-command105.patch', 'native-eud-command-resume105.patch', 'native-eud-deadmovement105.patch', 'native-eud-image105.patch', 'native-eud-image-empty105.patch', 'native-eud-image-save105.patch', 'native-eud-camera105.patch', 'native-eud-selection105.patch', 'native-eud-client105.patch', 'native-eud-client-lan105.patch', 'native-eud-location105.patch', 'native-eud-beacon105.patch', 'native-eud-placement105.patch', 'native-eud-text106.patch', 'native-eud-status108.patch', 'native-eud-commands108.patch', 'native-eud-graphics108.patch', 'native-eud-options109.patch', 'native-eud-repulse-layout109.patch', 'native-eud-wireframe109.patch', 'native-eud-ai109.patch', 'native-eud-ai-debug109.patch', 'native-eud-common109.patch', 'native-eud-shield-rate109.patch', 'native-eud-hotkeys109.patch', 'native-terrain110.patch', 'native-terrain110-fullgate.patch', 'native-terrain110-render-scope.patch', 'native-eud-commands110.patch', 'native-eud-flags110.patch', 'native-ums-bring110.patch', 'native-static-vector110.patch', 'native-ums-buttons111.patch', 'native-ums-powerups111.patch', 'native-ums-ctf111.patch', 'native-ums-ai111.patch', 'native-ums-triggerflow111.patch', 'native-ums-result-input111.patch', 'native-ums-cinematic111.patch', 'native-ums-center111.patch', 'native-ai-difficulty112.patch', 'native-ums-requests112.patch', 'native-ums-regions112.patch', 'native-ums-accounting112.patch', 'native-ums-presentation112.patch', 'native-gameplay113.patch', 'native-prerequisites113.patch', 'native-match-options113.patch', 'native-ui113.patch', 'native-campaign-buttons114.patch', 'native-ai-stall115.patch', 'native-fog115.patch', 'native-cjk116.patch', 'native-score-difficulty117.patch', 'native-transports117.patch', 'native-expansion117.patch', 'native-selection121.patch', 'native-traps122.patch', 'native-medic122.patch', 'native-command-census123.patch', 'native-hd2-bodies.patch'):
++    for name in ('native-owners94.patch', 'native-terrain94.patch', 'native-minimap94.patch', 'native-eud95.patch', 'native-eud96.patch', 'native-eud97.patch', 'native-eud98.patch', 'native-eud99.patch', 'native-eud100.patch', 'native-eud101.patch', 'native-eud102.patch', 'native-eud-sight103.patch', 'native-eud-units103.patch', 'native-eud-grp103.patch', 'native-eud-redraw103.patch', 'native-eud-allocation103.patch', 'native-eud-hallucination103.patch', 'native-eud-palette104.patch', 'native-eud-pause104.patch', 'native-eud-movement105.patch', 'native-eud-mouse105.patch', 'native-eud-gameplay105.patch', 'native-eud-repulse105.patch', 'native-eud-unitbytes105.patch', 'native-eud-memory105.patch', 'native-eud-drop105.patch', 'native-eud-noop105.patch', 'native-eud-player105.patch', 'native-eud-unitbytes-lifecycle105.patch', 'native-eud-player-ui105.patch', 'native-eud-queue105.patch', 'native-eud-pendingstatus105.patch', 'native-eud-fighter-queue105.patch', 'native-eud-wait105.patch', 'native-eud-drone105.patch', 'native-eud-queue-reservation105.patch', 'native-eud-deadunit105.patch', 'native-eud-cloak105.patch', 'native-eud-command105.patch', 'native-eud-command-resume105.patch', 'native-eud-deadmovement105.patch', 'native-eud-image105.patch', 'native-eud-image-empty105.patch', 'native-eud-image-save105.patch', 'native-eud-camera105.patch', 'native-eud-selection105.patch', 'native-eud-client105.patch', 'native-eud-client-lan105.patch', 'native-eud-location105.patch', 'native-eud-beacon105.patch', 'native-eud-placement105.patch', 'native-eud-text106.patch', 'native-eud-status108.patch', 'native-eud-commands108.patch', 'native-eud-graphics108.patch', 'native-eud-options109.patch', 'native-eud-repulse-layout109.patch', 'native-eud-wireframe109.patch', 'native-eud-ai109.patch', 'native-eud-ai-debug109.patch', 'native-eud-common109.patch', 'native-eud-shield-rate109.patch', 'native-eud-hotkeys109.patch', 'native-terrain110.patch', 'native-terrain110-fullgate.patch', 'native-terrain110-render-scope.patch', 'native-eud-commands110.patch', 'native-eud-flags110.patch', 'native-ums-bring110.patch', 'native-static-vector110.patch', 'native-ums-buttons111.patch', 'native-ums-powerups111.patch', 'native-ums-ctf111.patch', 'native-ums-ai111.patch', 'native-ums-triggerflow111.patch', 'native-ums-result-input111.patch', 'native-ums-cinematic111.patch', 'native-ums-center111.patch', 'native-ai-difficulty112.patch', 'native-ums-requests112.patch', 'native-ums-regions112.patch', 'native-ums-accounting112.patch', 'native-ums-presentation112.patch', 'native-gameplay113.patch', 'native-prerequisites113.patch', 'native-match-options113.patch', 'native-ui113.patch', 'native-campaign-buttons114.patch', 'native-ai-stall115.patch', 'native-fog115.patch', 'native-cjk116.patch', 'native-score-difficulty117.patch', 'native-transports117.patch', 'native-expansion117.patch', 'native-selection121.patch', 'native-traps122.patch', 'native-medic122.patch', 'native-command-census123.patch', 'native-hd2-bodies.patch', 'native-hd2-compositor.patch'):
          apply_source_patch(fresh, name)
      for source in fresh.rglob('*'):
          if not source.is_file(): continue

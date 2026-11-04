@@ -1,6 +1,6 @@
 # Remastered renderer integration plan
 
-This plan records the original 2× host prototype and the requirements for a full-color renderer. The [1.5.4 Android preview](HD2-ANDROID-PREVIEW.md) implements an intermediate step using the existing indexed battlefield surface. It can import and draw five unit bodies in normal gameplay.
+This plan records the original 2× host prototype and the requirements for a full-color renderer. The [1.5.4 Android preview](HD2-ANDROID-PREVIEW.md) imports five unit bodies for normal gameplay. Preview 1 used the existing indexed battlefield surface. Preview 2 draws their native HD2 samples on a denser Android output bitmap.
 
 ## Current rendering path
 
@@ -61,8 +61,8 @@ python3 tests/run_remastered_scene.py \
 
 The geometry runner supports `--previews` for diagnostic captures. Captures contain caller-owned artwork and must stay private. Reports contain hashes and numerical results only. The scene runner is a host C++ experiment, not an Android build step.
 
-## Higher-resolution Android milestone
+## Android output and remaining work
 
-Integrate ordered RGBA composition into the app's actual renderer, preserving the full image stack and fog/UI order described above. Add a separate render scale without changing touch coordinates or the world viewport, then implement a bounded graphics-pack import/cache lifecycle. Use classic rendering for unsupported assets, modifiers and EUD changes. No release toggle should be exposed until these paths work together.
+Preview 2 composites the five supported unit bodies at HD2 resolution in the live game’s draw order. A denser Android bitmap covers the same world viewport. Classic foreground writes remove covered HD samples, and the game’s fog level shades the surviving sprite samples. Classic image effects that read their background can use the indexed representation for the specific pixels they touch. The app imports the same five files and honors the existing Classic/HD2 selection.
 
-Acceptance checks must add shadows, selection and other overlays, remembered buildings, cloak/distortion effects, viewport zoom, save/load and live data replacement. Compare a matching retail HD scene and measure device frame time/memory. The current host body scene is useful evidence for one subset, not completion of this Android milestone.
+Remaining work includes additional asset types and references, terrain and interface art, retail lighting, and phone performance measurements on crowded maps. See [the Android preview guide](HD2-ANDROID-PREVIEW.md) for the current inputs and hardware test status.

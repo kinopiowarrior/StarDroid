@@ -1,6 +1,6 @@
 {
   "passed": true,
-  "scope": "Host test using the Android native game renderer and campaign loader. Five normal body images, classic palette and world resolution. No physical device or performance result.",
+  "scope": "Host test using the Android native game renderer and campaign loader. Five normal body images on the 2x Android presentation target, including original foreground GRP coverage. The camera and input use the logical viewport. No physical device or performance result.",
   "sourceSha256": {
     "app/src/main/assets/native/weave.scx": "1956cdf864ca30a5f5e6c438857ba715d07bfb80988077cbefae8431c63e0a94",
     "native/audio.h": "e6ad1bb2b04d08ced4fa9bafe5f49dfff6034f1faf42ba5e1f30c7e0ff91c15f",
@@ -14,10 +14,11 @@
     "native/optional_audio102.h": "280112df749c1d287f12e006fecca8c0ca100137dca47ae9401a84d14e8337a0",
     "native/patch_probe119.h": "9e36ddf2ec10b8bd1bdec1d5269893900b001b583cd95d5d13436056d35a89e8",
     "native/remastered/assets.h": "1f6eb55a53b5f5d12a3425d0fb728d98e586bf7fd0629d8a8dd79489441f815c",
+    "native/remastered/compositor.h": "ee73d81fd97cfa3d5320569785ef70adcaf9e98477ddcad39ea28b1f8638ee7e",
     "native/remastered/geometry.h": "6b0db4ddea7d0177fcf35cf8197a903969349bc2938bc075c4dac59067f828b7",
-    "native/remastered/runtime.h": "9e5d5ddac5ce2106470ad5d74a34b0b116043ee27e9c2d345e2f1af29ef35533",
+    "native/remastered/runtime.h": "efa5157f1197dc1af401e8cf4aaf0310b91f6a15091325281ec0eef9dc2143d3",
     "native/replay.h": "8751d24c7c324f65c3db27d814b5b6b21328ca7fb90cb834ccb336ce42680106",
-    "native/runtime.cpp": "d1281fdf66e76e794961a1043506d59d0d058c0d8448eb0925369c640672e0d1",
+    "native/runtime.cpp": "bc308e09e74a4d197a949d0c64330296cc467c6815445b648db046d2f56fdd36",
     "native/save_state.h": "a95b736930bd233a917b6359fdd9d4bf5a02a68d0f2a78594841298734432e5a",
     "native/ums_compat.h": "ad831f3d7890d122cb712d2c18171be68d7d1407989ae9794f66461b15991488",
     "native-engine/actions.h": "1ba034f982351a45afeec17b60fd551d241328ac31b337de46d0682fee963b05",
@@ -390,7 +391,7 @@
     "native-engine/ui/native_window.h": "9f04edbe6e869962bc0da62e135166d4d535180512244f521a8b943d90247093",
     "native-engine/ui/native_window_drawing.h": "52eaa67b768d2c0bdaee0be64bcfdcd3ae79b414463749e4806cb588049ef072",
     "native-engine/ui/sdl2.cpp": "406b1c9d10dd2c79fe7a68f821daf8f2f7061b9fbf1988f8884414e2ba66b1d7",
-    "native-engine/ui/ui.h": "27a77e9e5724ef1bd23f3e5f60afbf5da25da64c15aa6572cbf45c5448be054d",
+    "native-engine/ui/ui.h": "ebad8c2ed4b87b9308ef2df5858e68dac75eb1c6cdee0d5ec25521546f3fa7e9",
     "native-engine/util.h": "779cd2d92761c144b2cd31a4f5d36de468b102652bffe5a19e9150c07ba6f3e1",
     "native-engine/web/ai_difficulty112.h": "9b2a1f956b7e8e117dfe1a9ce35d8c7f65aee2828a2cafeef3880f56b18043c5",
     "native-engine/web/bridge.cpp": "938aa7b24127c1c3adc6d3bc8ca2d6cec5cbac31522b41cea3fff27f2622ea03",
@@ -433,7 +434,7 @@
     "native-engine/web/eud_views97.h": "1a29868ee03fe0f2fd0d22c9283bc8852a0d5451d6af983f49aa7e1e1ba49fd3",
     "native-engine/web/play.cpp": "09898fbed675eb137befd824ef9dd35d3ee2a3e4ce2769b7590ba0d2e6e55e9a",
     "native-engine/web/replay_controls100.h": "d8ba30d5c3b3547f675e1f093e15649f1e218784ea6368bdc4c9b6e8d8bc3ae9",
-    "native-engine/web/sandbox.h": "a6199d9fbbfe87a01f7793b7308889026049c1aa5eff66079a2adc31cbd2c658",
+    "native-engine/web/sandbox.h": "a6118430edff0288ba7eca1a78cf06351b296210c02b345be18f8f0e969628fc",
     "native-engine/web/ums_center_view111.h": "b940aafa24165c7a30d133dccecf56cc4da21542e9b10a1fcc1885d788d879fa",
     "native-engine/web/ums_center_view112.h": "50fef28647ec80c851407bd2c56c18d9b98ac91ffd1a89f4b1bb501e294f8230",
     "native-engine/web/wasm_backend.cpp": "9dd773dd80d3cd6f3230f1920342441a3a64b4b50d74e79f13262bb2ef5862ec",
@@ -543,6 +544,7 @@
     "patches/native-gameplay.patch": "327b7b1b36dd32ea7f06d3ca8bc1b3beac37a19b8f91938bb687521b1ef45356",
     "patches/native-gameplay113.patch": "c97b519694519d0f8fbc0fc7636307f66ab40b39c5cc80db0d06e23ac5e7667e",
     "patches/native-hd2-bodies.patch": "5779ea64c870a6fc049d6bc7779a3277ac8204a443182dcaca602a57a5fee907",
+    "patches/native-hd2-compositor.patch": "49fccda948387b758165f2497a5a249afb6048cbcf6db7135e08e94830e27871",
     "patches/native-hero-rescue11.patch": "95c180b354a1f69ce3c2ee69c51337d24e188f096dfaa35b874f1b56223a39db",
     "patches/native-hotkeys11.patch": "55a71e9908dffe77d5aa24508c140efeced2302a10f5d035cfd4c129dabdeeed",
     "patches/native-map-invincibility11.patch": "2bfc8910d558e87ec2b7fec9115bc95ba061f860c6254bff797a267cfa1935f8",
@@ -627,9 +629,9 @@
     "patches/native-unit-names79.patch": "b09b2ffcc193de2b2ab28b34aef78ab0f1fbfec99c85d64394316e559fd336f0",
     "patches/native-upgrades1.patch": "780b4beaa60d8897128202322f0852ba091b390b6eff5f9b53c2b9cfea007811",
     "patches/native-wireframes11.patch": "763547e1ab053ee612665718e5810d35fcbe39263a8308960e4fedd3a75ac25a",
-    "scripts/prepare_native.py": "81e20a43d15b72301bebc9dd20ba2b9bd3f32e2f0563896e831d2b7b1dd27cdd",
-    "tests/native_hd2_live.cpp": "7c8bb332f9f6f53e99a556517ab2602d001b0be6bb38883d065103748560c820",
-    "tests/run_hd2_live.py": "dd720bac745fa6a95f6679d18ba3081d8948b6393ea8b55e185fceb288b9914b",
+    "scripts/prepare_native.py": "4ca13a451ab26e9a04a5c302aa2744741cc4290d10b8311dad51ed474709849d",
+    "tests/native_hd2_live.cpp": "716f65923eaf2f4fedfb483a3de5d38d55fb3ad0fc2de77eb4c3d3dc5193d22e",
+    "tests/run_hd2_live.py": "85d16da7eca74e93b025cbce8d3e8e85074d88055686b052deda31623b92718f",
     "vendor/libsmacker/smacker.c": "d2a9adda0f8d36e952cdb44ec2fefbbe1f4146319272e779eed15f6c06a813a5",
     "vendor/libsmacker/smacker.h": "4bcf855b32bc6a69ca2d6df65bcbf628d939ad89866313553eb5f2de598e29c8",
     "vendor/libsmacker/smk_malloc.h": "ccb52a95f587a9b7968433280c198ddadc726288d454102729d638f9d5d82353"
@@ -650,32 +652,32 @@
   "steps": [
     {
       "name": "compile libsmacker",
-      "seconds": 0.47,
+      "seconds": 0.45,
       "output": []
     },
     {
       "name": "compile renderer harness",
-      "seconds": 34.96,
+      "seconds": 29.9,
       "output": []
     },
     {
       "name": "normal framebuffer and simulation",
-      "seconds": 7.48,
+      "seconds": 6.91,
       "output": [
-        "PASS original First Strike Dragoon: 1076 changed framebuffer pixels",
-        "PASS image 0: 308 changed pixels",
-        "PASS image 5: 431 changed pixels",
-        "PASS image 13: 831 changed pixels",
-        "PASS image 122: 1081 changed pixels",
-        "PASS image 228: 352 changed pixels",
-        "PASS classic foreground occlusion: 184 pixels; iscript poses: 5",
-        "RESULT {\"passed\":true,\"checks\":352,\"supportedBodies\":5,\"mission\":\"First Strike\"}"
+        "PASS original First Strike Dragoon: 4431 changed framebuffer pixels",
+        "PASS image 0: 1220 changed pixels",
+        "PASS image 5: 1686 changed pixels",
+        "PASS image 13: 3276 changed pixels",
+        "PASS image 122: 4472 changed pixels",
+        "PASS image 228: 1369 changed pixels",
+        "PASS classic foreground occlusion: 720 pixels; iscript poses: 5",
+        "RESULT {\"passed\":true,\"checks\":1614,\"supportedBodies\":5,\"mission\":\"First Strike\"}"
       ]
     }
   ],
   "result": {
     "passed": true,
-    "checks": 352,
+    "checks": 1614,
     "supportedBodies": 5,
     "mission": "First Strike"
   }

@@ -23,18 +23,28 @@ static std::vector<uint8_t> world() {
 }
 static Pixels screen() {
     g_ui->external_minimap = true;
-    openbw_render(0);
+    // Compare the same physical area in both modes. In Classic, reproduce the
+    // nearest-neighbor 2x display of the logical world used by the reference.
+    const bool hd = bool(std::atomic_load(&stardroid::remastered::live::active_pack));
+    const unsigned density = hd ? 2 : 1;
+    const size_t row = width * density;
+    Pixels bitmap(row * height * density);
+    render_world_pixels(reinterpret_cast<uint8_t*>(bitmap.data()), row * 4,
+                        unsigned(row), height * density, 0.0);
     check(openbw_framebuffer_width() == width && openbw_framebuffer_height() == height, "World viewport changed");
-    Pixels result(width * height);
-    std::memcpy(result.data(), openbw_framebuffer(), result.size() * sizeof(uint32_t));
+    if (hd) return bitmap;
+    Pixels result(width * 2 * height * 2);
+    for (int y = 0; y < height * 2; ++y) {
+        for (int x = 0; x < width * 2; ++x) result[y * width * 2 + x] = bitmap[(y/2)*width + x/2];
+    }
     return result;
 }
 static Pixels crop(const Pixels& frame, xy position, int radius = 48) {
     const auto center = position - g_ui->screen_pos;
     Pixels result;
-    for (int y = std::max(0, center.y - radius); y < std::min(height, center.y + radius); ++y) {
-        int left = std::max(0, center.x - radius), right = std::min(width, center.x + radius);
-        if (left < right) result.insert(result.end(), frame.begin()+y*width+left, frame.begin()+y*width+right);
+    for (int y = 2*std::max(0, center.y - radius); y < 2*std::min(height, center.y + radius); ++y) {
+        int left = 2*std::max(0, center.x - radius), right = 2*std::min(width, center.x + radius);
+        if (left < right) result.insert(result.end(), frame.begin()+y*width*2+left, frame.begin()+y*width*2+right);
     }
     return result;
 }
@@ -46,7 +56,7 @@ static size_t different(const Pixels& a, const Pixels& b) {
 }
 static void write_private_capture(const fs::path& path, const Pixels& frame) {
     std::ofstream f(path, std::ios::binary);
-    f << "P6\n640 480\n255\n";
+    f << "P6\n1280 960\n255\n";
     for (auto p : frame) f.write(reinterpret_cast<const char*>(&p), 3);
     check(bool(f), "Could not save private capture");
 }
@@ -219,6 +229,28 @@ static void skirmish(const fs::path& map, const fs::path& pack, const fs::path& 
     foreground->flags|=image_t::flag_hidden;const auto neither=crop(screen(),at);
     image->flags=sf;const auto only_back=crop(screen(),at);foreground->flags=wf;
     size_t overlap=0;
+    const auto& fg_frame = foreground->grp->frame_at105(foreground->frame_index);
+    std::vector<uint8_t> fg_mask(fg_frame.size.x * fg_frame.size.y);
+    bwgame::draw_frame(fg_frame, bool(foreground->flags & image_t::flag_horizontally_flipped),
+        fg_mask.data(), fg_frame.size.x, 0, 0, fg_frame.size.x, fg_frame.size.y,
+        [](uint8_t, uint8_t) { return uint8_t(1); });
+    const auto fg_pos = g_ui->get_image_map_position(foreground);
+    const int radius = 48, crop_width = 4 * radius;
+    check(both.size() == size_t(crop_width * crop_width), "Occlusion fixture must lie inside the viewport");
+    for (int fy = 0; fy < fg_frame.size.y; ++fy) for (int fx = 0; fx < fg_frame.size.x; ++fx) {
+        if (!fg_mask[fy * fg_frame.size.x + fx]) continue;
+        const int x = (fg_pos.x + fx - at.x + radius) * 2, y = (fg_pos.y + fy - at.y + radius) * 2;
+        if (x < 0 || x+1 >= crop_width || y < 0 || y+1 >= crop_width) continue;
+        for (int dy = 0; dy < 2; ++dy) for (int dx = 0; dx < 2; ++dx) {
+            const size_t index = size_t(y+dy)*crop_width + x+dx;
+            if (only_back[index] != neither[index]) {
+                ++overlap;
+                check(both[index] == only_front[index], "Source-defined opaque GRP pixel did not cover an HD texel");
+            }
+        }
+    }
+    check(overlap >= 40, "Too few actual HD texels tested behind a known opaque foreground");
+    overlap = 0;
     for(size_t i=0;i<both.size();++i) if(only_front[i]!=neither[i] && only_back[i]!=neither[i]) {
         ++overlap;check(both[i]==only_front[i],"HD Scourge painted over classic foreground Wraith");
     }

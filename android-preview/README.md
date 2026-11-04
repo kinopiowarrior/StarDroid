@@ -11,6 +11,6 @@ patch_dir="$PWD/android-preview"
 tar -cf - -T "$patch_dir/copy-files.txt" | tar -C "$preview_src" -xf -
 ```
 
-Follow `BUILD-1.5.4-hd2-preview1.txt` in the prepared tree to rebuild both native architectures and package the APK. The separately supplied preview source ZIP already includes these changes, rebuilt libraries and build manifests.
+Follow `BUILD-1.5.4-hd2-preview2.txt` in the prepared tree to rebuild both native architectures and package the APK. The separately supplied preview source ZIP already includes these changes, rebuilt libraries and build manifests.
 
 See [files and usage](../docs/HD2-ANDROID-PREVIEW.md) for the ZIP import and supported unit bodies.

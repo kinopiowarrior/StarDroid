@@ -90,7 +90,7 @@ def main():
     result = json.loads(next(line[7:] for line in log if line.startswith('RESULT ')))
     if not result['passed'] or bound != sources() or anim_hash != inputs(anim_dir) or archive_hash != {k:sha(p) for k,p in archives.items()}:
         raise RuntimeError('Validation did not finish on stable inputs')
-    receipt = {'passed':True, 'scope':'Host test using the Android native game renderer and campaign loader. Five normal body images, classic palette and world resolution. No physical device or performance result.',
+    receipt = {'passed':True, 'scope':'Host test using the Android native game renderer and campaign loader. Five normal body images on the 2x Android presentation target, including original foreground GRP coverage. The camera and input use the logical viewport. No physical device or performance result.',
                'sourceSha256':bound,'archiveSha256':archive_hash,'sampleSha256':anim_hash,'steps':steps,'result':result}
     args.report.parent.mkdir(parents=True,exist_ok=True)
     args.report.write_text(json.dumps(receipt,indent=2)+'\n')

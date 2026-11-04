@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "sourceSha256": {
+    "native/remastered/assets.h": "1f6eb55a53b5f5d12a3425d0fb728d98e586bf7fd0629d8a8dd79489441f815c",
+    "native/remastered/geometry.h": "6b0db4ddea7d0177fcf35cf8197a903969349bc2938bc075c4dac59067f828b7",
+    "native/remastered/runtime.h": "efa5157f1197dc1af401e8cf4aaf0310b91f6a15091325281ec0eef9dc2143d3",
+    "tests/native_hd2_texels.cpp": "2911b93e6d6cf1be17ae98c27068f0aa07627b5935bab5741cc915c0a75ed5a4",
+    "tests/run_hd2_texels.py": "64a56be159b081891662815ee36bfb0d0f1a2fee003f99169bcd1d0baf10d84d"
+  },
+  "inputSha256": {
+    "main_000.anim": "a50bbec9ddfee123dec8ac9f8948f898561caa66169b9b5baa22260ebfbef0a2",
+    "main_005.anim": "ffa1dbad5cc78f06ca155aff54c6f4c7339eac19ea57b90e8a6e505403d248ab",
+    "main_013.anim": "0e6edfd839d206dd996d16f0b58654f2e32a342d2a3744036a5fa43c5c0c0c13",
+    "main_122.anim": "40d34dd5d1426c5a6e796a3f56346451f6e679625b1f200cfa82ab0e9c7ef737",
+    "main_228.anim": "09525d8df4e2ef9d8582ccfd756c0fea14eefaafd4182382d86b5e83394af209"
+  },
+  "scope": "Full diffuse/mask atlases and all cropped poses sampled on host using five private ANIM files. Compares straight RGBA before screen compositing, including tint, flipped and clipped coordinates.",
+  "result": {
+    "frames": 1222,
+    "atlasTexels": 5048320,
+    "drawnTexelsCompared": 6139411,
+    "cacheBytes": 25280704,
+    "passed": true
+  }
+}
