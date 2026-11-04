@@ -4,16 +4,15 @@
 
 **Classic StarCraft and Brood War on Android.**
 
-**Latest release: 1.5.3 · Android 8.0+ · ARM64 and x86-64**
+**Latest release: 1.5.4 · Android 8.0+ · ARM64 and x86-64**
 
-[Download APK](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.5.3/StarDroid-1.5.3.apk) · [Release notes](https://github.com/kinopiowarrior/StarDroid/releases/tag/v1.5.3) · [Source ZIP](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.5.3/StarDroid-1.5.3-source.zip) · [Discord](https://discord.gg/F2FnjUrtQ)
+[Download APK](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.5.4/StarDroid-1.5.4.apk) · [Release notes](https://github.com/kinopiowarrior/StarDroid/releases/tag/v1.5.4) · [Source ZIP](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.5.4/StarDroid-1.5.4-source.zip) · [Discord](https://discord.gg/F2FnjUrtQ)
 
-## New in 1.5.3
+## New in 1.5.4
 
-- Fixed the false defeat when Kerrigan hatches in **Agent of the Swarm**, the fourth mission of the original Zerg campaign.
-- After she hatches, the mission continues with the objective to infest or destroy Raynor’s Command Center. The Chrysalis still needs protection before she hatches, and Kerrigan must survive afterward.
+Mission countdowns disappear from the screen when they reach zero. If the mission starts another countdown, the timer appears again.
 
-[1.5.3 changes and compatibility](docs/CHANGES-1.5.3.md) · [1.5.2 changes](docs/CHANGES-1.5.2.md)
+[1.5.4 changes](docs/CHANGES-1.5.4.md) · [1.5.3 campaign fix](docs/CHANGES-1.5.3.md) · [1.5.2 changes](docs/CHANGES-1.5.2.md)
 
 ## Included from 1.5
 
@@ -64,7 +63,7 @@ Version 1.5 includes **UMS support and common EUD support**, plus the changes de
 
 ## Install
 
-1. Download and open **[StarDroid-1.5.3.apk](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.5.3/StarDroid-1.5.3.apk)**.
+1. Download and open **[StarDroid-1.5.4.apk](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.5.4/StarDroid-1.5.4.apk)**.
 2. Import your own `StarDat.mpq`, `BrooDat.mpq`, and `Patch_rt.mpq`.
 3. Import `StarCraft.mpq` and `BroodWar.mpq` from the original installation media for campaigns and movies.
 
@@ -72,13 +71,13 @@ To update, install over the existing app **without uninstalling**. Use the same 
 
 **Game data is not included.** This is an unofficial fan project, not affiliated with Blizzard Entertainment.
 
-[Player guide](docs/PLAYER-GUIDE.md) · [Download checksums](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.5.3/SHA256SUMS.txt) · [Report a bug](https://github.com/kinopiowarrior/StarDroid/issues/new/choose)
+[Player guide](docs/PLAYER-GUIDE.md) · [Download checksums](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.5.4/SHA256SUMS.txt) · [Report a bug](https://github.com/kinopiowarrior/StarDroid/issues/new/choose)
 
 ## Development
 
-The **[1.5.3 source ZIP](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.5.3/StarDroid-1.5.3-source.zip)** contains the matching code, build instructions, and validation records. The repository code snapshot remains at 1.1.1.
+The **[1.5.4 source ZIP](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.5.4/StarDroid-1.5.4-source.zip)** contains the matching code, build instructions, and validation records. The repository code snapshot remains at 1.1.1.
 
-Version 1.5.3 builds on the 1.5.2 source release. See the matching source ZIP for build instructions and validation records.
+Version 1.5.4 builds on the 1.5.3 source release. See the matching source ZIP for build instructions and validation records.
 
 ## Credits
 
