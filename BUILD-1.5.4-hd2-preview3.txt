@@ -1,0 +1,24 @@
+StarDroid 1.5.4-hd2-preview3 (Android build 124)
+
+Preview 3 builds on the 1.5.4 HD2 preview 2 source. To install the preview
+and select the supported sprites, see docs/HD2-ANDROID-PREVIEW.md. The game
+archives and HD2 sprite pack are supplied by the player.
+
+Build using Android NDK r27d, SDK 35, Build Tools 35.0.0, GNU patch and JDK 17.
+From the extracted source root, run:
+
+  python3 scripts/prepare_native.py
+  STARDROID_ANDROID_TOOLS=/path/to/tools python3 scripts/build_native_engine.py arm64-v8a --skip-prepare
+  STARDROID_ANDROID_TOOLS=/path/to/tools python3 scripts/build_native_engine.py x86_64 --skip-prepare
+  python3 scripts/package_android_offline.py --tools /path/to/tools --java-home /path/to/jdk --output /path/to/unsigned.apk
+
+Sign the aligned APK with apksigner. The supplied APK shares the application
+ID, version code and signing identity of preview 2 and stable 1.5.4. The build
+keeps their simulation and replay engine (123), multiplayer protocols (Nearby
+123 and Room 86) and save schema (22).
+
+SOURCE-SNAPSHOT.json lists the SHA-256 of each other packaged file.
+NATIVE-BUILD.json identifies the source inputs, validation scope, original
+build receipts and libraries inside the signed APK. Prior preview and release
+reports describe their respective builds. Rebuilding from source requires
+the listed toolchain. Reproducing the signed APK also requires its signer.

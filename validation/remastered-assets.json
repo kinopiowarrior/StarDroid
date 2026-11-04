@@ -1,0 +1,186 @@
+{
+  "passed": true,
+  "sanitizers": false,
+  "leak_check": false,
+  "source_sha256": {
+    "native/remastered/assets.h": "1f6eb55a53b5f5d12a3425d0fb728d98e586bf7fd0629d8a8dd79489441f815c",
+    "tests/native_remastered_assets.cpp": "eaac896d6d26e2a27034426758b6fbb233645fd79821d18b390d4c64bab64e7e",
+    "tools/remastered_inspect.cpp": "beafd85101e4b9d94bbc4d98af15b1fea87de4d0fc5613d80ace261bb4aa6ae1",
+    "tests/run_remastered_assets.py": "8fad74665fb7b00ba14475ecaa8f5856426a1a34f0a1fbe0dcfd203db65305f0"
+  },
+  "scope": "Synthetic ANIM/DDS reader and developer CLI checks only; no licensed assets, Android device, CASC or game renderer validation.",
+  "checks": [
+    {
+      "command": [
+        "g++",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-pedantic",
+        "-O2",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/tests/native_remastered_assets.cpp",
+        "-o",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets/native-remastered-assets"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "g++",
+        "-std=c++17",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-pedantic",
+        "-O2",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/tools/remastered_inspect.cpp",
+        "-o",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets/remastered-inspect"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets/native-remastered-assets"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS 655 synthetic Remastered asset checks\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets/native-remastered-assets",
+        "--write-fixture",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets/synthetic-3o5bu2zq/fixture.anim"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets/synthetic-3o5bu2zq/fixture.anim",
+        "--frame",
+        "0",
+        "--preview",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets/synthetic-3o5bu2zq/frame.pam"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"format\": \"ANIM\",\n  \"scale\": 2,\n  \"frame_count\": 2,\n  \"canvas_hd\": [24,32],\n  \"layers\": [{\"name\":\"diffuse\",\"present\":true,\"width\":4,\"height\":4},{\"name\":\"teamcolor\",\"present\":true,\"width\":4,\"height\":4}],\n  \"frame\": 0,\n  \"texture_crop\": [0,0,4,4],\n  \"offset_pixels\": [-2,-1],\n  \"decoded_pixels\": 16,\n  \"renderer_integrated\": false\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets/synthetic-3o5bu2zq/fixture.anim",
+        "--team-color",
+        "ff0000"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"format\": \"ANIM\",\n  \"scale\": 2,\n  \"frame_count\": 2,\n  \"canvas_hd\": [24,32],\n  \"layers\": [{\"name\":\"diffuse\",\"present\":true,\"width\":4,\"height\":4},{\"name\":\"teamcolor\",\"present\":true,\"width\":4,\"height\":4}],\n  \"frame\": 0,\n  \"texture_crop\": [0,0,4,4],\n  \"offset_pixels\": [-2,-1],\n  \"decoded_pixels\": 16,\n  \"renderer_integrated\": false\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets/synthetic-3o5bu2zq/fixture.anim",
+        "--frame",
+        "-1"
+      ],
+      "exit_code": 2,
+      "stdout": "",
+      "stderr": "Remastered asset error: Invalid frame number\n"
+    },
+    {
+      "command": [
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets/synthetic-3o5bu2zq/fixture.anim",
+        "--frame",
+        "999999999999999999999999999999"
+      ],
+      "exit_code": 2,
+      "stdout": "",
+      "stderr": "Remastered asset error: Invalid frame number\n"
+    },
+    {
+      "command": [
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets/synthetic-3o5bu2zq/fixture.anim",
+        "--team-color",
+        "xxyyzz"
+      ],
+      "exit_code": 2,
+      "stdout": "",
+      "stderr": "Remastered asset error: Invalid hexadecimal team color\n"
+    },
+    {
+      "command": [
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets/synthetic-3o5bu2zq/fixture.anim",
+        "--frame",
+        "2"
+      ],
+      "exit_code": 2,
+      "stdout": "",
+      "stderr": "Remastered asset error: ANIM frame index out of range\n"
+    },
+    {
+      "command": [
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets/synthetic-3o5bu2zq/fixture.anim",
+        "--preview",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets/synthetic-3o5bu2zq/fixture.anim"
+      ],
+      "exit_code": 2,
+      "stdout": "",
+      "stderr": "Remastered asset error: Preview must not overwrite the source asset\n"
+    },
+    {
+      "command": [
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets/synthetic-3o5bu2zq/fixture.anim",
+        "--unknown",
+        "value"
+      ],
+      "exit_code": 2,
+      "stdout": "",
+      "stderr": "Remastered asset error: Unknown option: --unknown\n"
+    },
+    {
+      "command": [
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets/synthetic-3o5bu2zq/truncated.anim"
+      ],
+      "exit_code": 2,
+      "stdout": "",
+      "stderr": "Remastered asset error: ANIM header is truncated or outside the file\n"
+    },
+    {
+      "command": [
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets/synthetic-3o5bu2zq/blank.anim"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"format\": \"ANIM\",\n  \"scale\": 2,\n  \"frame_count\": 2,\n  \"canvas_hd\": [24,32],\n  \"layers\": [{\"name\":\"diffuse\",\"present\":true,\"width\":4,\"height\":4},{\"name\":\"teamcolor\",\"present\":true,\"width\":4,\"height\":4}],\n  \"frame\": 0,\n  \"texture_crop\": [0,0,0,0],\n  \"offset_pixels\": [-2,-1],\n  \"decoded_pixels\": 0,\n  \"renderer_integrated\": false\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets/remastered-inspect",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets/synthetic-3o5bu2zq/blank.anim",
+        "--preview",
+        "/workspace/scratch/169ead29422f/stardroid-hd2/build-native/remastered-assets/synthetic-3o5bu2zq/blank.pam"
+      ],
+      "exit_code": 2,
+      "stdout": "",
+      "stderr": "Remastered asset error: This frame is empty; there are no preview pixels to export\n"
+    }
+  ],
+  "error": null
+}

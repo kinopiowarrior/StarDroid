@@ -1,0 +1,50 @@
+{
+  "passed": true,
+  "sourceSha256": {
+    "native/remastered/assets.h": "1f6eb55a53b5f5d12a3425d0fb728d98e586bf7fd0629d8a8dd79489441f815c",
+    "native/remastered/geometry.h": "6b0db4ddea7d0177fcf35cf8197a903969349bc2938bc075c4dac59067f828b7",
+    "native/remastered/runtime.h": "5f77d4e9fe833d9fe7a6b08e5ce68fe1ae363ca54dfdbae7b629f93b6da06ff2",
+    "tests/native_hd2_texels.cpp": "6ce9f0a68181e2d0b46e824e1ef547c85655aad70cded63bc82b5522d75ad040",
+    "tests/run_hd2_texels.py": "2884fa57af8db344728d2f543919462eae7acec39dc43759489a4b465cec5f6f"
+  },
+  "inputSha256": {
+    "main_000.anim": "a50bbec9ddfee123dec8ac9f8948f898561caa66169b9b5baa22260ebfbef0a2",
+    "main_001.anim": "50e20d85a6c43f25aa755d00f5ccaea4904ab1fa9d3215287ad11ef6229fa096",
+    "main_002.anim": "ca3379cdd718f8a13a95916677e07f40bbf26becbf01e098107f7e8701a4f352",
+    "main_003.anim": "01d458eae337636940ff9242ae809c031c3ea8900ecf7b2efa46cdd3a8636c10",
+    "main_004.anim": "769ba730b494731e2e138864e3ac65a616289a034de238040e65051779a5ff9e",
+    "main_005.anim": "ffa1dbad5cc78f06ca155aff54c6f4c7339eac19ea57b90e8a6e505403d248ab",
+    "main_006.anim": "ed2de59777e034e6fc53e6046f9cd857c624346da9bf6f6496d322127fe15635",
+    "main_007.anim": "49c7c6917f1a4e4f55873985faa915d8665771df353b5ff5409381ad136c4d97",
+    "main_013.anim": "0e6edfd839d206dd996d16f0b58654f2e32a342d2a3744036a5fa43c5c0c0c13",
+    "main_024.anim": "3809a52d7d257340892927acab72123f60648e1ff56dbc16fc9e8f03dd18d0ca",
+    "main_036.anim": "edf5523b55d00f3f889987907164e94aaf17eb12840f91c1abfd056856b0aa6b",
+    "main_045.anim": "50335461ea67715e6014fca9c6a2bc57b3562eadc17b31a5a23e6f6ee6540bb1",
+    "main_063.anim": "efdd7c3b804a42d0d893bd85dbfd578f0061eff599f9d33d4d9362c1c73a3db6",
+    "main_081.anim": "898cef932875515f3e37e96e6ef42986fce15c1960033dc825628a568155acdc",
+    "main_100.anim": "09d4b49b17a61b0e703b3ece28b4255fee7a5ce9db79af8b768954a3b56ad4e4",
+    "main_122.anim": "40d34dd5d1426c5a6e796a3f56346451f6e679625b1f200cfa82ab0e9c7ef737",
+    "main_145.anim": "dac6766da9658e3255e81ebc9dc67eaee8d44c8b79dd5e96cf78a6f673d1adaf",
+    "main_177.anim": "303feada5664f430f4bfdaaa127572198b6d376046fa6b94c177da3730a6b316",
+    "main_202.anim": "0eaa67d2bb2bf38f0117fcd79138c26c88cc6ef21bfe7f587ded391a89189014",
+    "main_228.anim": "09525d8df4e2ef9d8582ccfd756c0fea14eefaafd4182382d86b5e83394af209",
+    "main_325.anim": "631ba0ce8a0cae10c72e440c749a139b304d54708d4df750186236e3ee124df9",
+    "main_348.anim": "a913fd25ed7221fdcfb73841370da649db030c435bfe80719b0b2cc5958bc9bb",
+    "main_527.anim": "6c7e3eda3bf91a38d749066e95941351301f46fb9bc538e179dab71894562e57",
+    "main_545.anim": "0dbe2c37d4d61f07986301b5ef53bb1ed48d76d65a975e5e648dba80ac029e85",
+    "main_723.anim": "759c8f1c4cb733fb3e7125af31409c6a1184e6ed03302c5503858a95a7bffd0b",
+    "main_747.anim": "60a1827cb5defaf083ccd871c67bc53ec6ebcfa17415de53eb0697009c9ad663",
+    "main_758.anim": "d6e1e1e0dbfec37a840ef09548850de6895b4e322e3c62198dd1f6fae0e0233b",
+    "main_862.anim": "0553aa26b58c5c4b376cc282c950ab2a8807261c20b6e07c719b0055a4a08ecc",
+    "main_893.anim": "710d2031915db26406d68d2b78db36bb6917ce40405137fea3a1bef4ef31f4f1"
+  },
+  "scope": "Full diffuse/mask atlases and all cropped poses sampled on host for the installed private ANIM files. Compares straight RGBA before screen compositing, including tint, flipped and clipped coordinates.",
+  "result": {
+    "images": 29,
+    "frames": 1966,
+    "atlasTexels": 9844832,
+    "drawnTexelsCompared": 10669500,
+    "cacheBytes": 49287072,
+    "passed": true
+  }
+}

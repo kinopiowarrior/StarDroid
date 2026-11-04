@@ -1,0 +1,266 @@
+--- a/ui/ui.h
++++ b/ui/ui.h
+@@ -5,6 +5,9 @@
+ #include "native_window.h"
+ #include "native_window_drawing.h"
+ #include "native_sound.h"
++#ifdef STARDROID_HD2_RUNTIME
++#include "../../native/remastered/compositor.h"
++#endif
+ 
+ namespace bwgame {
+ 
+@@ -375,8 +378,31 @@
+ 	}
+ }
+ 
++// Ordered palette writes also retire any HD2 samples under the same pixel.
++inline void put_indexed(uint8_t* dest, uint8_t value) {
++#ifdef STARDROID_HD2_RUNTIME
++    if (auto* plane = stardroid::remastered::live::observing) plane->retire(dest);
++#endif
++    *dest = value;
++}
++inline void fill_indexed(uint8_t* dest, int value, size_t count) {
++#ifdef STARDROID_HD2_RUNTIME
++    if (auto* plane = stardroid::remastered::live::observing) plane->retire(dest, count);
++#endif
++    std::memset(dest, value, count);
++}
++
+ template<bool bounds_check, bool flipped, bool textured, typename remap_F>
+ void draw_frame(const grp_t::frame_t& frame, const uint8_t* texture, uint8_t* dst, size_t pitch, size_t offset_x, size_t offset_y, size_t width, size_t height, remap_F&& remap_f) {
++#ifdef STARDROID_HD2_RUNTIME
++    auto* coverage = stardroid::remastered::live::observing;
++#endif
++    auto write = [&](uint8_t* pixel, uint8_t color) {
++#ifdef STARDROID_HD2_RUNTIME
++        if (coverage) coverage->retire(pixel);
++#endif
++        *pixel = color;
++    };
+ 	for (size_t y = 0; y != offset_y; ++y) {
+ 		dst += pitch;
+ 		if (textured) texture += frame.size.x;
+@@ -400,7 +426,7 @@
+ 				int c = *d++;
+ 				for (;v; --v) {
+ 					if (!bounds_check || (x >= offset_x && x < width)) {
+-						*dst = remap_f(textured ? *texture : c, *dst);
++						write(dst, remap_f(textured ? *texture : c, *dst));
+ 					}
+ 					dst += flipped ? -1 : 1;
+ 					x += flipped ? -1 : 1;
+@@ -410,7 +436,7 @@
+ 				for (;v; --v) {
+ 					int c = *d++;
+ 					if (!bounds_check || (x >= offset_x && x < width)) {
+-						*dst = remap_f(textured ? *texture : c, *dst);
++						write(dst, remap_f(textured ? *texture : c, *dst));
+ 					}
+ 					dst += flipped ? -1 : 1;
+ 					x += flipped ? -1 : 1;
+@@ -1025,7 +1051,10 @@
+ 				int bot = g1[gx] * (32 - fx) + g1[gx + 1] * fx;
+ 				int level = (top * (32 - fy) + bot * fy) >> 10;   // / (32*32)
+ 				if (level >= 31) continue;                        // fully lit
+-				row[sx] = dark[256 * level + row[sx]];
++#ifdef STARDROID_HD2_RUNTIME
++                hd2_details.fog(sx, sy, level);
++#endif
++                row[sx] = dark[256 * level + row[sx]];
+ 			}
+ 		}
+ 	}
+@@ -1229,11 +1258,18 @@
+ 
+ #ifdef STARDROID_HD2_RUNTIME
+     stardroid::remastered::live::Palette hd2_palette;
++    stardroid::remastered::live::DetailPlane hd2_details;
++    bool hd2_output_requested = false;
++
++    void present_hd2(uint8_t* destination, size_t stride, const uint8_t* classic, size_t classic_stride) const {
++        hd2_details.present(destination, stride, classic, classic_stride, int(screen_width), int(screen_height));
++    }
+ 
+     void prepare_hd2_palette() {
+         hd2_palette.ready = false;
+         if (tileset_img.wpe.size() == 1024 && std::atomic_load(&stardroid::remastered::live::active_pack))
+             hd2_palette.prepare(tileset_img.wpe.data());
++        else hd2_details.release();
+     }
+ 
+     bool draw_hd2_body(const image_t* image, uint8_t* data, size_t pitch, size_t player_color) {
+@@ -1252,14 +1288,17 @@
+         const auto pack = std::atomic_load(&hd2::active_pack);
+         if (!pack || pack->poses[slot].empty()) return false;
+         const auto& pose = pack->poses[slot][image->frame_index];
+-        if (pose.pixels.empty()) return false;
++        if (pose.empty()) return false;
+ 
+         const auto center = get_image_center_map_position(image) - screen_pos;
+         const auto owner = image->sprite->owner;
+         const auto ramp = unit_player_colors101(owner, display_player_color(player_color, owner));
+         const auto* colors = tileset_img.wpe.data();
+-        hd2::blit(pose, center.x, center.y, i_flag(image, image_t::flag_horizontally_flipped),
+-                  colors + size_t(ramp[4]) * 4, hd2_palette, colors, data, pitch, int(screen_width), int(screen_height));
++        const bool flipped = i_flag(image, image_t::flag_horizontally_flipped);
++        const uint8_t* tint = colors + size_t(ramp[4]) * 4;
++        if (!hd2_details.draw(pose, center.x, center.y, flipped, tint, hd2_palette, colors, data))
++            hd2::blit_reduced(pose, center.x, center.y, flipped, tint, hd2_palette, colors,
++                              data, pitch, int(screen_width), int(screen_height));
+         return true;
+     }
+ #endif
+@@ -1656,10 +1695,10 @@
+ 			int ci = hp_percent >= 66 ? colors_66[i] : hp_percent >= 33 ? colors_33[i] : colors_0[i];
+ 			int c = img.hp_bar_colors.at(ci);
+ 
+-			if (dw > 0) memset(dst, c, dw);
++			if (dw > 0) fill_indexed(dst, c, dw);
+ 			if (width - dw > 0) {
+ 				c = img.hp_bar_colors.at(colors_bg[i]);
+-				memset(dst + dw, c, width - dw);
++				fill_indexed(dst + dw, c, width - dw);
+ 			}
+ 			dst += data_pitch;
+ 		}
+@@ -1673,10 +1712,10 @@
+ 			for (int i = offset_y; i < std::min(4, height); ++i) {
+ 				int c = img.hp_bar_colors.at(shield_colors[i]);
+ 
+-				if (shield_dw > 0) memset(dst, c, shield_dw);
++				if (shield_dw > 0) fill_indexed(dst, c, shield_dw);
+ 				if (width - shield_dw > 0) {
+ 					c = img.hp_bar_colors.at(shield_colors_bg[i]);
+-					memset(dst + shield_dw, c, width - shield_dw);
++					fill_indexed(dst + shield_dw, c, width - shield_dw);
+ 				}
+ 				dst += data_pitch;
+ 			}
+@@ -1692,10 +1731,10 @@
+ 			for (int i = energy_begin; i < energy_end; ++i) {
+ 				int c = img.hp_bar_colors.at(energy_colors[i]);
+ 
+-				if (energy_dw > 0) memset(dst, c, energy_dw);
++				if (energy_dw > 0) fill_indexed(dst, c, energy_dw);
+ 				if (width - energy_dw > 0) {
+ 					c = img.hp_bar_colors.at(no_shield_colors_bg[i]);
+-					memset(dst + energy_dw, c, width - energy_dw);
++					fill_indexed(dst + energy_dw, c, width - energy_dw);
+ 				}
+ 				dst += data_pitch;
+ 			}
+@@ -1708,13 +1747,13 @@
+ 		for (int x = 0; x < orig_width; x += 3) {
+ 			if (x < offset_x || x >= offset_x + width) continue;
+ 			for (int y = 0; y != hp_height; ++y) {
+-				*dst = c;
++				put_indexed(dst, c);
+ 				dst += data_pitch;
+ 			}
+ 			if (has_energy && energy_end > energy_begin) {
+ 				if (energy_offset) dst += data_pitch;
+ 				for (int i = energy_begin; i != energy_end; ++i) {
+-					*dst = c;
++					put_indexed(dst, c);
+ 					dst += data_pitch;
+ 				}
+ 				if (energy_offset) dst -= data_pitch;
+@@ -1922,7 +1961,7 @@
+ 		size_t to_y = area.to.y;
+ 		uint8_t* ptr = data + data_pitch * from_y + area.from.x;
+ 		for (size_t i = from_y; i != to_y; ++i) {
+-			memset(ptr, index, width);
++			fill_indexed(ptr, index, width);
+ 			ptr += pitch;
+ 		}
+ 	}
+@@ -1936,12 +1975,12 @@
+ 		size_t width = area.to.x - area.from.x;
+ 		size_t height = area.to.y - area.from.y;
+ 		uint8_t* p = data + data_pitch * (size_t)area.from.y + (size_t)area.from.x;
+-		memset(p, index, width);
++		fill_indexed(p, index, width);
+ 		// Rectangle ends are exclusive; the last row is height - 1.
+-		memset(p + data_pitch * (height - 1), index, width);
++		fill_indexed(p + data_pitch * (height - 1), index, width);
+ 		for (size_t y = 0; y != height; ++y) {
+-			p[data_pitch * y] = index;
+-			p[data_pitch * y + width - 1] = index;
++			put_indexed(p + data_pitch * y, index);
++			put_indexed(p + data_pitch * y + width - 1, index);
+ 		}
+ 	}
+ 
+@@ -1953,6 +1992,15 @@
+ 		if (area.from.x >= area.to.x || area.from.y >= area.to.y) return;
+ 		size_t width = area.to.x - area.from.x;
+ 		size_t height = area.to.y - area.from.y;
++#ifdef STARDROID_HD2_RUNTIME
++        // Native drag box is drawn after indexed-to-RGBA conversion.
++        hd2_details.retire_xy(area.from.x, area.from.y, width);
++        hd2_details.retire_xy(area.from.x, area.to.y-1, width);
++        for (int y=area.from.y+1; y<area.to.y-1; ++y) {
++            hd2_details.retire_xy(area.from.x,y);
++            hd2_details.retire_xy(area.to.x-1,y);
++        }
++#endif
+ 		uint32_t* p = data + data_pitch * (size_t)area.from.y + (size_t)area.from.x;
+ 		for (size_t x = 0; x != width; ++x) {
+ 			p[x] = color;
+@@ -2107,6 +2155,10 @@
+ 	virtual void draw_minimap(uint8_t* data, size_t data_pitch) {
+ 		auto area = get_minimap_area();
+ 		if (area.from == area.to) return;
++#ifdef STARDROID_HD2_RUNTIME
++        for (int y=area.from.y; y<area.to.y; ++y)
++            hd2_details.retire_xy(area.from.x, y, size_t(area.to.x-area.from.x));
++#endif
+ 		draw_minimap_pixels(data, data_pitch, area);
+ 		line_rectangle(data, data_pitch, {area.from - xy(1, 1), area.to + xy(1, 1)},
+ 		               (uint8_t)tileset_img.minimap_border_color);
+@@ -2669,7 +2721,13 @@
+ 		if (screen_pos.x + (int)view_width > (int)game_st.map_width) screen_pos.x = (int)game_st.map_width - (int)view_width;
+ 		if (screen_pos.x < 0) screen_pos.x = 0;
+ 
+-		uint8_t* data = (uint8_t*)indexed_surface->lock();
++        uint8_t* data = (uint8_t*)indexed_surface->lock();
++#ifdef STARDROID_HD2_RUNTIME
++        namespace hd2 = stardroid::remastered::live;
++        const bool observe = hd2_details.begin(hd2_output_requested && hd2_palette.ready && !game_st.eud_enabled95 && !use_new_images,
++            data, indexed_surface->pitch, int(screen_width), int(screen_height));
++        hd2::ObserveFrame coverage(observe ? &hd2_details : nullptr);
++#endif
+ 		// A viewport can extend past the map beneath the Android console. Clear
+ 		// the indexed canvas too: clearing only RGBA leaves last frame's terrain.
+ 		memset(data, 0, indexed_surface->pitch * indexed_surface->h);
+--- a/web/sandbox.h
++++ b/web/sandbox.h
+@@ -3464,7 +3464,7 @@
+ 		int sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1, err = adx - ady;
+ 		for (;;) {
+ 			if ((unsigned)x0 < screen_width && (unsigned)y0 < screen_height)
+-				data[(size_t)y0 * data_pitch + x0] = color;
++				put_indexed(data + (size_t)y0 * data_pitch + x0, color);
+ 			if (x0 == x1 && y0 == y1) break;
+ 			int e2 = 2 * err;
+ 			if (e2 > -ady) { err -= ady; x0 += sx; }
+@@ -3479,7 +3479,7 @@
+ 				if ((dx < 0 ? -dx : dx) + (dy < 0 ? -dy : dy) > 3) continue;
+ 				int px = cx + dx, py = cy + dy;
+ 				if ((unsigned)px < screen_width && (unsigned)py < screen_height)
+-					data[(size_t)py * data_pitch + px] = color;
++					put_indexed(data + (size_t)py * data_pitch + px, color);
+ 			}
+ 	}
+ 	static bool close_xy(xy a, xy b) { int dx = a.x - b.x, dy = a.y - b.y; return dx * dx + dy * dy < 16 * 16; }
+@@ -3795,7 +3795,7 @@
+ 			for (int x = 0; x != fw; ++x) {
+ 				if (!src[x] || ((x ^ y) & 1)) continue;   // 0 = empty, checkerboard = faded
+ 				int px = gx + x;
+-				if (px >= 0 && px < (int)screen_width) row[px] = src[x];
++				if (px >= 0 && px < (int)screen_width) put_indexed(row + px, src[x]);
+ 			}
+ 		}
+ 
