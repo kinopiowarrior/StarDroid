@@ -1,6 +1,6 @@
 # Remastered graphics: HD2 prototype
 
-For the playable Android preview based on StarDroid 1.5.4, see [installation and supported unit files](HD2-ANDROID-PREVIEW.md). Preview 2 renders five imported HD2 unit bodies at their native 2× sprite resolution in the regular Android game renderer.
+For the playable Android preview based on StarDroid 1.5.4, see [installation and supported unit files](HD2-ANDROID-PREVIEW.md). Preview 3 renders 29 supplied HD2 images in Android gameplay, including the five high-resolution unit bodies from preview 2.
 
 The following reader and host-scene results were recorded during the earlier 1.5.2 prototype using assets from StarCraft build **1.23.10.13515**.
 
@@ -79,7 +79,7 @@ Supplied assets, installation metadata and generated captures stay outside versi
 
 - Direct CASC extraction, broader graphics-pack support and on-device performance measurements.
 - Full image/frame mapping, including `images.rel` references, and comparison of the prototype's HD anchor convention against retail captures.
-- Expand higher-resolution Android artwork beyond the five supported unit bodies. Preview 1 reduced those sprites to classic resolution and palette. Preview 2 preserves their individual HD2 color samples.
+- Expand higher-resolution Android artwork beyond the 29 verified images. Preview 1 reduced those sprites to classic resolution and palette. Preview 2 preserves their individual HD2 color samples.
 - Terrain, interface artwork, wireframes, portraits, video, real-time lighting, and the other rendering effects.
 - Retail HD capture comparisons and Android memory/performance measurements.
 

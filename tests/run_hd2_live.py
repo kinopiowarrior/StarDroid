@@ -77,12 +77,17 @@ def main():
         ROOT/'native/generated/wasm_backend.cpp',out/'smacker.o','-o',out/'hd2-live'])
     with tempfile.TemporaryDirectory(dir=out) as tmp:
         work = Path(tmp)
-        for folder in ('one','broken','wrong','empty'):
+        for folder in ('previous-five','one','broken','wrong','empty'):
             (work/folder).mkdir()
+        # This regression compares the original five-body profile, even if the supplied
+        # ZIP also contains sprites supported by newer previews.
+        for ident in IDS:
+            name = f'main_{ident:03d}.anim'
+            shutil.copyfile(anim_dir/name,work/'previous-five'/name)
         shutil.copyfile(anim_dir/'main_000.anim',work/'one/main_000.anim')
         (work/'broken/main_000.anim').write_bytes(b'ANIM\x02')
         shutil.copyfile(anim_dir/'main_122.anim',work/'wrong/main_000.anim')
-        command = [out/'hd2-live', *archives.values(), ROOT/'app/src/main/assets/native/weave.scx',anim_dir,work]
+        command = [out/'hd2-live', *archives.values(), ROOT/'app/src/main/assets/native/weave.scx',work/'previous-five',work]
         if args.captures:
             args.captures.mkdir(parents=True, exist_ok=True)
             command.append(args.captures.resolve())

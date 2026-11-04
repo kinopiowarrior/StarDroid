@@ -1,0 +1,397 @@
+{
+  "passed": true,
+  "scope": "Caller-owned classic image table and GRP dimensions, real HD2 samples, partial-pack compatibility and rejection of bad or over-budget replacements. Rendering is tested separately.",
+  "sourceSha256": {
+    "tests/native_hd2_catalog3.cpp": "23acf23e157a441d42e84c60ae75441fee1f2c8e9e26ec7d17417b74d172e095",
+    "tests/run_hd2_catalog3.py": "71ff7fbeb1dc55e9f825e04f24c128430f8faaed8b9605b05a54c4eb01fbdded",
+    "native/remastered/assets.h": "1f6eb55a53b5f5d12a3425d0fb728d98e586bf7fd0629d8a8dd79489441f815c",
+    "native/remastered/geometry.h": "6b0db4ddea7d0177fcf35cf8197a903969349bc2938bc075c4dac59067f828b7",
+    "native/remastered/runtime.h": "5f77d4e9fe833d9fe7a6b08e5ce68fe1ae363ca54dfdbae7b629f93b6da06ff2",
+    "native-engine/actions.h": "1ba034f982351a45afeec17b60fd551d241328ac31b337de46d0682fee963b05",
+    "native-engine/bwenums.h": "8941989594df54f5ebe65a75e0d0414183fb29e90a4d3519c980aa0fd9cb6264",
+    "native-engine/bwgame.h": "a73df6ba284955449d00e597ee2a8423e8dce77f6fd3e2244cfbe8a27d4ee66a",
+    "native-engine/circular_vector.h": "f8f5bedc30d76563639fca4abf6346ab538ce8811c9056a60419ee78744dcc68",
+    "native-engine/containers.h": "2194c3b780a39f703881c90baed28cbcf9ef3b9f67acea6a1992d913f5e75ca1",
+    "native-engine/ctf105.h": "4ae479cd60e1d80937d8cb0d88f14e041d81e9da073d2be69f2ebe404a3db3ca",
+    "native-engine/data_loading.h": "039b2d8228b1747bf35d175c08dd11eac2c7b713dabb3f58dab3404ec9ff0568",
+    "native-engine/data_types.h": "788b4f152279dfdffe6329b4ba53c4341e31470321b3fe475ae41a80db13294e",
+    "native-engine/eud_allocation103.h": "c75b8a8c8226e96843bce2538bd25595a0d0cae76f03eb0f904ba350b971e163",
+    "native-engine/eud_build_state97.h": "e91593b74e1d6c37c3fc2551a9a23da8df5c46a7eb8d054a4c114c0e7ff4a304",
+    "native-engine/eud_camera105.h": "443c6c098268fc2e6995d82a778cb3f8eeef68cb506cd07b7d83abfd4b2a3ea9",
+    "native-engine/eud_commands105.h": "f4dd3b767676b739fbd32d606bb268cad1cb2ac34133bd9d0ae6380f35997918",
+    "native-engine/eud_damage103.h": "12c0edd61cf738aa3d1492c5a57534390e42ce70eeca8d07c891ad1e08663c38",
+    "native-engine/eud_drop105.h": "d777bdd1764b0f911d978a689de515ec6264f7dc64b645426b0866e0c376840c",
+    "native-engine/eud_grp109.h": "8b705b78c1f7f4f9c8e0d4239b9dd7878dccc69968e049c0f8cbe0d130e9a597",
+    "native-engine/eud_image105.h": "72ff1ee2b1605e5f0bcaa5107b04237ca45bb5f449cfb1a8956bc6b6a795f0c5",
+    "native-engine/eud_memory95.h": "49f5e4cb2bc6979a26c5cae2a226a9966a0ba060c52f40514e4fdc6072d4a8d5",
+    "native-engine/eud_mouse105.h": "92c7827f84835b17140513e97cefa0bccc430ba045a892f668ae89590adc69fe",
+    "native-engine/eud_owners95.h": "1e9902410a6cf999d9804a67ba4267b14e940e5d47a866e74100e11346d85a76",
+    "native-engine/eud_pause104.h": "1d486e17d176c20b4e83944fcad391f37952db96bda9c009a11ec0aeb629f86d",
+    "native-engine/eud_pools95.h": "68445529a4257265c2ebe025a46d9f15d2bf655d744fd700a73655dfb761bf68",
+    "native-engine/eud_redraw103.h": "43ce019cb7f5f902f7feb781856e02548e15dcc6086e39279e08e54d99c075ea",
+    "native-engine/eud_repulse101.h": "5bfefbbd1b5735f76cc456784faa1257810427a3f0f35efffd2d48b23345e5d1",
+    "native-engine/eud_repulse102.h": "f8e2bc205dd65dcf99965220105a19c3092b16993d3106c4e5047ef2457d9ef0",
+    "native-engine/eud_requirement_data95.h": "e9d425c59c216223f2f6ed05680af241040ba1480eda9399a890f4c433134277",
+    "native-engine/eud_requirements95.h": "ee906bfae88917c2531ba5362712d95092d75c20e777663278b6917046957e2a",
+    "native-engine/eud_state95.h": "0016a1085e16f8ffa2ee8f2b0b29db3050128a211f667c95c0b48c32a75aa711",
+    "native-engine/eud_timing99.h": "535f669ac412ce202a24aed8130ed698bec18e3cab9dd0e8855b7e475e36b1cb",
+    "native-engine/eud_unit95.h": "29e590ad6c0488678c7c5fc8e9d16586a3a6ad45a8b1f0fdb7fc1dc321c6798b",
+    "native-engine/eud_unit_info96.h": "4f12cd919bef16f336cfd61bef7739b8b80a76df3330739efa6cd0223f1723ab",
+    "native-engine/game_types.h": "1984121f9a1778ed99939a8aa46f3646bf38bdda0ebfb3b0fd08737eeadf348c",
+    "native-engine/intrusive_list.h": "104b93bfa2917560c5e38967e1b5babb331ee3f21ee9251c2aab71a54767afb7",
+    "native-engine/iscript_runtime98.h": "0dca524d8d76e80de396b64bbc98f5442767415c060c6fca6d162a9d2cd934b0",
+    "native-engine/korean.h": "ad16286e3087b26c2315b7a45dabcce2897ac5fe1276ecd12a9590b270715a44",
+    "native-engine/puff100.h": "e97d053aba1389ffd6a6f010a91e30147fc69650b881ad2f48da1bdbf2f507e7",
+    "native-engine/replay.h": "0089b1b3e3667c71a492c93a6340d3adf5d9f7799e27bb62fd0960e9fe11fb5b",
+    "native-engine/replay_saver.h": "a8eb9a78572664746076bd92f7e9751754eb408a1d1024db115c9a1a0954d6d0",
+    "native-engine/static_vector.h": "61b4112f35c762d0ffb9f3ef8cfafb20f7b34d751031559aedbd4925f9418b0a",
+    "native-engine/strf.h": "7348fbc3366ae8ad7049a203ec684fcb474865c8a025d52700d8339eca3b9769",
+    "native-engine/sync.h": "a4c2cae3b6183a2146798b3b931f19d0ba7a321e9f2ddfdfc7a745441576a5b4",
+    "native-engine/sync_server_asio_local.h": "f08c408b68a61a57a842fef15f0bf1276f9dec8958f2545d5b30e2f0ad831f68",
+    "native-engine/sync_server_asio_posix_stream.h": "1d6961d2c724727f75e6ff1c1eec4ba55b724d22d03c1b55cd7242ee5d4e16ea",
+    "native-engine/sync_server_asio_socket.h": "fe2a5299b9ee9cc8d906cdb68741dc85b512514a5064a24f14d5befa23deed0d",
+    "native-engine/sync_server_asio_tcp.h": "0e1fca553dd1dc62bb3bd5037a8f95a0569e52b9577b410af6bcecdb4dba2bdc",
+    "native-engine/terrain_compat110.h": "c5641d32f276cdae27efb0fe32b77a19f7bcf066063b927f9c6fe3cd386d9106",
+    "native-engine/terrain_compat94.h": "0c47b66eeb1cfd55e9392a3c1db182840eb9038a4d6bd6c637e23dd9b79ebd65",
+    "native-engine/util.h": "779cd2d92761c144b2cd31a4f5d36de468b102652bffe5a19e9150c07ba6f3e1"
+  },
+  "archiveSha256": {
+    "StarDat(2).mpq": "e49e107cb4a0848bdd8f6f9e526dcf3f93f21c577f4a1f5be961644d21f05377",
+    "BrooDat(2).mpq": "050a63f78259d9debaaa63b5069d955e495799bd81b51233398ac96028a8ecee",
+    "patch_rt(4).mpq": "58bd856aac2328b42af4b9538c248367150c876e57ec596a9f30e3e81d8ddf11"
+  },
+  "sampleSha256": {
+    "main_000.anim": "a50bbec9ddfee123dec8ac9f8948f898561caa66169b9b5baa22260ebfbef0a2",
+    "main_001.anim": "50e20d85a6c43f25aa755d00f5ccaea4904ab1fa9d3215287ad11ef6229fa096",
+    "main_002.anim": "ca3379cdd718f8a13a95916677e07f40bbf26becbf01e098107f7e8701a4f352",
+    "main_003.anim": "01d458eae337636940ff9242ae809c031c3ea8900ecf7b2efa46cdd3a8636c10",
+    "main_004.anim": "769ba730b494731e2e138864e3ac65a616289a034de238040e65051779a5ff9e",
+    "main_005.anim": "ffa1dbad5cc78f06ca155aff54c6f4c7339eac19ea57b90e8a6e505403d248ab",
+    "main_006.anim": "ed2de59777e034e6fc53e6046f9cd857c624346da9bf6f6496d322127fe15635",
+    "main_007.anim": "49c7c6917f1a4e4f55873985faa915d8665771df353b5ff5409381ad136c4d97",
+    "main_013.anim": "0e6edfd839d206dd996d16f0b58654f2e32a342d2a3744036a5fa43c5c0c0c13",
+    "main_024.anim": "3809a52d7d257340892927acab72123f60648e1ff56dbc16fc9e8f03dd18d0ca",
+    "main_036.anim": "edf5523b55d00f3f889987907164e94aaf17eb12840f91c1abfd056856b0aa6b",
+    "main_045.anim": "50335461ea67715e6014fca9c6a2bc57b3562eadc17b31a5a23e6f6ee6540bb1",
+    "main_063.anim": "efdd7c3b804a42d0d893bd85dbfd578f0061eff599f9d33d4d9362c1c73a3db6",
+    "main_081.anim": "898cef932875515f3e37e96e6ef42986fce15c1960033dc825628a568155acdc",
+    "main_100.anim": "09d4b49b17a61b0e703b3ece28b4255fee7a5ce9db79af8b768954a3b56ad4e4",
+    "main_122.anim": "40d34dd5d1426c5a6e796a3f56346451f6e679625b1f200cfa82ab0e9c7ef737",
+    "main_145.anim": "dac6766da9658e3255e81ebc9dc67eaee8d44c8b79dd5e96cf78a6f673d1adaf",
+    "main_177.anim": "303feada5664f430f4bfdaaa127572198b6d376046fa6b94c177da3730a6b316",
+    "main_202.anim": "0eaa67d2bb2bf38f0117fcd79138c26c88cc6ef21bfe7f587ded391a89189014",
+    "main_228.anim": "09525d8df4e2ef9d8582ccfd756c0fea14eefaafd4182382d86b5e83394af209",
+    "main_325.anim": "631ba0ce8a0cae10c72e440c749a139b304d54708d4df750186236e3ee124df9",
+    "main_348.anim": "a913fd25ed7221fdcfb73841370da649db030c435bfe80719b0b2cc5958bc9bb",
+    "main_361.anim": "064db78a91dfdb034f45c706fd91b93ff63f083736a39871e4a2c11770c8332f",
+    "main_508.anim": "d9a75ce009d52e80bb39d52dc7f4632faa4a6a101e701f0f8e8e3cd00a42d9b0",
+    "main_527.anim": "6c7e3eda3bf91a38d749066e95941351301f46fb9bc538e179dab71894562e57",
+    "main_545.anim": "0dbe2c37d4d61f07986301b5ef53bb1ed48d76d65a975e5e648dba80ac029e85",
+    "main_723.anim": "759c8f1c4cb733fb3e7125af31409c6a1184e6ed03302c5503858a95a7bffd0b",
+    "main_747.anim": "60a1827cb5defaf083ccd871c67bc53ec6ebcfa17415de53eb0697009c9ad663",
+    "main_758.anim": "d6e1e1e0dbfec37a840ef09548850de6895b4e322e3c62198dd1f6fae0e0233b",
+    "main_862.anim": "0553aa26b58c5c4b376cc282c950ab2a8807261c20b6e07c719b0055a4a08ecc",
+    "main_893.anim": "710d2031915db26406d68d2b78db36bb6917ce40405137fea3a1bef4ef31f4f1"
+  },
+  "supported": [
+    {
+      "imageId": 0,
+      "modifier": 0,
+      "frames": 85,
+      "classicCanvas": [
+        48,
+        48
+      ],
+      "atlasTexels": 227328
+    },
+    {
+      "imageId": 1,
+      "modifier": 10,
+      "frames": 85,
+      "classicCanvas": [
+        48,
+        48
+      ],
+      "atlasTexels": 307648
+    },
+    {
+      "imageId": 2,
+      "modifier": 0,
+      "frames": 7,
+      "classicCanvas": [
+        96,
+        160
+      ],
+      "atlasTexels": 115200
+    },
+    {
+      "imageId": 3,
+      "modifier": 0,
+      "frames": 1,
+      "classicCanvas": [
+        36,
+        36
+      ],
+      "atlasTexels": 2112
+    },
+    {
+      "imageId": 4,
+      "modifier": 0,
+      "frames": 9,
+      "classicCanvas": [
+        48,
+        48
+      ],
+      "atlasTexels": 60416
+    },
+    {
+      "imageId": 5,
+      "modifier": 0,
+      "frames": 204,
+      "classicCanvas": [
+        48,
+        48
+      ],
+      "atlasTexels": 864256
+    },
+    {
+      "imageId": 6,
+      "modifier": 10,
+      "frames": 204,
+      "classicCanvas": [
+        48,
+        48
+      ],
+      "atlasTexels": 823296
+    },
+    {
+      "imageId": 7,
+      "modifier": 0,
+      "frames": 5,
+      "classicCanvas": [
+        48,
+        48
+      ],
+      "atlasTexels": 17920
+    },
+    {
+      "imageId": 13,
+      "modifier": 0,
+      "frames": 289,
+      "classicCanvas": [
+        80,
+        80
+      ],
+      "atlasTexels": 1441792
+    },
+    {
+      "imageId": 24,
+      "modifier": 0,
+      "frames": 12,
+      "classicCanvas": [
+        96,
+        96
+      ],
+      "atlasTexels": 180848
+    },
+    {
+      "imageId": 36,
+      "modifier": 0,
+      "frames": 85,
+      "classicCanvas": [
+        36,
+        36
+      ],
+      "atlasTexels": 155648
+    },
+    {
+      "imageId": 45,
+      "modifier": 0,
+      "frames": 1,
+      "classicCanvas": [
+        72,
+        72
+      ],
+      "atlasTexels": 17760
+    },
+    {
+      "imageId": 63,
+      "modifier": 0,
+      "frames": 6,
+      "classicCanvas": [
+        128,
+        160
+      ],
+      "atlasTexels": 376832
+    },
+    {
+      "imageId": 81,
+      "modifier": 10,
+      "frames": 3,
+      "classicCanvas": [
+        128,
+        192
+      ],
+      "atlasTexels": 145856
+    },
+    {
+      "imageId": 100,
+      "modifier": 10,
+      "frames": 4,
+      "classicCanvas": [
+        128,
+        128
+      ],
+      "atlasTexels": 24768
+    },
+    {
+      "imageId": 122,
+      "modifier": 0,
+      "frames": 415,
+      "classicCanvas": [
+        96,
+        96
+      ],
+      "atlasTexels": 1884160
+    },
+    {
+      "imageId": 145,
+      "modifier": 10,
+      "frames": 153,
+      "classicCanvas": [
+        84,
+        84
+      ],
+      "atlasTexels": 1925760
+    },
+    {
+      "imageId": 177,
+      "modifier": 10,
+      "frames": 1,
+      "classicCanvas": [
+        96,
+        128
+      ],
+      "atlasTexels": 36864
+    },
+    {
+      "imageId": 202,
+      "modifier": 10,
+      "frames": 1,
+      "classicCanvas": [
+        128,
+        160
+      ],
+      "atlasTexels": 35904
+    },
+    {
+      "imageId": 228,
+      "modifier": 0,
+      "frames": 229,
+      "classicCanvas": [
+        64,
+        64
+      ],
+      "atlasTexels": 630784
+    },
+    {
+      "imageId": 325,
+      "modifier": 0,
+      "frames": 3,
+      "classicCanvas": [
+        160,
+        128
+      ],
+      "atlasTexels": 84800
+    },
+    {
+      "imageId": 348,
+      "modifier": 10,
+      "frames": 4,
+      "classicCanvas": [
+        128,
+        96
+      ],
+      "atlasTexels": 53248
+    },
+    {
+      "imageId": 527,
+      "modifier": 0,
+      "frames": 135,
+      "classicCanvas": [
+        40,
+        40
+      ],
+      "atlasTexels": 100352
+    },
+    {
+      "imageId": 545,
+      "modifier": 0,
+      "frames": 18,
+      "classicCanvas": [
+        64,
+        64
+      ],
+      "atlasTexels": 224576
+    },
+    {
+      "imageId": 723,
+      "modifier": 0,
+      "frames": 1,
+      "classicCanvas": [
+        192,
+        224
+      ],
+      "atlasTexels": 53824
+    },
+    {
+      "imageId": 747,
+      "modifier": 0,
+      "frames": 1,
+      "classicCanvas": [
+        128,
+        128
+      ],
+      "atlasTexels": 9152
+    },
+    {
+      "imageId": 758,
+      "modifier": 0,
+      "frames": 3,
+      "classicCanvas": [
+        128,
+        128
+      ],
+      "atlasTexels": 25200
+    },
+    {
+      "imageId": 862,
+      "modifier": 0,
+      "frames": 1,
+      "classicCanvas": [
+        96,
+        64
+      ],
+      "atlasTexels": 7616
+    },
+    {
+      "imageId": 893,
+      "modifier": 10,
+      "frames": 1,
+      "classicCanvas": [
+        128,
+        128
+      ],
+      "atlasTexels": 10912
+    }
+  ],
+  "excludedPaletteRemaps": [
+    361,
+    508
+  ],
+  "residentBytes": 49287072,
+  "maxResidentPayload": 50331648,
+  "previousFiveResidentBytes": 25280704,
+  "previousFiveAccepted": true,
+  "atomicFailureChecks": true
+}

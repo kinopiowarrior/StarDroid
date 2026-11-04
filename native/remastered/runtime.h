@@ -12,21 +12,61 @@
 
 namespace stardroid { namespace remastered { namespace live {
 
-// Direct images.dat mappings verified against the original GRP and HD2 samples.
+// Supported direct image IDs. The GRP geometry and draw functions come from
+// the original images.dat. The two supplied palette-remap effects use a
+// different shader and deliberately do not appear here.
 struct Body {
-    unsigned id, frames, grp_width, grp_height;
+    unsigned id, frames, grp_width, grp_height, modifier;
     const char* filename;
 };
 inline constexpr Body bodies[] = {
-    {0,   85, 48, 48, "main_000.anim"}, // Scourge
-    {5,  204, 48, 48, "main_005.anim"}, // Broodling
-    {13, 289, 80, 80, "main_013.anim"}, // Defiler
-    {122,415, 96, 96, "main_122.anim"}, // Dragoon
-    {228,229, 64, 64, "main_228.anim"}  // Ghost
+    {  0,  85,  48,  48,  0, "main_000.anim"}, // Scourge
+    {  1,  85,  48,  48, 10, "main_001.anim"}, // Scourge Shadow
+    {  2,   7,  96, 160,  0, "main_002.anim"}, // Scourge Birth
+    {  3,   1,  36,  36,  0, "main_003.anim"}, // Scourge Death
+    {  4,   9,  48,  48,  0, "main_004.anim"}, // Scourge Explosion
+    {  5, 204,  48,  48,  0, "main_005.anim"}, // Broodling
+    {  6, 204,  48,  48, 10, "main_006.anim"}, // Broodling Shadow
+    {  7,   5,  48,  48,  0, "main_007.anim"}, // Broodling Remnants
+    { 13, 289,  80,  80,  0, "main_013.anim"}, // Defiler
+    { 24,  12,  96,  96,  0, "main_024.anim"}, // Egg Remnants
+    { 36,  85,  36,  36,  0, "main_036.anim"}, // Larva
+    { 45,   1,  72,  72,  0, "main_045.anim"}, // Overlord Death
+    { 63,   6, 128, 160,  0, "main_063.anim"}, // Infested Command Center
+    { 81,   3, 128, 192, 10, "main_081.anim"}, // Greater Spire Shadow
+    {100,   4, 128, 128, 10, "main_100.anim"}, // Spore Colony Shadow
+    {122, 415,  96,  96,  0, "main_122.anim"}, // Dragoon
+    {145, 153,  84,  84, 10, "main_145.anim"}, // Reaver Shadow
+    {177,   1,  96, 128, 10, "main_177.anim"}, // Cybernetics Core Shadow
+    {202,   1, 128, 160, 10, "main_202.anim"}, // Stargate Shadow
+    {228, 229,  64,  64,  0, "main_228.anim"}, // Ghost
+    {325,   3, 160, 128,  0, "main_325.anim"}, // Terran Construction Large
+    {348,   4, 128,  96, 10, "main_348.anim"}, // Mineral Field Type1 Shadow
+    {527, 135,  40,  40,  0, "main_527.anim"}, // Gauss Rifle Hit
+    {545,  18,  64,  64,  0, "main_545.anim"}, // Hallucination Hit
+    {723,   1, 192, 224,  0, "main_723.anim"}, // 1 13 Badlands
+    {747,   1, 128, 128,  0, "main_747.anim"}, // 3 10 Installation
+    {758,   3, 128, 128,  0, "main_758.anim"}, // 7 14 Twilight
+    {862,   1,  96,  64,  0, "main_862.anim"}, // Unknown Desert
+    {893,   1, 128, 128, 10, "main_893.anim"}, // 4 12 Desert Shadow
 };
 constexpr size_t body_count = sizeof(bodies) / sizeof(bodies[0]);
+static_assert(body_count < 255, "HD2 slot index must fit in a byte");
+
+// Every image in the game passes through the draw hook. A zero entry means
+// classic graphics, and supported images store their slot plus one.
+inline constexpr auto image_slots = [] {
+    std::array<uint8_t, 999> slots{};
+    for (size_t slot = 0; slot < body_count; ++slot) slots[bodies[slot].id] = uint8_t(slot + 1);
+    return slots;
+}();
+inline constexpr size_t slot_for(unsigned id) {
+    return id < image_slots.size() && image_slots[id] ? size_t(image_slots[id] - 1) : body_count;
+}
+
 constexpr size_t max_file_bytes = 16u * 1024u * 1024u;
-constexpr size_t max_pack_bytes = 32u * 1024u * 1024u;
+// The complete 29-image pack uses about 47 MiB including pose metadata.
+constexpr size_t max_pack_bytes = 48u * 1024u * 1024u;
 
 // One entry per original HD2 atlas texel. The mask is stored next to its
 // diffuse RGBA so overlapping animation frame crops can share one allocation.
@@ -55,12 +95,18 @@ inline void charge(size_t& used, size_t count, size_t element) {
     used += count * element;
 }
 inline void cache_body(Pack& pack, size_t slot, const Anim& anim) {
+    const auto& names = anim.layer_names();
+    const auto it = std::find(names.begin(), names.end(), "diffuse");
+    if (it == names.end()) throw FormatError("Missing diffuse layer");
+    const auto& texture = anim.textures()[size_t(it - names.begin())];
+    if (!texture.present()) throw FormatError("Missing diffuse texture");
+    const size_t pixels = size_t(texture.width) * texture.height;
+    // Check the final cache budget before allocating or decoding this atlas.
+    charge(pack.bytes, pixels, sizeof(Texel));
+    charge(pack.bytes, anim.frames().size(), sizeof(Pose));
     const auto decoded = anim.decode_sprite();
     const auto& diffuse = decoded.diffuse();
     const auto* mask = decoded.teamcolor();
-    const size_t pixels = size_t(diffuse.width) * diffuse.height;
-    charge(pack.bytes, pixels, sizeof(Texel));
-    charge(pack.bytes, anim.frames().size(), sizeof(Pose));
     auto& atlas = pack.atlases[slot];
     atlas.resize(pixels);
     for (uint32_t y = 0; y < diffuse.height; ++y) {

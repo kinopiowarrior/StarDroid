@@ -1,0 +1,394 @@
+--- a/ui/ui.h
++++ b/ui/ui.h
+@@ -1062,9 +1062,11 @@
+ 	// Is a sprite's tile explored by fog_player? (Used to hide sprites in the
+ 	// black unexplored area.) True when fog is off.
+ 	bool sprite_position_explored(const sprite_t* sprite) const {
+-		if (fog_player < 0) return true;
+-		xy pos = sprite->position;
+-		if (pos.x < 0 || pos.y < 0) return false;
++        return fog_position_explored(sprite->position);
++    }
++    bool fog_position_explored(xy pos) const {
++        if (fog_player < 0) return true;
++        if (pos.x < 0 || pos.y < 0) return false;
+         // World brightness may be zero without changing exploration, targeting
+         // or last-seen structures. Read the logical mask, never palette output.
+         if(size_t(pos.x/32)>=game_st.map_tile_width||size_t(pos.y/32)>=game_st.map_tile_height)return false;
+@@ -1256,6 +1258,20 @@
+ 	a_vector<uint8_t> temporary_warp_texture_buffer;
+ 	a_vector<uint8_t> temporary_cloak_background;
+ 
++    // Only the image stack is stored in the save format. The observation is
++    // local presentation state, captured even before a player enables HD2.
++    struct fog_appearance {
++        const sprite_type_t* type = nullptr;
++        xy position{};
++        int owner = 0;
++        size_t color = 0;
++        std::array<uint8_t,8> ramp{};
++        uint32_t depth = 0;
++        unit_id subject{};
++        int viewer = -1;
++        bool expired = false;
++    };
++
+ #ifdef STARDROID_HD2_RUNTIME
+     stardroid::remastered::live::Palette hd2_palette;
+     stardroid::remastered::live::DetailPlane hd2_details;
+@@ -1272,17 +1288,19 @@
+         else hd2_details.release();
+     }
+ 
+-    bool draw_hd2_body(const image_t* image, uint8_t* data, size_t pitch, size_t player_color) {
++    bool draw_hd2_image(const image_t* image, uint8_t* data, size_t pitch, size_t player_color,
++                        const fog_appearance* observed) {
+         namespace hd2 = stardroid::remastered::live;
+-        if (!hd2_palette.ready || game_st.eud_enabled95 || image != image->sprite->main_image ||
+-            image->iscript_state.raw_mode98 || (image->flags & (image_t::flag_hidden | image_t::flag_y_frozen)) ||
+-            (image->modifier != 0 && image->modifier != 1)) return false;
++        if (!hd2_palette.ready || game_st.eud_enabled95 || use_new_images ||
++            image->iscript_state.raw_mode98 || (image->flags & (image_t::flag_hidden | image_t::flag_y_frozen))) return false;
++        if (observed && !observed->type) return false; // legacy save: no trusted HD anchor or tint
+ 
+         const unsigned id = unsigned(image->image_type->id);
+-        size_t slot = 0;
+-        while (slot < hd2::body_count && hd2::bodies[slot].id != id) ++slot;
++        const size_t slot = hd2::slot_for(id);
+         if (slot == hd2::body_count || image->grp != global_st.image_grp[id]) return false;
+         const auto& expected = hd2::bodies[slot];
++        const bool shadow = expected.modifier == 10;
++        if (shadow ? image->modifier != 10 : (image->modifier != 0 && image->modifier != 1)) return false;
+         if (image->grp->width != expected.grp_width || image->grp->height != expected.grp_height ||
+             image->grp->frames.size() != expected.frames || image->frame_index >= expected.frames) return false;
+         const auto pack = std::atomic_load(&hd2::active_pack);
+@@ -1292,24 +1310,26 @@
+ 
+         const auto center = get_image_center_map_position(image) - screen_pos;
+         const auto owner = image->sprite->owner;
+-        const auto ramp = unit_player_colors101(owner, display_player_color(player_color, owner));
++        const auto ramp = observed ? observed->ramp : unit_player_colors101(owner, display_player_color(player_color, owner));
+         const auto* colors = tileset_img.wpe.data();
+         const bool flipped = i_flag(image, image_t::flag_horizontally_flipped);
+         const uint8_t* tint = colors + size_t(ramp[4]) * 4;
+-        if (!hd2_details.draw(pose, center.x, center.y, flipped, tint, hd2_palette, colors, data))
++        if (!hd2_details.draw(pose, center.x, center.y, flipped, tint, hd2_palette, colors, data, shadow)) {
++            if (shadow) return false; // low-memory / 1x: use the original shadow lookup once
+             hd2::blit_reduced(pose, center.x, center.y, flipped, tint, hd2_palette, colors,
+                               data, pitch, int(screen_width), int(screen_height));
++        }
+         return true;
+     }
+ #endif
+ 
+-	void draw_image(const image_t* image, uint8_t* data, size_t data_pitch, size_t color_index, bool cloak_shimmer = false) {
++	void draw_image(const image_t* image, uint8_t* data, size_t data_pitch, size_t color_index, bool cloak_shimmer = false, const fog_appearance* observed = nullptr) {
+         const auto& source_frame105=image->grp->frame_at105(image->frame_index);
+         // Retail drawSprites tests the prepared width/height before calling
+         // any image drawing function. Empty source geometry needs no pixels.
+         if(!source_frame105.size.x||!source_frame105.size.y)return;
+ #ifdef STARDROID_HD2_RUNTIME
+-        if (!cloak_shimmer && draw_hd2_body(image, data, data_pitch, color_index)) return;
++        if (!cloak_shimmer && draw_hd2_image(image, data, data_pitch, color_index, observed)) return;
+ #endif
+ 
+ 		if (is_new_image(image)) {
+@@ -1388,7 +1408,8 @@
+             color_index = display_player_color(st.players[image->modifier_data1].color, image->modifier_data1);
+         }
+         color_index = display_player_color(color_index, image->sprite->owner);
+-        const auto palette101=unit_player_colors101(palette_owner101,color_index);
++        const auto palette101 = observed && observed->type && image->modifier != 14
++            ? observed->ramp : unit_player_colors101(palette_owner101,color_index);
+ 		if (image->modifier == 0 || image->modifier == 1 || image->modifier == 14) {
+ 			const uint8_t* ptr = palette101.data();
+ 			auto player_color = [ptr](uint8_t new_value, uint8_t) {
+@@ -1513,6 +1534,7 @@
+ 	struct fog_snapshot_t {
+ 		bool valid = false;
+ 		a_vector<image_t> images;   // last-seen images, in draw order
++        fog_appearance observed;
+ 	};
+ 	a_vector<fog_snapshot_t> fog_snapshots = a_vector<fog_snapshot_t>(5000);
+ 
+@@ -1535,16 +1557,19 @@
+ 	virtual int selection_viewer() const { return fog_player; }
+ 	virtual const unit_t* selection_flash_unit(const sprite_t* sprite) const { return nullptr; }
+ 	virtual int selection_color_offset(const unit_t* u) const {
+-		int viewer = selection_viewer();
+-		if (viewer < 0) return -1; // Observer mode retains player colors.
+-		if (u->owner == viewer) return 0;
+-		if (u->owner >= 8 || ut_resource(u) || st.alliances[viewer][u->owner] ||
+-		    st.players[u->owner].controller == player_t::controller_rescue_passive ||
+-		    st.players[u->owner].controller == player_t::controller_neutral) return 8;
++        return selection_owner_offset(u->owner, ut_resource(u));
++    }
++    int selection_owner_offset(int owner, bool resource) const {
++        int viewer = selection_viewer();
++        if (viewer < 0) return -1;
++        if (owner == viewer) return 0;
++        if (owner >= 8 || resource || st.alliances[viewer][owner] ||
++            st.players[owner].controller == player_t::controller_rescue_passive ||
++            st.players[owner].controller == player_t::controller_neutral) return 8;
+ 		return 16;
+ 	}
+ 
+-	void draw_selection_circle(const sprite_t* sprite, const unit_t* u, uint8_t* data, size_t data_pitch) {
++	void draw_selection_circle(const sprite_t* sprite, const unit_t* u, uint8_t* data, size_t data_pitch, const fog_appearance* seen = nullptr) {
+ 		auto* image_type = get_image_type((ImageTypes)((int)ImageTypes::IMAGEID_Selection_Circle_22pixels + sprite->sprite_type->selection_circle));
+ 
+ 		xy map_pos = sprite->position + xy(0, sprite->sprite_type->selection_circle_vpos);
+@@ -1580,9 +1605,9 @@
+ 		height = std::min(height, screen_height - screen_y);
+ 
+ 		// Original tselect ramps: friendly green, neutral/allied yellow, hostile red.
+-		int offset = selection_color_offset(u);
+-		size_t color_index = display_player_color(st.players[u->owner].color, u->owner);
+-		uint8_t color = unit_player_colors101(u->owner,color_index)[0];
++        int offset = seen ? selection_owner_offset(seen->owner, ut_resource(u)) : selection_color_offset(u);
++        size_t color_index = seen ? seen->color : display_player_color(st.players[u->owner].color, u->owner);
++        uint8_t color = seen ? seen->ramp[0] : unit_player_colors101(u->owner, color_index)[0];
+ 		if (unit_is_mineral_field(u) || unit_is(u, UnitTypes::Resource_Vespene_Geyser)) {
+ 			color = tileset_img.resource_minimap_color;
+ 		}
+@@ -1795,15 +1820,38 @@
+ 	// picture (frozen mid-animation) can be replayed once it drops back into fog. The
+ 	// live sim keeps spawning/retiring overlays (e.g. geyser steam) — a frame freeze
+ 	// isn't enough, we have to keep our own static copy.
+-	void snapshot_fog_sprite(const sprite_t* sprite) {
++	void snapshot_fog_sprite(const sprite_t* sprite, const unit_t* subject = nullptr) {
+         ensure_sprite_ui_capacity95(size_t(sprite->index)+1);
+ 		auto& snap = fog_snapshots.at(sprite->index);
+-		snap.valid = true;
+-		snap.images.clear();
+-		for (const image_t* image : ptr(reverse(sprite->images))) {
+-			if (i_flag(image, image_t::flag_hidden)) continue;
+-			snap.images.push_back(*image);
+-		}
++        snap.valid = true;
++        snap.images.clear();
++        bool has_hd2_art = false;
++        for (const image_t* image : ptr(reverse(sprite->images))) {
++            if (i_flag(image, image_t::flag_hidden)) continue;
++            snap.images.push_back(*image);
++#ifdef STARDROID_HD2_RUNTIME
++            namespace hd2 = stardroid::remastered::live;
++            has_hd2_art |= hd2::slot_for(unsigned(image->image_type->id)) != hd2::body_count;
++#endif
++        }
++#ifdef STARDROID_HD2_RUNTIME
++        // Pre-explored CHK terrain and guest save restoration also seed classic
++        // fog stacks. Only a sighting by this viewer can authorize HD artwork.
++        auto& seen = snap.observed;
++        if (has_hd2_art && !game_st.eud_enabled95 && subject && subject->sprite == sprite &&
++            fog_player >= 0 && !s_hidden(sprite) && !unit_hidden_by_fog(subject) &&
++            (own_vision_enabled(subject) || (sprite->visibility_flags & (1 << fog_player)))) {
++            seen.type = sprite->sprite_type;
++            seen.position = sprite->position;
++            seen.owner = sprite->owner;
++            seen.color = display_player_color(st.players[seen.owner].color, seen.owner);
++            seen.ramp = unit_player_colors101(seen.owner, seen.color);
++            seen.depth = sprite_depth_order(sprite);
++            seen.subject = get_unit_id(subject);
++            seen.viewer = fog_player;
++            seen.expired = false;
++        } else seen = {};
++#endif
+ 	}
+ 
+     // CHK MASK contains terrain the player already knows at mission start.
+@@ -1813,30 +1861,61 @@
+         if(fog_player<0)return;
+         for(int p=0;p<12;++p)for(auto* u:ptr(st.player_units[p]))
+             if(u->sprite && unit_persists_in_fog(u) && !unit_is_undetected(u,fog_player)
+-                && sprite_position_explored(u->sprite))snapshot_fog_sprite(u->sprite);
++                && sprite_position_explored(u->sprite))snapshot_fog_sprite(u->sprite, u);
+     }
+ 
+ 	// Draw the frozen snapshot of a fogged structure/resource. Something at an explored
+ 	// spot we never actually saw (built in fog) has no snapshot and stays hidden. The
+-	// structure doesn't move, so the live sprite's position still places the copy.
+-	virtual void draw_fog_snapshot(const sprite_t* live, uint8_t* data, size_t data_pitch) {
++    // HD2 observations retain the original anchor and player ramp as well.
++    const fog_appearance* hd2_fog_appearance(size_t index) const {
++#ifdef STARDROID_HD2_RUNTIME
++        if (hd2_palette.ready && !game_st.eud_enabled95 && !use_new_images && fog_snapshots[index].valid)
++            return &fog_snapshots[index].observed;
++#endif
++        return nullptr;
++    }
++
++    bool hd2_observation_valid(const fog_appearance& seen, const sprite_t* sprite) const {
++        const unit_t* subject = get_unit(seen.subject);
++        return !seen.expired && subject && subject->sprite == sprite && seen.viewer == fog_player
++            && fog_position_explored(seen.position);
++    }
++
++    virtual void draw_fog_snapshot(const sprite_t* live, uint8_t* data, size_t data_pitch) {
+         ensure_sprite_ui_capacity95(size_t(live->index)+1);
+ 		auto& snap = fog_snapshots.at(live->index);
+ 		if (!snap.valid) return;
+ 		// Keep the selected remembered building's circle below its cached body.
+ 		// Do not show health bars from the live unit while it is out of sight.
+ 		const unit_t* selected = current_selection_sprites_set.at(live->index);
+-		for (image_t& image : snap.images) {
+-			if (selected && image.modifier != 10) {
+-				draw_selection_circle(live, selected, data, data_pitch);
++        const auto* seen = hd2_fog_appearance(live->index);
++        const sprite_t* source = live;
++        sprite_t remembered{};
++        if (seen && seen->type) {
++            if (!hd2_observation_valid(*seen, live)) return;
++            remembered.sprite_type = seen->type;
++            remembered.position = seen->position;
++            remembered.index = live->index;
++            remembered.owner = seen->owner;
++            source = &remembered;
++        }
++        const size_t color = source == live ? st.players[live->owner].color : seen->color;
++        for (image_t& cached : snap.images) {
++            // New-image queuing only occurs on the legacy path. Keep its original
++            // stable image pointer, and give HD2 a private copy for this draw.
++            image_t local;
++            image_t& image = source == live ? cached : (local = cached);
++            if (selected && image.modifier != 10) {
++				draw_selection_circle(source, selected, data, data_pitch, seen && seen->type ? seen : nullptr);
+ 				selected = nullptr;
+ 			}
+-			image.sprite = const_cast<sprite_t*>(live);
+-			draw_image(&image, data, data_pitch, st.players[live->owner].color);
++			image.sprite = const_cast<sprite_t*>(source);
++            draw_image(&image, data, data_pitch, color, false, seen);
+ 		}
+ 	}
+ 
+ 	a_vector<std::pair<uint32_t, const sprite_t*>> sorted_sprites;
++    a_vector<std::pair<uint32_t, const sprite_t*>> remembered_sprites;
+ 
+ 	virtual void draw_psi_fields(uint8_t*, size_t) {}
+ 
+@@ -1847,6 +1926,8 @@
+ 		image_draw_queue.clear();
+ 
+ 		sorted_sprites.clear();
++        remembered_sprites.clear();
++        bool has_frozen_hd2 = false;
+ 
+ 		auto screen_tile = screen_tile_bounds();
+ 
+@@ -1886,7 +1967,26 @@
+                     cover.modifier=0;
+                     trap_cover_index122.at(u->sprite->index)=trap_cover_images122.size();
+                 }
+-				if (unit_has_cloak_shimmer(u)) {
++                const auto* seen = hd2_fog_appearance(u->sprite->index);
++                if (seen && seen->type && fog_player >= 0 && unit_persists_in_fog(u)
++                    && !own_vision_enabled(u) && !(u->sprite->visibility_flags & (1 << fog_player))) {
++                    // Recycled sprite slots do not inherit the old unit's
++                    // picture. Seeing its vacant footprint erases the memory.
++                    if (!hd2_observation_valid(*seen, u->sprite) ||
++                        (seen->position != u->sprite->position && player_position_is_visible(fog_player, seen->position))) {
++                        fog_snapshots[u->sprite->index].observed.expired = true;
++                        fog_hidden_sprite[u->sprite->index] = 1;
++                    } else {
++                        has_frozen_hd2 = true;
++                        fog_frozen_sprite[u->sprite->index] = 1;
++                        // Cull and sort the observed position, even if the
++                        // live unit has flown into shroud or outside the camera.
++                        if (size_t(seen->position.y / 32) >= from_y && size_t(seen->position.y / 32) < to_y)
++                            remembered_sprites.emplace_back(seen->depth, u->sprite);
++                    }
++                    continue;
++                }
++                if (unit_has_cloak_shimmer(u)) {
+ 					cloak_shimmer_sprite.at(u->sprite->index)=1;
+ 					if(u->subunit)cloak_shimmer_sprite.at(u->subunit->sprite->index)=1;
+ 				} else if (unit_hidden_by_fog(u)) {
+@@ -1896,9 +1996,16 @@
+ 				else if (unit_frozen_by_fog(u)) fog_frozen_sprite.at(u->sprite->index) = 1;
+ 				// Own structures also need a last-seen image when a UMS map
+                 // turns off self vision. Ordinary own-unit rendering is unchanged.
+-                else if (fog_player >= 0 && unit_persists_in_fog(u)) snapshot_fog_sprite(u->sprite);
+-			}
+-
++                else if (fog_player >= 0 && unit_persists_in_fog(u)) snapshot_fog_sprite(u->sprite, u);
++			}
++
++        if (has_frozen_hd2) {
++            sorted_sprites.erase(std::remove_if(sorted_sprites.begin(), sorted_sprites.end(), [&](const auto& item) {
++                const auto* seen = hd2_fog_appearance(item.second->index);
++                return fog_frozen_sprite[item.second->index] && seen && seen->type;
++            }), sorted_sprites.end());
++            sorted_sprites.insert(sorted_sprites.end(), remembered_sprites.begin(), remembered_sprites.end());
++        }
+         for(auto& v:sorted_sprites) {
+             const size_t cover_index=trap_cover_index122.at(v.second->index);
+             if(!cover_index)continue;
+@@ -1922,8 +2029,8 @@
+             }
+ 			if (fog_hidden_sprite[v.second->index]) continue;
+ 			if (fog_player >= 0) {
+-				if (!sprite_position_explored(v.second)) continue;
+-				if (fog_frozen_sprite[v.second->index]) { draw_fog_snapshot(v.second, data, data_pitch); continue; }
++                if (fog_frozen_sprite[v.second->index]) { draw_fog_snapshot(v.second, data, data_pitch); continue; }
++                if (!sprite_position_explored(v.second)) continue;
+                 // Unit bodies have the ownership/detection/snapshot rules above.
+                 // Iscript afterimages, projectiles and dying sprites have no live
+                 // unit entry. Exploration alone must not expose their movement.
+--- a/web/sandbox.h
++++ b/web/sandbox.h
+@@ -3359,7 +3359,7 @@
+ 		double e = ui_now - flash_start;
+ 		return e < FLASH_TOTAL_MS && ((int)(e / FLASH_PHASE_MS)) % 2 == 0;   // show phases 0 and 2
+ 	}
+-	uint8_t flash_color() {
++	uint8_t flash_color(int observed_owner = -1) {
+ 		if (line_move_color < 0) {
+ 			line_move_color = nearest_palette_color(40, 240, 40);
+ 			line_atk_color = nearest_palette_color(240, 40, 40);
+@@ -3367,8 +3367,9 @@
+ 		if (ring_neutral_color < 0) ring_neutral_color = nearest_palette_color(240, 220, 40);
+ 		unit_t* t = get_unit(flash_unit);
+ 		if (!t) return (uint8_t)line_move_color;
+-		return (uint8_t)(t->owner == my_player ? line_move_color
+-		              : t->owner < 8 ? line_atk_color : ring_neutral_color);
++		const int owner = observed_owner < 0 ? t->owner : observed_owner;
++        return (uint8_t)(owner == my_player ? line_move_color
++                      : owner < 8 ? line_atk_color : ring_neutral_color);
+ 	}
+ 	// Both live and remembered structures draw the target ring before their body.
+ 	// Fog snapshots bypass draw_sprite, so they need the same feedback hook.
+@@ -3387,8 +3388,16 @@
+ 		// An explored tile alone does not reveal a building constructed out of sight.
+         ensure_sprite_ui_capacity95(size_t(sprite->index)+1);
+ 		if (!fog_snapshots.at(sprite->index).valid) return;
+-		draw_target_flash(sprite, data, data_pitch);
+-		ui_functions::draw_fog_snapshot(sprite, data, data_pitch);
++		const auto* seen = hd2_fog_appearance(sprite->index);
++        if (seen && seen->type) {
++            if (!hd2_observation_valid(*seen, sprite)) return;
++            if (flash_showing()) {
++                const auto* t = get_unit(flash_unit);
++                if (t && t->sprite == sprite)
++                    draw_selection_ring(seen->type, seen->position, flash_color(seen->owner), data, data_pitch);
++            }
++        } else draw_target_flash(sprite, data, data_pitch);
++        ui_functions::draw_fog_snapshot(sprite, data, data_pitch);
+ 	}
+ 
+ 	// The animated click marker BW drops where you order — the real Cursor_Marker sprite,
+@@ -3430,9 +3439,11 @@
+ 	// ui_functions::draw_selection_circle exactly (same GRP, position, clipping) — it just
+ 	// remaps the ring's colour band to `color` instead of the owner's player colour.
+ 	void draw_selection_ring(const unit_t* u, uint8_t color, uint8_t* data, size_t data_pitch) {
+-		const sprite_t* sprite = u->sprite;
+-		auto* image_type = get_image_type((ImageTypes)((int)ImageTypes::IMAGEID_Selection_Circle_22pixels + sprite->sprite_type->selection_circle));
+-		xy map_pos = sprite->position + xy(0, sprite->sprite_type->selection_circle_vpos);
++        draw_selection_ring(u->sprite->sprite_type, u->sprite->position, color, data, data_pitch);
++    }
++    void draw_selection_ring(const sprite_type_t* type, xy position, uint8_t color, uint8_t* data, size_t data_pitch) {
++        auto* image_type = get_image_type((ImageTypes)((int)ImageTypes::IMAGEID_Selection_Circle_22pixels + type->selection_circle));
++        xy map_pos = position + xy(0, type->selection_circle_vpos);
+ 		auto* grp = global_st.image_grp[(size_t)image_type->id];
+ 		auto& frame = grp->frames.at(0);
+ 		map_pos.x += int(frame.offset.x - grp->width / 2);

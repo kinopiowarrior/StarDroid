@@ -1,41 +1,37 @@
-# HD2 unit sprite preview for Android
+# HD2 battlefield sprites for Android
 
-This development APK, `1.5.4-hd2-preview2`, draws five imported unit bodies at their original HD2 sprite resolution during StarDroid 1.5.4 gameplay. It uses the same Android application ID, signing identity and version code (124) as 1.5.4. Existing game data and save formats are compatible. Device installation and performance still need handset testing.
+`1.5.4-hd2-preview3` uses 29 of the 31 HD2 animations in the supplied `filezz.zip`. The five unit bodies from preview 2 keep their original 2× detail. This build adds Larva, the Infested Command Center, birth and death animations, construction art, hit effects, scenery and shadows.
 
-## Try it
+## Install and try it
 
-1. Install the preview APK over 1.5.4 or preview 1. If the five sprites were already imported and HD2 is selected, start a mission. For a new import, open **App Options → Unit graphics → Import HD2 sprite ZIP**.
-2. Select `filezz.zip` directly. The importer reads the `HD2/anim/` directory inside the ZIP. A successful import selects HD2 and shows the number of installed sprites.
-3. Return to the game. The original Protoss campaign’s first mission, **First Strike**, contains Dragoons. Under **Unit graphics**, **Use classic unit sprites** and **Use HD2 unit sprites** switch the artwork without reimporting.
+1. Install the APK over preview 2. It uses the same Android application ID, release signing identity and version code (124) as StarDroid 1.5.4.
+2. Open **App Options → Battlefield sprites → Import HD2 sprite ZIP** and select `filezz.zip` again. Preview 2 saved only the five entries it could use. A successful re-import of the supplied ZIP selects HD2 and reports **29 of 29**. Existing five-file imports still work, and Classic/HD2 selection persists across restarts.
+3. Return to the game menu and start a mission. Look at the Larva beside the starting Hatchery in **Among the Ruins**, the first original Zerg mission. **Backwater Station**, the second original Terran mission, contains an Infested Command Center. **First Strike** still shows the preview 2 Dragoons.
 
-## Files the preview reads
+## Included files
 
-| ZIP entry | Unit body | Animation frames |
-| --- | --- | ---: |
-| `HD2/anim/main_000.anim` | Scourge | 85 |
-| `HD2/anim/main_005.anim` | Broodling | 204 |
-| `HD2/anim/main_013.anim` | Defiler | 289 |
-| `HD2/anim/main_122.anim` | Dragoon | 415 |
-| `HD2/anim/main_228.anim` | Ghost | 229 |
+Each number below is the three-digit portion of `HD2/anim/main_NNN.anim` inside the ZIP. The ANIM files include their texture data. A ZIP with any subset of the supported entries also works.
 
-These files contain their own textures and team-color masks. The supplied ZIP contains all five, and an archive containing any subset also works. A successful import replaces the selected pack. Omitted bodies use their classic art. The importer extracts the recognized files to private app storage and remembers the selected graphics mode between launches. The importer accepts ZIPs up to 128 MiB and individual supported files up to 16 MiB.
+| Graphics | IDs | What they draw |
+| --- | --- | --- |
+| Units and building | `000`, `005`, `013`, `036`, `063`, `122`, `228` | Scourge, Broodling, Defiler, Larva, Infested Command Center, Dragoon, Ghost |
+| Birth, death and remnants | `002`, `003`, `004`, `007`, `024`, `045` | Scourge birth, death and explosion, Broodling remnants, Egg remnants, Overlord death |
+| Construction and weapon effects | `325`, `527`, `545` | Large Terran construction, Gauss Rifle hit, Hallucination hit |
+| Map scenery | `723`, `747`, `758`, `862` | Badlands, Installation, Twilight and Desert scenery |
+| Shadows | `001`, `006`, `081`, `100`, `145`, `177`, `202`, `348`, `893` | Scourge, Broodling, Greater Spire, Spore Colony, Reaver, Cybernetics Core, Stargate, Mineral Field Type 1 and a Desert doodad |
 
-StarDroid still uses **StarDat.mpq**, **BrooDat.mpq**, and **Patch_rt.mpq** for its classic game data. **StarCraft.mpq** provides the original campaign and **BroodWar.mpq** the expansion campaign. Existing imports can be used directly. This preview uses extracted ANIM files. A `.build.info` file describes the installation build and is unnecessary for importing these sprites.
+`361` (small Lockdown field) and `508` (unused Venom hit) use special palette effects. They continue through the classic renderer. A shadow file upgrades the shadow of the named object. For example, the Reaver gets an HD2 shadow while its body uses classic artwork.
 
-## What appears in game
+Your existing `StarDat.mpq`, `BrooDat.mpq` and `Patch_rt.mpq` supply the classic game data. `StarCraft.mpq` and `BroodWar.mpq` supply their respective campaigns. For these HD2 graphics, the extracted ZIP is the only extra input.
 
-Preview 1 averaged a 2×2 block of HD2 artwork into each classic world pixel, then mapped the result to the tileset palette. At higher zoom, the Dragoon could look blocky and lose fine shading. Preview 2 retains each texture sample and its team-color mask. A logical 640×480 viewport can now produce a 1280×960 Android bitmap with the same camera framing and touch coordinates. The five decoded sprite atlases and frame metadata occupy about 24.1 MiB. Frame direction, animation and team colors follow the engine. The game draws each body in its usual position among shadows, other units, effects and the interface. EUD maps and unsupported image effects use the classic renderer. When a classic effect reads the color behind it, the effect uses an indexed approximation for its covered pixels.
+## Rendering
 
-Android uses the existing **Smooth graphics** setting for the final display scale. A device texture or memory limit can select the lower-resolution fallback. The high-density path draws the world once per displayed frame and writes to the Android bitmap using its actual row stride.
+The live renderer draws the imported sprites in their original image order. Supported shadows use the imported alpha mask to darken what is underneath, including other HD2 sprites. Maximum coverage uses an approximation of the classic shadow strength. A remembered HD2 building uses its last observed appearance while under fog. On loading a save that has no saved HD presentation context, a remembered building uses the saved classic imagery until it is seen again.
 
-Other units, buildings, terrain, selection circles, portraits and menus use classic artwork. The five HD2 bodies use the imported diffuse artwork and team colors. Full Remastered lighting and additional HD assets remain future work.
+With a 640×480 logical viewport, HD2 can produce a 1280×960 Android bitmap. Controls, camera and selection use the same logical coordinates. The complete supplied pack occupies about **47 MiB** of resident sprite data. A device texture or memory limit can select a lower-resolution fallback. EUD maps use the classic rendering path. Terrain tiles, portraits and menus use classic assets.
 
-## Verification
+## Validation
 
-The same placed Dragoon in *First Strike* was captured in preview 1 and preview 2 with identical camera position, animation pose and zoom. With a 640×480 logical viewport, preview 2 produced a 1280×960 output. In the Dragoon’s region, 1,045 logical pixels contained distinct higher-resolution samples. Comparing the rendered normal, mirrored and alternate-team-color poses against an independent decode of `main_122.anim` produced exact RGB matches for 3,370 opaque and 771 partly transparent texels per pose.
+The host tests rendered all 29 images individually and checked that each changed the game framebuffer. In Among the Ruins, the starting Larva advanced through 25 distinct poses. In Backwater Station, the Infested Command Center retained its observed pose and color after moving under fog. A separate test checked all 1,490 output pixels of a Scourge shadow drawn over an HD2 sprite.
 
-The selected Dragoon’s 31×7 health and shield gauge appeared in its original position, covering 868 output texels. The drag-selection border, foreground unit coverage, camera and pointer mapping, padded Android-style row stride and single simulation/presentation timing were checked separately. The tests use the production native render and bitmap presentation code on the host. Handset installation, frame time and memory pressure remain device checks.
-
-The 1.5.4 importer continues to use the same files and persisted mode. The Android package is signed with the established certificate and contains both ARM64 and x86-64 native libraries. Game artwork is supplied by the player.
-
-Test records include `validation/hd2-live.json`, `validation/hd2-density2.json` and `validation/hd2-texels.json`. Earlier host-scene and preview 1 reports retain their original scope.
+The importer passed 345 checks, including upgrades from a five-file pack and recovery from failed imports. The source ZIP includes the engine patches, importer, native libraries, build instructions and test records. Frame rate and memory use on a physical Android device remain unmeasured.

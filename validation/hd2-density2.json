@@ -1,6 +1,6 @@
 {
   "passed": true,
-  "scope": "Host CPU game presentation, original archived First Strike Dragoon and Pillow DDS reference. Timing uses 12 warmed O1 draws for the same view. Android Canvas/device performance is not measured.",
+  "scope": "Host CPU game presentation using the original five-file import, original archived First Strike Dragoon and Pillow DDS reference. Timing uses 12 warmed O1 draws for the same view. Android Canvas/device performance is not measured.",
   "sourceSha256": {
     "native/audio.h": "e6ad1bb2b04d08ced4fa9bafe5f49dfff6034f1faf42ba5e1f30c7e0ff91c15f",
     "native/generated/wasm_backend.cpp": "844b4f296a6ba8722a0dac019c50fb911155866ea0653a0c147656f7ea8adadb",
@@ -9,16 +9,16 @@
     "native/hero_mode.h": "371cce07d5ff3fffbd9fd7244f47b21bff83306fabd210e75b869eae38ea80c7",
     "native/map_compat116.h": "535102183b12f5bae22407fbf822bb5a445473df0780fc9649fdd71efa7b19a0",
     "native/match_options113.h": "53ebb24a8b01fa2aedb075800d6f64fb821039eef952b55fd78dc73270323ab1",
-    "native/multiplayer.h": "33eb26bf0d4f505f1b9d5589c05dd3b2387f3b8ddb39eb43fed35622edfbf523",
+    "native/multiplayer.h": "099dfc2be28e883e82e7e644d0a081cb5520e10b1f6e9b37c4bb35a8e35a7304",
     "native/optional_audio102.h": "280112df749c1d287f12e006fecca8c0ca100137dca47ae9401a84d14e8337a0",
     "native/patch_probe119.h": "9e36ddf2ec10b8bd1bdec1d5269893900b001b583cd95d5d13436056d35a89e8",
     "native/remastered/assets.h": "1f6eb55a53b5f5d12a3425d0fb728d98e586bf7fd0629d8a8dd79489441f815c",
-    "native/remastered/compositor.h": "ee73d81fd97cfa3d5320569785ef70adcaf9e98477ddcad39ea28b1f8638ee7e",
+    "native/remastered/compositor.h": "47575f45f37416095d9df251c726490bdec378e6721f5849442dc6e85620d6da",
     "native/remastered/geometry.h": "6b0db4ddea7d0177fcf35cf8197a903969349bc2938bc075c4dac59067f828b7",
-    "native/remastered/runtime.h": "efa5157f1197dc1af401e8cf4aaf0310b91f6a15091325281ec0eef9dc2143d3",
+    "native/remastered/runtime.h": "5f77d4e9fe833d9fe7a6b08e5ce68fe1ae363ca54dfdbae7b629f93b6da06ff2",
     "native/replay.h": "8751d24c7c324f65c3db27d814b5b6b21328ca7fb90cb834ccb336ce42680106",
-    "native/runtime.cpp": "bc308e09e74a4d197a949d0c64330296cc467c6815445b648db046d2f56fdd36",
-    "native/save_state.h": "a95b736930bd233a917b6359fdd9d4bf5a02a68d0f2a78594841298734432e5a",
+    "native/runtime.cpp": "d108a176895f3454cb48da0c4e1df0f2c0490d66b89726e85768af5fd6bbe67f",
+    "native/save_state.h": "e5628cdcf5ebc0389da62345618c5bb8e47b5b48e8ce2bdafe81aa58c3585c1a",
     "native/ums_compat.h": "ad831f3d7890d122cb712d2c18171be68d7d1407989ae9794f66461b15991488",
     "native-engine/actions.h": "1ba034f982351a45afeec17b60fd551d241328ac31b337de46d0682fee963b05",
     "native-engine/bwenums.h": "8941989594df54f5ebe65a75e0d0414183fb29e90a4d3519c980aa0fd9cb6264",
@@ -390,7 +390,7 @@
     "native-engine/ui/native_window.h": "9f04edbe6e869962bc0da62e135166d4d535180512244f521a8b943d90247093",
     "native-engine/ui/native_window_drawing.h": "52eaa67b768d2c0bdaee0be64bcfdcd3ae79b414463749e4806cb588049ef072",
     "native-engine/ui/sdl2.cpp": "406b1c9d10dd2c79fe7a68f821daf8f2f7061b9fbf1988f8884414e2ba66b1d7",
-    "native-engine/ui/ui.h": "ebad8c2ed4b87b9308ef2df5858e68dac75eb1c6cdee0d5ec25521546f3fa7e9",
+    "native-engine/ui/ui.h": "bdc1a604484c7b4de09a6ddac4b0ef848f1f95a9c2b164edb576616136bcf209",
     "native-engine/util.h": "779cd2d92761c144b2cd31a4f5d36de468b102652bffe5a19e9150c07ba6f3e1",
     "native-engine/web/ai_difficulty112.h": "9b2a1f956b7e8e117dfe1a9ce35d8c7f65aee2828a2cafeef3880f56b18043c5",
     "native-engine/web/bridge.cpp": "938aa7b24127c1c3adc6d3bc8ca2d6cec5cbac31522b41cea3fff27f2622ea03",
@@ -433,7 +433,7 @@
     "native-engine/web/eud_views97.h": "1a29868ee03fe0f2fd0d22c9283bc8852a0d5451d6af983f49aa7e1e1ba49fd3",
     "native-engine/web/play.cpp": "09898fbed675eb137befd824ef9dd35d3ee2a3e4ce2769b7590ba0d2e6e55e9a",
     "native-engine/web/replay_controls100.h": "d8ba30d5c3b3547f675e1f093e15649f1e218784ea6368bdc4c9b6e8d8bc3ae9",
-    "native-engine/web/sandbox.h": "a6118430edff0288ba7eca1a78cf06351b296210c02b345be18f8f0e969628fc",
+    "native-engine/web/sandbox.h": "a431c3f252a8bd3680cadaee586c9bb258707ae7ca3addf8b8b6ee6a110db9af",
     "native-engine/web/ums_center_view111.h": "b940aafa24165c7a30d133dccecf56cc4da21542e9b10a1fcc1885d788d879fa",
     "native-engine/web/ums_center_view112.h": "50fef28647ec80c851407bd2c56c18d9b98ac91ffd1a89f4b1bb501e294f8230",
     "native-engine/web/wasm_backend.cpp": "9dd773dd80d3cd6f3230f1920342441a3a64b4b50d74e79f13262bb2ef5862ec",
@@ -544,6 +544,7 @@
     "patches/native-gameplay113.patch": "c97b519694519d0f8fbc0fc7636307f66ab40b39c5cc80db0d06e23ac5e7667e",
     "patches/native-hd2-bodies.patch": "5779ea64c870a6fc049d6bc7779a3277ac8204a443182dcaca602a57a5fee907",
     "patches/native-hd2-compositor.patch": "49fccda948387b758165f2497a5a249afb6048cbcf6db7135e08e94830e27871",
+    "patches/native-hd2-expanded.patch": "4585597bcc3d3162c506be8d7370ccc7a4559192ee8375f69fc7c449a89c1da8",
     "patches/native-hero-rescue11.patch": "95c180b354a1f69ce3c2ee69c51337d24e188f096dfaa35b874f1b56223a39db",
     "patches/native-hotkeys11.patch": "55a71e9908dffe77d5aa24508c140efeced2302a10f5d035cfd4c129dabdeeed",
     "patches/native-map-invincibility11.patch": "2bfc8910d558e87ec2b7fec9115bc95ba061f860c6254bff797a267cfa1935f8",
@@ -628,19 +629,21 @@
     "patches/native-unit-names79.patch": "b09b2ffcc193de2b2ab28b34aef78ab0f1fbfec99c85d64394316e559fd336f0",
     "patches/native-upgrades1.patch": "780b4beaa60d8897128202322f0852ba091b390b6eff5f9b53c2b9cfea007811",
     "patches/native-wireframes11.patch": "763547e1ab053ee612665718e5810d35fcbe39263a8308960e4fedd3a75ac25a",
-    "scripts/prepare_native.py": "4ca13a451ab26e9a04a5c302aa2744741cc4290d10b8311dad51ed474709849d",
+    "scripts/prepare_native.py": "81535cd1ee251e3a4f756d62866697593d40c9f66a82105736afabb56a6694c1",
     "vendor/libsmacker/smacker.c": "d2a9adda0f8d36e952cdb44ec2fefbbe1f4146319272e779eed15f6c06a813a5",
     "vendor/libsmacker/smacker.h": "4bcf855b32bc6a69ca2d6df65bcbf628d939ad89866313553eb5f2de598e29c8",
     "vendor/libsmacker/smk_malloc.h": "ccb52a95f587a9b7968433280c198ddadc726288d454102729d638f9d5d82353",
     "tests/native_hd2_density2.cpp": "86a36b9b831030fa3c9619bf955dedec68cbd23be09a2b991f93d9c710e64ce2",
-    "tests/run_hd2_density2.py": "174adfe964f88b646ea95ae97998f1761464bce00cd3e2b40c0c49552d306ff8",
+    "tests/run_hd2_density2.py": "3e3e596b67b982c308fe10e248c5827cf8e69a08ab51d92aeab115d44512dca3",
     "app/src/main/java/org/openbw/androidtest/Hd2FrameSize.java": "fb8abbd133df36aa991bc5149d3ddfc93ad27becdb6f1f0e07a931f14dd97549",
     "tests/Hd2FrameSizeTest.java": "bcbd47df67d1fccffa51e7f7e51f6a6214f38ba4236fe1e9bbd44cee99e093e0",
     "app/src/main/java/org/openbw/androidtest/NativeSurface.java": "fbcd077c4e9937e60c04539a521d469bcef0527b0752938cfc866a1985f8b57e"
   },
   "preview1SourceDifferences": {
+    "native/multiplayer.h": "33eb26bf0d4f505f1b9d5589c05dd3b2387f3b8ddb39eb43fed35622edfbf523",
     "native/remastered/runtime.h": "9e5d5ddac5ce2106470ad5d74a34b0b116043ee27e9c2d345e2f1af29ef35533",
     "native/runtime.cpp": "d1281fdf66e76e794961a1043506d59d0d058c0d8448eb0925369c640672e0d1",
+    "native/save_state.h": "a95b736930bd233a917b6359fdd9d4bf5a02a68d0f2a78594841298734432e5a",
     "native-engine/ui/ui.h": "27a77e9e5724ef1bd23f3e5f60afbf5da25da64c15aa6572cbf45c5448be054d",
     "native-engine/web/sandbox.h": "a6199d9fbbfe87a01f7793b7308889026049c1aa5eff66079a2adc31cbd2c658",
     "scripts/prepare_native.py": "81e20a43d15b72301bebc9dd20ba2b9bd3f32e2f0563896e831d2b7b1dd27cdd"
@@ -719,7 +722,7 @@
       640,
       480
     ],
-    "preview2Size": [
+    "currentSize": [
       1280,
       960
     ]
@@ -727,12 +730,12 @@
   "androidDensityBounds": "PASS 14 HD2 output-density checks",
   "hostTiming": {
     "old": {
-      "medianMs": 1.62739,
-      "slowestMs": 1.88546
+      "medianMs": 1.51513,
+      "slowestMs": 1.87657
     },
     "new": {
-      "medianMs": 1.88987,
-      "slowestMs": 2.04887
+      "medianMs": 1.71743,
+      "slowestMs": 1.96431
     }
   }
 }

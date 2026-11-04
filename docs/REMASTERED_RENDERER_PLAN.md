@@ -1,6 +1,6 @@
 # Remastered renderer integration plan
 
-This plan records the original 2× host prototype and the requirements for a full-color renderer. The [1.5.4 Android preview](HD2-ANDROID-PREVIEW.md) imports five unit bodies for normal gameplay. Preview 1 used the existing indexed battlefield surface. Preview 2 draws their native HD2 samples on a denser Android output bitmap.
+This plan records the original 2× host prototype and the requirements for a full-color renderer. The [1.5.4 Android preview](HD2-ANDROID-PREVIEW.md) now imports 29 verified images for normal gameplay. Preview 1 used the existing indexed battlefield surface. Preview 2 draws their native HD2 samples on a denser Android output bitmap.
 
 ## Current rendering path
 
@@ -63,6 +63,6 @@ The geometry runner supports `--previews` for diagnostic captures. Captures cont
 
 ## Android output and remaining work
 
-Preview 2 composites the five supported unit bodies at HD2 resolution in the live game’s draw order. A denser Android bitmap covers the same world viewport. Classic foreground writes remove covered HD samples, and the game’s fog level shades the surviving sprite samples. Classic image effects that read their background can use the indexed representation for the specific pixels they touch. The app imports the same five files and honors the existing Classic/HD2 selection.
+Preview 2 introduced full-color 2× unit bodies. Preview 3 extends that path to verified overlays, effects, scenery and alpha-mask shadows. A denser Android bitmap covers the same world viewport. Classic foreground writes remove covered HD samples, and the game’s fog level shades the surviving sprite samples. Classic image effects that read their background can use the indexed representation for the specific pixels they touch. The app imports the same five files and honors the existing Classic/HD2 selection.
 
 Remaining work includes additional asset types and references, terrain and interface art, retail lighting, and phone performance measurements on crowded maps. See [the Android preview guide](HD2-ANDROID-PREVIEW.md) for the current inputs and hardware test status.

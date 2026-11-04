@@ -10,6 +10,7 @@ import io
 import json
 import os
 from pathlib import Path
+import shutil
 import struct
 import subprocess
 import tempfile
@@ -158,7 +159,7 @@ def compare(old, new, anim, image_path):
         try:
             font=ImageFont.truetype('DejaVuSans.ttf',16); small=ImageFont.truetype('DejaVuSans.ttf',12)
         except OSError: font=small=ImageFont.load_default()
-        for i,label in enumerate(('Preview 1','Preview 2 · HD2 texels')):
+        for i,label in enumerate(('Preview 1','Current preview · HD2 texels')):
             dx=10+i*(rx*8+10);draw.text((dx,9),label,font=font,fill='#f1f5f9');canvas.paste(panels[i],(dx,36))
         draw.text((10,ry*8+47),'First Strike · same Dragoon, pose and camera · 4× display enlargement',font=small,fill='#cbd5e1')
         canvas.save(image_path)
@@ -166,7 +167,7 @@ def compare(old, new, anim, image_path):
             'worldPixelsContainingDistinctSubpixels':detailed,'exactSelectedGaugeSubpixels':bar_samples,'exactDragBorderSubpixels':int(actual_line.size//3),
             'reducedTargetMatchesPreview1':True,
             'renderTicksPerPresentation':1,'comparedSimulationSteps':32,'identicalWorldContinuation':True,
-            'preview1Size':[640,480],'preview2Size':[1280,960]}
+            'preview1Size':[640,480],'currentSize':[1280,960]}
 
 
 def main():
@@ -186,6 +187,15 @@ def main():
     perf={}
     with tempfile.TemporaryDirectory(prefix='hd2-density-') as tmp:
         tmp=Path(tmp)
+        # Exercise the same five-file generation held by an upgraded preview 2
+        # installation even when the supplied ZIP contains additional artwork.
+        legacy_pack = tmp / 'five-sprites'
+        legacy_pack.mkdir()
+        for original in anim_paths:
+            copied = legacy_pack / original.name
+            shutil.copyfile(original, copied)
+            if sha(copied) != bound[original.name]:
+                raise RuntimeError('Sprite changed while preparing the compatibility fixture')
         java=tmp/'java';java.mkdir()
         java_home=Path(os.environ['JAVA_HOME'])/'bin' if os.environ.get('JAVA_HOME') else None
         tool=lambda name: str(java_home/name) if java_home else name
@@ -194,15 +204,15 @@ def main():
                                    capture_output=True,text=True,check=True,timeout=60).stdout.strip()
         for name,root,is_old in [('old',old,True),('new',ROOT,False)]:
             work=tmp/name;work.mkdir();compile_scene(root,work,is_old)
-            run=subprocess.run([work/'scene',*inputs.values(),sprite,work],capture_output=True,text=True,errors='replace',timeout=120)
+            run=subprocess.run([work/'scene',*inputs.values(),legacy_pack,work],capture_output=True,text=True,errors='replace',timeout=120)
             if run.returncode:raise RuntimeError(run.stderr[-3000:]+run.stdout[-2000:])
             line=next(s for s in run.stdout.splitlines() if s.startswith('TIMING '))
             perf[name]={'medianMs':float(line.split()[1]),'slowestMs':float(line.split()[2])}
         if args.comparison:args.comparison.parent.mkdir(exist_ok=True,parents=True)
-        result=compare(tmp/'old',tmp/'new',sprite/'main_122.anim',args.comparison)
+        result=compare(tmp/'old',tmp/'new',legacy_pack/'main_122.anim',args.comparison)
     assert src==source_hashes(ROOT) and base==source_hashes(old) and bound==input_hash()
     assert all(sha(ROOT/p)==h for p,h in harness.items())
-    report={'passed':True,'scope':'Host CPU game presentation, original archived First Strike Dragoon and Pillow DDS reference. Timing uses 12 warmed O1 draws for the same view. Android Canvas/device performance is not measured.',
+    report={'passed':True,'scope':'Host CPU game presentation using the original five-file import, original archived First Strike Dragoon and Pillow DDS reference. Timing uses 12 warmed O1 draws for the same view. Android Canvas/device performance is not measured.',
         'sourceSha256':{**src,**harness},'preview1SourceDifferences':{n:h for n,h in base.items() if src.get(n)!=h},
         'inputSha256':bound,'result':result,'androidDensityBounds':java_result,'hostTiming':perf}
     args.report.parent.mkdir(parents=True,exist_ok=True);args.report.write_text(json.dumps(report,indent=2)+'\n')

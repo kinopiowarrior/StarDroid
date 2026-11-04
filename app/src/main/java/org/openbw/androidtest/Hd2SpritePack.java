@@ -8,19 +8,21 @@ import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-/** Private, extracted HD2 unit bodies. A single atomic pointer selects a complete generation. */
+/** Private, extracted HD2 battlefield sprites. A single atomic pointer selects a complete generation. */
 final class Hd2SpritePack {
-  private static final String[] NAMES = {
-      "main_000.anim", "main_005.anim", "main_013.anim", "main_122.anim", "main_228.anim"
-  };
   private static final long MAX_ZIP = 128L << 20;
+  private static final long MAX_EXTRACTED = 128L << 20;
   private static final long MAX_FILE = 16L << 20;
   private static final int MAX_ENTRIES = 4096;
 
@@ -80,16 +82,29 @@ final class Hd2SpritePack {
     select(root, directory, enabled);
   }
 
-  static int installedCount(File root) {
+  // The renderer owns the supported image IDs. Import and UI use its same catalog.
+  static Set<String> supportedFiles(int[] imageIds) {
+    Set<String> files = new HashSet<>();
+    for (int id : imageIds) {
+      if (id < 0 || id > 999 || !files.add(String.format(Locale.ROOT, "main_%03d.anim", id)))
+        throw new IllegalArgumentException("Invalid HD2 image catalog");
+    }
+    return Collections.unmodifiableSet(files);
+  }
+
+  static int installedCount(File root, Set<String> supported) {
     File directory = current(root);
     int count = 0;
-    if (directory != null) for (String name : NAMES) if (new File(directory, name).isFile()) count++;
+    if (directory != null) for (String name : supported) if (new File(directory, name).isFile()) count++;
     return count;
   }
 
-  private static String supportedName(String path) {
-    for (String name : NAMES) if (("HD2/anim/" + name).equalsIgnoreCase(path)) return name;
-    return null;
+  private static String supportedName(String path, Set<String> supported) {
+    final String prefix = "hd2/anim/";
+    String normalized = path.toLowerCase(Locale.ROOT);
+    if (!normalized.startsWith(prefix)) return null;
+    String name = normalized.substring(prefix.length());
+    return supported.contains(name) ? name : null;
   }
 
   private static void checkPath(String name) throws IOException {
@@ -143,7 +158,7 @@ final class Hd2SpritePack {
     throw new IOException("Incomplete or invalid ZIP file.");
   }
 
-  static synchronized int install(File root, InputStream input, Validator validator) throws IOException {
+  static synchronized int install(File root, InputStream input, Set<String> supported, Validator validator) throws IOException {
     Files.createDirectories(root.toPath());
     File previous = current(root);
     // Clean up any inactive generation left by interruption. Only importer-owned names are touched.
@@ -158,18 +173,25 @@ final class Hd2SpritePack {
     try {
       copy(input, archive, MAX_ZIP, null);
       checkDirectory(archive);
-      Set<String> accepted = new HashSet<>();
+      Map<String, ZipEntry> accepted = new LinkedHashMap<>();
+      long extractedSize = 0;
       try (ZipFile zip = new ZipFile(archive)) {
         if (zip.size() > MAX_ENTRIES) throw new IOException("Too many files in HD2 ZIP.");
         Enumeration<? extends ZipEntry> entries = zip.entries();
         while (entries.hasMoreElements()) {
           ZipEntry entry = entries.nextElement();
           checkPath(entry.getName());
-          String name = supportedName(entry.getName());
+          String name = supportedName(entry.getName(), supported);
           if (name == null || entry.isDirectory()) continue;
-          if (!accepted.add(name)) throw new IOException("Duplicate sprite: " + name);
+          if (accepted.put(name, entry) != null) throw new IOException("Duplicate sprite: " + name);
           if (entry.getSize() <= 0 || entry.getSize() > MAX_FILE)
             throw new IOException("Empty or oversized sprite: " + name);
+          extractedSize += entry.getSize();
+          if (extractedSize > MAX_EXTRACTED) throw new IOException("Extracted HD2 sprites exceed the pack size limit.");
+        }
+        for (Map.Entry<String, ZipEntry> item : accepted.entrySet()) {
+          String name = item.getKey();
+          ZipEntry entry = item.getValue();
           CRC32 crc = new CRC32();
           try (InputStream in = zip.getInputStream(entry)) {
             long actual = copy(in, new File(stage, name), entry.getSize(), crc);
@@ -192,7 +214,10 @@ final class Hd2SpritePack {
 
   private static void removeGeneration(File directory) {
     // Children are generated flat filenames; never traverse an archive-controlled tree.
-    if (!Files.isSymbolicLink(directory.toPath())) for (String name : NAMES) new File(directory, name).delete();
+    if (!Files.isSymbolicLink(directory.toPath())) {
+      File[] members = directory.listFiles((parent, name) -> name.matches("main_[0-9]{3}\\.anim"));
+      if (members != null) for (File member : members) member.delete();
+    }
     directory.delete();
   }
 

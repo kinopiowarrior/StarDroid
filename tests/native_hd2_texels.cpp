@@ -45,12 +45,17 @@ static size_t compare_draw(const hd::Pose& pose, const scr::Image& expected,
 
 int main(int argc, char** argv) {
     try {
+        if (argc == 2 && std::string(argv[1]) == "--files") {
+            for (const auto& image : hd::bodies) std::cout << image.filename << '\n';
+            return 0;
+        }
         require(argc == 2, "Usage: native-hd2-texels HD2/anim");
         const std::string dir = argv[1];
         const auto pack = hd::read_pack(dir);
-        require(pack->count == hd::body_count, "All five supported samples required");
+        require(pack->count > 0, "No supported HD2 files in directory");
         size_t frames = 0, pix = 0, draws = 0;
         for (size_t slot = 0; slot < hd::body_count; ++slot) {
+            if (pack->poses[slot].empty()) continue;
             std::ifstream file(dir + '/' + hd::bodies[slot].filename, std::ios::binary);
             require(file.good(), "Missing source file");
             const auto anim = scr::Anim::parse({std::istreambuf_iterator<char>(file), {}});
@@ -89,7 +94,7 @@ int main(int argc, char** argv) {
         }
         require(pack->bytes == pix * sizeof(hd::Texel) + frames * sizeof(hd::Pose), "Incorrect cache accounting");
         require(pack->bytes <= hd::max_pack_bytes, "Unbounded resident cache");
-        std::cout << "{\"frames\":" << frames << ",\"atlasTexels\":" << pix << ",\"drawnTexelsCompared\":" << draws
+        std::cout << "{\"images\":" << pack->count << ",\"frames\":" << frames << ",\"atlasTexels\":" << pix << ",\"drawnTexelsCompared\":" << draws
                   << ",\"cacheBytes\":" << pack->bytes << ",\"passed\":true}\n";
         return 0;
     } catch (const std::exception& e) { std::cerr << e.what() << '\n'; return 1; }

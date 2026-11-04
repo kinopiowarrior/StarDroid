@@ -111,12 +111,19 @@ public:
             color[c] = uint8_t((unsigned(color[c]) * light + 15) / 31);
     }
     bool draw(const Pose& pose, int cx, int cy, bool flip, const uint8_t* tint,
-              const Palette& palette, const uint8_t* wpe, uint8_t* indexed) {
+              const Palette& palette, const uint8_t* wpe, uint8_t* indexed, bool shadow = false) {
         if (!active()) return false;
         int x0 = width, y0 = height, x1 = -1, y1 = -1;
         try {
             for_each_texel(pose, cx, cy, flip, tint, width*2, height*2,
                 [&](int dx, int dy, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+                    if (shadow) {
+                        // Modifier 10 uses coverage only. Full silhouette opacity
+                        // darkens the destination by 47% (classic dark.pcx row 18).
+                        a = uint8_t((unsigned(a) * 120 + 127) / 255);
+                        if (!a) return;
+                        r = g = b = 0;
+                    }
                     const int x = dx >> 1, y = dy >> 1;
                     const size_t i = size_t(y)*pitch + x;
                     auto& q = acquire(i, wpe + size_t(indexed[i])*4);
