@@ -1,26 +1,28 @@
 # StarDroid 1.8
 
-Version 1.8 publishes the completed 1.7.9 build under the new version number. Gameplay and graphics behavior are unchanged from 1.7.9.
+Remastered and optional Carbot graphics, with rendering, import, interface and multiplayer improvements.
 
-## Included since the public 1.5.4 release
+## Highlights
 
-- Remastered graphics for the battlefield, menus, briefings, portraits and campaign artwork.
+- Remastered battlefield, menus, briefings, portraits and campaign artwork.
 - Optional Carbot / StarCraft Cartooned graphics. App Options shows each graphics choice only when the required data is installed.
 - CPU/GPU rendering options, graphics cache management and zoomed-out rendering improvements.
-- ZIP, RAR, split RAR and folder imports. A complete Remastered installation can also supply the supported Classic game content.
+- ZIP, RAR, split RAR and folder imports. A complete Remastered installation can also supply supported Classic game content.
 - Improved race consoles, command buttons, group icons, placement previews, menu layouts and controls guides.
 - Multiplayer graphics switching, UMS/EUD briefings, clearer data-mismatch errors, and fixes for map filters, briefing text and computer opponents.
 
-## Updating
+## Updating and importing data
 
 Install **StarDroid-1.8.apk** over your existing app without uninstalling. Use 1.8 on all multiplayer devices.
 
-To install Remastered or Carbot graphics, import your own complete StarCraft installation: the **Data** folder and its matching **.build.info** file. If you imported graphics before 1.7.9, re-import once to add Carbot assets that older importers did not retain. The Carbot option appears only when usable Carbot data is present.
+For Remastered or Carbot graphics, import your own complete installation folder, or a ZIP/RAR containing the **Data** folder and matching **.build.info** file together.
+
+If Carbot is missing after updating to 1.8, re-import the complete installation data once. The Carbot option appears only when usable Carbot assets are present. Complete installation data can also supply supported Classic content.
 
 Game data is not included. UMS support and common EUD support remain available; EUD compatibility is partial.
 
 ## Source and validation
 
-Download **StarDroid-1.8-source.zip** for the matching source, build instructions and validation records. The repository's application-code snapshot is older; GitHub's automatic source archives are not the complete 1.8 build.
+Download **StarDroid-1.8-source.zip** for the complete 1.8 app source, build instructions and validation records. GitHub's automatic source archives contain the repository snapshot.
 
-Android version code is 142. Simulation/replay 140, Nearby 140, Room 88 and save schema 22 are unchanged from 1.7.9. The version-only comparison, APK signature and alignment checks are recorded in the source package. Rendering checks from 1.7.9 are retained; physical phone and live wireless testing remain outstanding.
+The 1.8 source package includes APK signature and alignment checks, source comparisons, and rendering validation records with their test scope. Physical phone and live wireless testing remain outstanding.
