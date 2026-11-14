@@ -1,4 +1,28 @@
-# StarDroid 1.9.2 validation — final build 179
+# StarDroid 1.9.2 validation — replacement build 180
+
+Build 180 corrects Disruption Web turning dark with Enhanced Lighting enabled. Its authored diffuse artwork is already illuminated; a per-draw policy now bypasses surface lighting for this exact Web image/modifier/remap combination, including warm material-cache entries. Other effects retain their existing lighting policy. The replacement retains the earlier 1.9.2 changes and installs over build 179 using the same application identity and certificate.
+
+## Current evidence
+
+- `webfix180-effects.json`: focused reproduction and rendering checks for the corrected effect, with its actual source hashes and test boundaries.
+- `webfix180-review.json`: independent source and visual review.
+- `webfix180-integration.json`: exact changed-source inventory and compatibility checks against published build 179.
+
+The earlier Java, input, localization, campaign and import reports below are retained evidence for unchanged sources. They were not rerun or relabeled as build 180 results. Host rendering checks do not establish behavior on every phone GPU.
+
+The build 179 Enhanced Lighting check established CPU/GPU agreement but missed both renderers making Web dark. That pass did not establish correct lit appearance. The build 180 appearance oracle and visual review supersede that claim; the historical receipts remain unchanged.
+
+## Build and compatibility
+
+`webfix180-android-build.json` binds both rebuilt Android ABIs to frozen sources freshly reproduced from the shipped archives and patches. `webfix180-native.json` verifies native provenance and unchanged local networking. Engine/protocol remain 174 and saves remain schema 28.
+
+`webfix180-android-package.json` binds Java 8, resources, DEX and APK contents to the frozen sources. `webfix180-signed-package.json` verifies version 1.9.2/code 180, the existing owner certificate, v2/v3 signatures, 16 KiB ZIP/ELF alignment and unchanged signed payload. `scripts/seal_webfix180.py` rejects stale gates, changed historical receipts and unrelated source edits before creating the matching source and checksums.
+
+No import revision is raised. Data imported since 1.9 remains valid. Only Weave is bundled; original game data and imported artwork are excluded. No physical phone or phone GPU test is claimed. Android lint was not run.
+
+---
+
+# StarDroid 1.9.2 build 179 validation (historical)
 
 The final build retains the earlier 1.9.2 fixes, removes the additional Player ID unlock control, preserves game data imported since 1.9, and repairs Remastered effects. The previous development build was code 178; code 179 installs over it using the same application identity and certificate.
 
