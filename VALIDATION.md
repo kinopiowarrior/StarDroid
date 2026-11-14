@@ -1,4 +1,22 @@
-# StarDroid 1.9.2 validation — replacement build 180
+# StarDroid 1.9.2 validation — replacement build 181
+
+Build 181 changes only touch-control layout and Android version metadata. Selection and move/attack buttons preserve their normal vertical bounds when translated into side margins, including the lower selection-button setting. Group controls avoid the reserved touch-button space.
+
+## Current evidence
+
+- `margin181-controls.json`: executed production layout, hit-rectangle, availability and control-group interaction checks, with layout-only visual captures.
+- `margin181-review.json`: independent source and visual layout review.
+- `margin181-integration.json`: exact changed-source inventory, fresh gate binding and preservation of unrelated behavior.
+- `margin181-native.json`: exact reuse of all six published build 180 native libraries, with every compiled native input checked against the pinned build 180 receipt. Native source is reproduced for comparison; native libraries are not rebuilt.
+- `margin181-android-package.json` and `margin181-signed-package.json`: actual Java 8, resources, DEX and APK packaging; code 181, existing application/certificate identity, v2/v3 signatures, 16 KiB ZIP/ELF alignment and unchanged signed payload.
+
+The Disruption Web Enhanced Lighting correction is byte-identical to build 180. Engine/protocol remain 174 and saves remain schema 28. Imports from 1.9 onward remain valid. Historical reports below are retained for their unchanged sources; they are not relabeled as 181 executions.
+
+Host layout tests do not establish physical Android touch behavior. No phone test or Android lint run is claimed. Only Weave is bundled; original game data and imported artwork remain external.
+
+---
+
+# StarDroid 1.9.2 build 180 validation (historical)
 
 Build 180 corrects Disruption Web turning dark with Enhanced Lighting enabled. Its authored diffuse artwork is already illuminated; a per-draw policy now bypasses surface lighting for this exact Web image/modifier/remap combination, including warm material-cache entries. Other effects retain their existing lighting policy. The replacement retains the earlier 1.9.2 changes and installs over build 179 using the same application identity and certificate.
 

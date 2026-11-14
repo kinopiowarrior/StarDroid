@@ -4,7 +4,7 @@
 
 **StarCraft and Brood War on Android, with Classic, Remastered and optional Carbot graphics.**
 
-**Latest release: 1.9.2 (build 180) · Android 8.0+ · ARM64 and x86-64**
+**Latest release: 1.9.2 (build 181) · Android 8.0+ · ARM64 and x86-64**
 
 See [1.9.2 changes](docs/CHANGES-1.9.2.md) and [build instructions](BUILD-1.9.2.txt).
 
@@ -23,7 +23,7 @@ See [1.9.2 changes](docs/CHANGES-1.9.2.md) and [build instructions](BUILD-1.9.2.
 
 ## New in 1.9.2
 
-Build 180 corrects Disruption Web turning dark with Enhanced Lighting enabled. Install over 1.9.2 without uninstalling; no reimport is needed.
+Build 181 keeps the selection and move/attack buttons at their original heights when moved into side margins. The Enhanced Lighting fix for Disruption Web is retained. Install over 1.9.2 without uninstalling; no reimport is needed.
 
 - Corrected localized menu labels and Cyrillic game text.
 - Keyboard entry supports standard Android input methods and overlays the game without shrinking its viewport.
