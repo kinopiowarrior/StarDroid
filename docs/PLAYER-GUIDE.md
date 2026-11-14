@@ -4,44 +4,38 @@
 
 ## Importing and updating
 
-Follow the [installation instructions](../README.md#install) to import the three core MPQs and the campaign/media archives. **App Options** is also the screen shown when game files are missing. It has one import action, the file guide, and **Installed content** counts.
+Follow the [installation instructions](../README.md#install) to import a complete Remastered installation or original MPQ game files. **App Options → Import game files** offers **Installation folder** and **Files or archives**. The latter detects original MPQs and complete installations automatically. **Installed content** shows what is available.
 
 Importing copies content into the selected app storage. Keep the original archives elsewhere: uninstalling StarDroid or clearing Android app data removes local imports, settings, and saves, including app-specific SD-card files. Android backup is disabled for this app. Update by installing the matching signed APK over the existing app.
 
-Use **Import maps / ZIP…** in the custom-game or host map selector for `.scm`, `.scx`, and ZIP map collections. Campaign bundles belong in **Import game files**. The included community map is **Weave**; additional game maps are not bundled.
+Use **Import** in the custom-game or host map selector for `.scm`, `.scx`, ZIP and RAR map collections. Campaign bundles belong in **Import game files**. The replay browser also accepts `.rep` files, ZIPs and RARs. Select every part together for a split RAR. See [archive import instructions](IMPORTING-ARCHIVES.md). The included community map is **Weave**; additional game maps are not bundled.
 
-## Interface language
+## Languages
 
-Open **App Options → Interface language**. **Automatic (game files)** detects the imported game text language; choose a specific language to override it. You can select **English**, **Deutsch**,
-**Русский**, **Español** or **Français**. All five UI languages are available
-with any imported game data. Import Russian MPQs through **Import game files**;
-duplicate filename suffixes such as `(1)` are accepted. The setting is saved and
-changes the port's menus, settings and interface labels. Voices, original unit
-names and campaign text follow the imported game data; the setting does not
-translate recordings. Technical diagnostic details remain available.
+Open **App Options → Languages**. **App and game text** controls menus, settings and unit labels. Nine interface languages are built in: English, Russian, German, Spanish, French, Simplified Chinese, Traditional Chinese, Korean and Japanese. Additional installed game translations can supply their own labels; app-only labels fall back to English when no translation exists.
+
+**Campaign and voices** separately selects installed briefing, campaign, voice and movie content. **Automatic** follows the imported installation's language preference. Missing content falls back to English or another installed language. Custom-map text and EUD encoding settings remain separate.
+
+Language choices show when content is missing or only partly installed. An unavailable choice shows an error without changing your setting. For partial content, the message lists what is missing before you choose whether to use the available files. **Use app text only** keeps a built-in app translation even when matching game text is absent; it does not install translated unit names or voices. A language folder containing shared artwork or effects is not enough.
+
+Cinematics display imported SRT subtitles for the selected campaign language when available. Captions follow the movie's playback time and pause with it. Missing subtitles use an installed fallback; StarDroid does not generate translations or download voice packs.
+
+Download the desired language in your own StarCraft installation before copying its `Data` folder and matching `.build.info`. If an older StarDroid import omitted a downloaded language, import the complete installation again. Do not clear app data. Change these settings from the main menu; a match must end before switching game-content languages.
 
 ## Controls and settings
 
-Open **Menu → Options → Controls** during a match. Its **Gesture guide** reflects your current preferences. The [README gesture table](../README.md#touch-controls) describes fresh-install defaults.
+Open **Menu → Options → Controls** during a match. **Controls guides**, the last entry, contains the touch, mouse/keyboard and gamepad guides.
 
 ### Selection
 
-**Original larvae selection** is on by default under **Selection settings**.
-The Select Larvae command selects only larvae attached to the selected Hatchery,
-Lair or Hive, up to three. Turn it off to select up to twelve larvae across your
-buildings. Selection hold, double-tap and drag tolerances are grouped under
-**Timing & accuracy**.
-
-**One larva morph per press**, in the same Selection settings, is off by default.
-Turn it on to morph one selected larva with each tap or hotkey press. Remaining
-larvae keep their morph buttons; three quick presses can morph three larvae.
-Zerglings and Scourge still hatch as pairs from one larva. Hydralisk, Mutalisk and
-building morphs are unaffected. This is separate from Original larvae selection.
+Selection hold, double-tap and drag tolerances are grouped under **Timing & accuracy**. Custom and multiplayer **Match options** separately control whether Select Larvae uses one Hatchery or all Hatcheries, and whether a morph command uses one larva per press. These gameplay choices are set before a match.
 
 - **Drag to pan / hold to select** is the default. Start dragging immediately to move the camera; hold briefly first to draw a selection box. The default selection hold is about 180 ms.
 - You can switch to **Drag to select / two fingers pan** under **Selection settings**.
 - **Hold tap always selects** helps distinguish selection from a ground order.
 - The selection-mode button arms selection when you need it. It can be moved to the other side or hidden.
+- **Controls → Selection settings → Touch buttons in side margins** moves touch controls into the unused side space in normal 4:3 mode. This option appears only when enough safe space is available, and starts off. If the screen no longer has room, controls return to their ordinary positions.
+- **Lower selection button** moves the cursor button below the screen's midpoint to avoid a landscape camera cutout. Large buttons move slightly inward if necessary to clear the console. The touch area follows the visible button.
 - Double-tap selects units of the same type. Its timing window and selection tap tolerance are adjustable.
 
 ### Camera
@@ -84,13 +78,13 @@ Turn **Build buttons follow placement** off for a fixed button position. **Comma
 
 ### Control groups and interface size
 
-Enable **Show control-group buttons** under **Selection settings**. Tap an empty numbered group to assign the current selection; hold any group to replace its assignment. Tap an assigned group to recall it, and double-tap to center the camera. The small number shows how many units are assigned. A physical keyboard can use Ctrl+number to assign and number to recall.
+Enable **Show control-group buttons** under **Selection settings**. Tap an empty numbered group to assign the current selection; hold any group for half a second to replace its assignment with your current selection. A short tap recalls the old group. Tap an assigned group to recall it, and double-tap to center the camera. The small number shows how many units are assigned. A physical keyboard can use Ctrl+number to assign and number to recall.
 
 Interface-size options adjust resources, command buttons, control groups, descriptions, and selection/move controls. **Command buttons** and **Control groups** have separate size controls. **Video Options → Smooth graphics (game + UI)** controls filtering across the battlefield, menus, HUD, portraits and other game artwork. It defaults to ON for new installs; turn it off for sharp pixels throughout. Hover and held-command descriptions can appear alongside command errors or target prompts, with space between the two. Control-group buttons retain their current size on upgrade and can be adjusted from 75% to 150%. They wrap when necessary to avoid overlapping resources. Sound options retain mute and separate effects/music volume sliders. Set Music to **0** to turn music off. The former music-enable switch is removed; an existing disabled setting becomes volume 0 once. Main-menu music continues without restarting when you change expansions. Music follows your race automatically. **Next track** skips to the next in-game theme while music is audible; it does not interrupt title, briefing or victory/defeat music. There is no manual track picker or sound-preview control. With the original music imports available, Brood War campaigns, custom games, and Nearby matches play four themes for each race: the expansion theme and original first theme share one complete file, followed by the original second and third themes. Missing expansion music falls back to the imported original soundtrack. **Miscellaneous → Cheats** contains single-player controls including **Invincibility** and **Force victory (end match)**. Invincibility protects your units from combat damage, leaves scripted mission deaths intact, and resets after loading or starting a game.
 
 ### Mouse and keyboard
 
-Open **Controls → Mouse & keyboard** in the in-game menu. Its settings and mouse/keyboard help share one screen. These controls work alongside touch and gamepad controls.
+Open **Controls → Mouse & keyboard** for settings. Its guide is under **Controls → Controls guides → Mouse/keyboard guide**. These controls work alongside touch and gamepad controls.
 
 - **Left click** selects a unit; drag a selection box to select several. **Double-click** or **Ctrl-click** selects units of the same type. **Shift-click** adds to the selection.
 - **Right click** gives a context-sensitive move, attack, gather or interaction order. Hold **Shift** to queue orders. Left click confirms a targeted command or building placement; right click or **Escape** cancels it.
@@ -100,6 +94,8 @@ Open **Controls → Mouse & keyboard** in the in-game menu. Its settings and mou
 - Menu navigation buttons, including those in-game, show a highlighted letter or a key in brackets. Press it to open another menu, go back or switch screens. Settings, speed choices, lobby slots and race choices, imports/exports, Save Replay and in-place replay controls have no menu shortcut or letter highlight. App Options and the battlefield MENU button keep their normal labels. The briefing room’s **Replay** button also has its original highlighted shortcut (**R** in English). Navigation shortcuts stay the same in Original and Grid command modes; gameplay command hotkeys are unchanged. Tooltip borders match your race: Terran blue, Zerg red or Protoss yellow.
 
 **Original** hotkeys are the default. This screen also lets you turn mouse edge scrolling, wheel zoom, middle-button camera dragging and arrow-key camera movement on or off, and adjust camera speed. Wheel scrolling in menu lists remains available when battlefield wheel zoom is off.
+
+The on-screen keyboard overlays the game without changing its resolution. Standard Android input methods, including third-party keyboards, can enter player names and chat.
 
 Typing a player name or chat message does not issue game commands. Losing focus or disconnecting an input device clears held input, so the camera or a modifier key cannot remain stuck.
 
@@ -120,6 +116,10 @@ Open **App Options → Game data storage → Change data storage** from the main
 The SD-card folder is `Android/data/org.openbw.androidtest/files/game-data`. Android removes app-specific files when the app is uninstalled. Keep your original archives separately. Moving requires free space for the copied files plus a small reserve and is unavailable during a match, replay or multiplayer connection. If the selected card is removed, reinsert it before playing or moving the data back. The app does not silently start using a different folder.
 
 ### Saving and campaign progress
+
+In **App Options → Campaign progress**, choose **Unlock all missions** and select the Player ID. This changes only that profile’s override and keeps earned mission progress. Use the same App Options control to restore normal progression.
+
+Campaign mission names follow **Campaign and voices** and use authored titles from the installed language data. Missing translated titles fall back to the original English name.
 
 Use the in-game **Save Game** and **Load Saved** controls. Save-file import and export are not provided.
 
@@ -233,12 +233,13 @@ Technical reference: [Android native exit traces](https://developer.android.com/
 
 ## Large map packs
 
-Use **Custom Game → Import maps/ZIP** for nested ZIP packs with up to 10,000
-`.scm`/`.scx` maps in one import. The limits are 8 GiB of uncompressed ZIP data
-(including ignored files), 64 MiB per map and 50,000 ZIP entries. The app streams
+Use **Custom Game → Import** for ZIP or RAR packs with nested folders and up to
+10,000 `.scm`/`.scx` maps in one import. Each archive is limited to 8 GiB of
+expanded data (including ignored files), 64 MiB per map and 50,000 entries.
+Select all parts together for a split RAR. The app streams
 files to storage and validates them in the background, reports progress, skips
 invalid maps and deduplicates identical maps. Keep enough free storage for the
-uncompressed pack plus at least 64 MiB. Nearby map-transfer limits are unchanged.
+compressed archive and uncompressed pack plus at least 64 MiB. Nearby map-transfer limits are unchanged.
 
 Computer players can ferry ground attackers with Dropships, Shuttles and
 Overlords with Ventral Sacs when terrain blocks their route. The same controller

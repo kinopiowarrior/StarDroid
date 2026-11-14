@@ -4,9 +4,11 @@
 
 **StarCraft and Brood War on Android, with Classic, Remastered and optional Carbot graphics.**
 
-**Latest release: 1.9.1 · Android 8.0+ · ARM64 and x86-64**
+**Latest release: 1.9.2 · Android 8.0+ · ARM64 and x86-64**
 
-[Download APK](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.1/StarDroid-1.9.1.apk) · [Release notes](https://github.com/kinopiowarrior/StarDroid/releases/tag/v1.9.1) · [Source ZIP](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.1/StarDroid-1.9.1-source.zip) · [Discord](https://discord.gg/F2FnjUrtQ)
+See [1.9.2 changes](docs/CHANGES-1.9.2.md) and [build instructions](BUILD-1.9.2.txt).
+
+[Download APK](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.2/StarDroid-1.9.2.apk) · [Release notes](https://github.com/kinopiowarrior/StarDroid/releases/tag/v1.9.2) · [Source ZIP](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.2/StarDroid-1.9.2-source.zip) · [Discord](https://discord.gg/F2FnjUrtQ)
 
 ## Features
 
@@ -19,7 +21,18 @@
 - Touch, mouse, keyboard and gamepad controls, with guides in the Controls menu.
 - Nine built-in interface languages, additional text and voices from installed language packs, map filtering, and ZIP/RAR imports.
 
-## New in 1.9.1
+## New in 1.9.2
+
+- Corrected localized menu labels and Cyrillic game text.
+- Keyboard entry supports standard Android input methods and overlays the game without shrinking its viewport.
+- Added optional touch controls in unused side margins when enough space is available.
+- Improved Remastered group wireframes and control-group replacement.
+- Corrected Protoss warp-in, Disruption Web and Dark Swarm effects in Remastered.
+- Localized campaign mission names. Campaign unlocking remains in App Options.
+
+Install over the existing app without uninstalling. Data already imported since 1.9 remains valid; no reimport is required.
+
+## Included from 1.9.1
 
 - Fixed false “Not enough storage” errors when importing maps.
 - Fixed worker build-menu Cancel for SCVs, Probes and Drones in Classic and Remastered.
@@ -46,25 +59,25 @@ In **App Options**, Classic / Remastered choices appear only when Remastered gra
 
 ## Install
 
-1. Install **[StarDroid-1.9.1.apk](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.1/StarDroid-1.9.1.apk)**. To update, install over the existing app **without uninstalling**.
+1. Install **[StarDroid-1.9.2.apk](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.2/StarDroid-1.9.2.apk)**. To update, install over the existing app **without uninstalling**.
 2. Import game data if prompted, through **App Options → Import game files**. Choose **Installation folder** or **Files or archives**. Data already imported for 1.9 does not need another import.
-3. Import maps as `.scm`, `.scx`, ZIP or RAR files. Use 1.9.1 on every multiplayer device.
+3. Import maps as `.scm`, `.scx`, ZIP or RAR files. Use the same app version on every multiplayer device.
 
 **Classic files:** import `StarDat.mpq`, `BrooDat.mpq` and `Patch_rt.mpq`. Import `StarCraft.mpq` and `BroodWar.mpq` from the original installation media for campaigns and movies.
 
 **Remastered / Carbot files:** import the installation folder, or a ZIP/RAR containing the **Data** folder and its matching **.build.info** file together. A complete installation can also supply Classic gameplay data, both campaigns, menus, portraits, music and the included movies. Use the normal game-data importer; separate original MPQs are not required for a fresh complete import.
 
-A fresh Remastered import creates the compatible Classic `patch_rt.mpq` from the installation's effective game data. The required 1.9 refresh regenerates converted Classic content as well as graphics. Later imports retain the normal preservation rules. Import a separate legacy `patch_rt.mpq` to replace the patch explicitly.
+A fresh Remastered import creates the compatible Classic `patch_rt.mpq` from the installation's effective game data. Existing imports made since 1.9 remain valid, including converted Classic content and graphics. Later imports retain the normal preservation rules. Import a separate legacy `patch_rt.mpq` to replace the patch explicitly.
 
 **Adding Carbot graphics:** if the Carbot option is missing, re-import your complete installation data once. The option appears only when the imported data contains usable Carbot assets.
 
 **Game data is not included.** This is an unofficial fan project, not affiliated with Blizzard Entertainment.
 
-[Player guide](docs/PLAYER-GUIDE.md) · [1.9 changes](docs/CHANGES-1.9.md) · [Checksums](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.1/StarDroid-1.9.1-SHA256SUMS.txt) · [Report a bug](https://github.com/kinopiowarrior/StarDroid/issues/new/choose)
+[Player guide](docs/PLAYER-GUIDE.md) · [1.9 changes](docs/CHANGES-1.9.md) · [Checksums](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.2/StarDroid-1.9.2-SHA256SUMS.txt) · [Report a bug](https://github.com/kinopiowarrior/StarDroid/issues/new/choose)
 
 ## Development
 
-Download **[StarDroid-1.9.1-source.zip](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.1/StarDroid-1.9.1-source.zip)** for the matching complete app source, build instructions and validation records. GitHub's automatic “Source code” archives contain the older repository code snapshot; use the attached source ZIP to build 1.9.1.
+Download **[StarDroid-1.9.2-source.zip](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.2/StarDroid-1.9.2-source.zip)** for the matching complete app source, build instructions and validation records. GitHub's automatic “Source code” archives contain the older repository code snapshot; use the attached source ZIP to build 1.9.2.
 
 ## Credits
 
