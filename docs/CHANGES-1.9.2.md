@@ -1,6 +1,6 @@
 # StarDroid 1.9.2
 
-**Build 180 replacement:** corrected Disruption Web appearing dark with Enhanced Lighting enabled. Install over the earlier 1.9.2 build; no reimport is needed.
+**Build 181 replacement:** side-margin selection and move/attack buttons now keep their original vertical positions, including the lower selection-button option. The Disruption Web lighting fix remains included. Install over the earlier 1.9.2 build; no reimport is needed.
 
 - Fixed stray shortcut letters in translated menu labels and Cyrillic campaign text.
 - Improved third-party keyboard support. The keyboard overlays the game without shrinking its resolution.

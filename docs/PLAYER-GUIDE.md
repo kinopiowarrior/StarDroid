@@ -34,7 +34,7 @@ Selection hold, double-tap and drag tolerances are grouped under **Timing & accu
 - You can switch to **Drag to select / two fingers pan** under **Selection settings**.
 - **Hold tap always selects** helps distinguish selection from a ground order.
 - The selection-mode button arms selection when you need it. It can be moved to the other side or hidden.
-- **Controls → Selection settings → Touch buttons in side margins** moves touch controls into the unused side space in normal 4:3 mode. This option appears only when enough safe space is available, and starts off. If the screen no longer has room, controls return to their ordinary positions.
+- **Controls → Selection settings → Touch buttons in side margins** moves touch controls into the unused side space in normal 4:3 mode. Selection and move/attack buttons keep their original vertical positions, including the lower selection-button option. This option appears only when enough safe space is available, and starts off. If the screen no longer has room, controls return to their ordinary positions.
 - **Lower selection button** moves the cursor button below the screen's midpoint to avoid a landscape camera cutout. Large buttons move slightly inward if necessary to clear the console. The touch area follows the visible button.
 - Double-tap selects units of the same type. Its timing window and selection tap tolerance are adjustable.
 
@@ -51,6 +51,8 @@ In **Menu → Options → Video Options**, choose **Off**, **On**, or
 **+ over camera area** on the Widescreen row. The third choice includes the
 phone's camera cutout area in the game display. The camera hole can cover pixels
 in that area; regular On keeps the safe inset. App Options retains safe margins.
+
+**Large unit group icons** is shown and active only when Widescreen is enabled, including **+ over camera area**. Turning Widescreen off uses normal icons without erasing the saved large-icon choice.
 
 ### Orders and descriptions
 

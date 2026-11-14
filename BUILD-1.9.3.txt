@@ -1,0 +1,34 @@
+StarDroid 1.9.3 — Android version code 182
+
+Pinned JDK 17, SDK 35 and Build Tools 35. Java targets version 8.
+
+Build the Android APK using the exact shipped native libraries:
+1. python3 scripts/setup_toolchain161.py
+2. Run the focused current checks described in VALIDATION.md.
+3. python3 scripts/package_normal193.py
+4. python3 scripts/sign_normal193.py --config /external/private/signing.json --output /external/output/StarDroid-1.9.3.apk
+
+This Java-only release reuses all six signed-build 180 native libraries exactly,
+including the Disruption Web correction. The packager pins the included
+webfix180-android-build.json receipt, reproduces native-engine from shipped
+archives and patches, and checks every compiled input and library hash. No
+older release archive is required for ordinary APK packaging. Native changes
+intentionally fail this exact-reuse gate and require their own rebuild and
+validation; the native source and historical build scripts remain included.
+
+The release audit additionally accepts the published 1.9.2 build 181 source
+archive through --baseline-source, pinned to SHA-256:
+1bc54c75ec60172d5f9f93600d0cbdad930a46dbfa54209de54056442ec94c50
+
+After the current gates pass, scripts/seal_normal193.py takes that archive
+through --baseline-source and an output --directory to create the matching
+source ZIP, validation summary and checksums. That historical audit baseline
+is not needed for ordinary APK packaging.
+
+The owner certificate, application identity, v2/v3 signatures and 16 KiB
+ZIP/ELF alignment are checked. Engine/multiplayer remain 174; saves remain 28.
+Existing imports since 1.9 remain valid. Historical reports stay unchanged
+and are not relabeled as current test runs.
+
+Keep signing configuration and keys outside the source tree. Only Weave is
+bundled; original StarCraft game data and imported artwork are not included.

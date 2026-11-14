@@ -1,28 +1,30 @@
-StarDroid 1.9.2 — Android version code 180
+StarDroid 1.9.2 — Android version code 181
 
-Pinned JDK 17, SDK 35, Build Tools 35 and NDK r27d. Java targets version 8.
+Pinned JDK 17, SDK 35 and Build Tools 35. Java targets version 8.
 
-Build the Android APK:
+Build the Android APK using the exact shipped native libraries:
 1. python3 scripts/setup_toolchain161.py
 2. Run the focused current checks described in VALIDATION.md.
-3. python3 scripts/build_native_webfix180.py
-4. python3 scripts/package_webfix180.py --baseline-source /path/to/StarDroid-1.9.1-source.zip --rebuilt-native
-5. python3 scripts/sign_webfix180.py --config /external/private/signing.json --output /external/output/StarDroid-1.9.2.apk
+3. python3 scripts/package_margin181.py
+4. python3 scripts/sign_margin181.py --config /external/private/signing.json --output /external/output/StarDroid-1.9.2.apk
 
-The native build first reproduces native-engine from the pinned archive and
-shipped patches, then builds both Android ABIs from frozen inputs. The packager
-requires this fresh build receipt and verifies the exact baseline supplied.
-For ordinary reproduction, the public 1.9.1 source archive is accepted:
-d72dfd57aa4816edb7a1fbea5ba5b2037b87cc5ac2d0862515a9e4aa87bc05de
+This Java-only release reuses the six signed-build 180 native libraries exactly.
+The packager pins the included webfix180-android-build.json receipt, reproduces
+native-engine from shipped archives and patches, and verifies every native
+input and library hash. It does not rebuild or relabel the historical native
+receipt. No older release archive is required for ordinary APK packaging.
+The native source and its historical build scripts remain included for native
+engine development; changed native inputs intentionally fail the exact-reuse
+release gate and need their own rebuild and validation.
 
-The replacement-release audit additionally uses the original published 1.9.2
-build 179 source archive as its exact edit baseline:
-7791e360a29c18e412daef21a07d2256065c252b7bcb957ac1a74fc5a27c8f5f
+The replacement-release audit additionally accepts the original published
+1.9.2 build 180 source archive through --baseline-source:
+6a0f261378cd3579a7d52be9d2b38b0b0732a8ef4af07c0279624b9071ca0852
 
-After all current validation gates pass, scripts/seal_webfix180.py takes that
-179 archive through --baseline-source and an output --directory to create the
+After all current gates pass, scripts/seal_margin181.py takes that 180 archive
+through --baseline-source and an output --directory to create the matching
 source ZIP, validation summary and checksums. This historical audit baseline
-is not required to build the APK using the public 1.9.1 baseline above.
+is not needed for the ordinary package command above.
 
 The owner certificate, application identity, v2/v3 signatures and 16 KiB
 ZIP/ELF alignment are checked. Engine/multiplayer remain 174; saves remain 28.
@@ -30,4 +32,4 @@ Existing data imported since 1.9 remains valid. Historical reports stay
 unchanged and are not claimed as current test runs.
 
 Keep signing configuration and keys outside the source tree. Only Weave is
-bundled; original StarCraft game data and imported artwork are never included.
+bundled; original StarCraft game data and imported artwork are not included.
