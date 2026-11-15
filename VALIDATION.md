@@ -1,4 +1,32 @@
-# StarDroid 1.9.7 validation — build 188
+# StarDroid 1.9.8 validation — build 189
+
+Build 189 corrects flashing and displaced shadows during Remastered burrowing and unburrowing.
+
+Specific Infested Terran, Defiler, Drone, Hydralisk and Lurker shadow frames retain Classic coordinate offsets alongside HD-sized artwork. Applying the shared HD canvas to these offsets displaced the rendered shadow. Their IDs, frame ranges, flags, offsets and dimensions must match the known pattern before the renderer uses the corresponding Classic anchor for a local HD pose copy. HD alpha remains intact. Ordinary shadows, unit bodies and effects retain their existing placement, and the cached source pose is not changed.
+
+## Current evidence
+
+- `normal198-shadow-state.json`: real engine burrow/unburrow timelines, shadow metadata eligibility, mirror/frozen-Y placement and immutable cached poses.
+- `normal198-render.json`: baseline/candidate full-engine temporal CPU/GLES captures, including cold/warm caches and retained rendering behavior.
+- `normal198-android-build.json` and `normal198-native.json`: both Android ABIs compiled from frozen native inputs reproduced from shipped archives and patches; library hashes and prepared source provenance verified.
+- `normal198-android-package.json` and `normal198-signed-package.json`: actual Java 8, resources, DEX and APK packaging; version 1.9.8/code 189, existing app/certificate identity, v2/v3 signatures, 16 KiB ZIP/ELF alignment and unchanged signed payload.
+
+Engine/protocol remain 174, saves remain schema 28, and valid imports since 1.9 remain accepted. The 1.9.7 burrow-marker/Dragoon-death fix and 1.9.6 zoom limits are retained. Historical evidence below is preserved rather than rerun or relabeled.
+
+Host rendering checks are not a physical phone test or a phone-FPS measurement. Android lint was not run. Original game data and imported artwork remain external; only Weave is bundled.
+
+## Reproduce the focused checks
+
+These checks require a verified, prepared 1.9.7 source tree, the published source ZIP, a C++ compiler, Mesa/EGL/GLES libraries and headers, and original game data kept outside this source tree. `classic-core` is the prepared Classic runtime data and `remastered-test-pack` contains the authored HD test assets. The supplied tests record their input hashes.
+
+```sh
+python3 tests/run_normal198_render.py --baseline-root /external/normal197 --baseline-source /external/StarDroid-1.9.7-source.zip --include /external/gles-headers --core /external/classic-core --hd-pack /external/remastered-test-pack
+python3 tests/run_normal198_shadow_state.py --baseline-root /external/normal197 --baseline-source /external/StarDroid-1.9.7-source.zip --core /external/classic-core --hd-pack /external/remastered-test-pack
+```
+
+---
+
+# StarDroid 1.9.7 validation — build 188 (historical)
 
 Build 188 fixes Remastered Zerg burrow markers and Dragoon death rendering.
 
