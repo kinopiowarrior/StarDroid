@@ -1,4 +1,34 @@
-# StarDroid 1.9.6 validation — build 187
+# StarDroid 1.9.7 validation — build 188
+
+Build 188 fixes Remastered Zerg burrow markers and Dragoon death rendering.
+
+Some authored frames contain visible baked artwork but an entirely transparent optional lighting layer. The runtime now keeps that baked artwork and remembers the completed material lookup. Frames with usable lighting data continue to use it; truly empty frames remain empty. No animation timeline, simulation, visibility rule or imported data was changed.
+
+## Current evidence
+
+- `normal197-render.json`: authored Remastered frame decoding and CPU/GLES rendering, including blank lighting layers, usable lighting data and caching. The same gate compares retained effects/fog captures and full Classic CPU/GPU pixels against 1.9.6.
+- `normal197-burrow.json`: focused burrow marker visibility and rendering checks.
+- `normal197-death.json`: actual classic Dragoon death timelines compared before and after the runtime change, alongside the authored Remastered frame checks above.
+- `normal197-android-build.json` and `normal197-native.json`: both Android ABIs compiled from frozen native inputs reproduced from shipped archives and patches; library hashes and prepared source provenance verified.
+- `normal197-android-package.json` and `normal197-signed-package.json`: actual Java 8, resources, DEX and APK packaging; version 1.9.7/code 188, existing app/certificate identity, v2/v3 signatures, 16 KiB ZIP/ELF alignment and unchanged signed payload.
+
+Engine/protocol stay 174, saves stay schema 28, and valid imports since 1.9 remain accepted. The minimum/maximum zoom controls from 1.9.6 are retained. Historical evidence below is preserved rather than rerun or relabeled.
+
+Host rendering checks are not a physical phone test or a phone-FPS measurement. Android lint was not run. Original game data and imported artwork remain external; only Weave is bundled.
+
+## Reproduce the focused checks
+
+These checks require a verified, prepared 1.9.6 source tree, the published source ZIP, a C++ compiler, Mesa/EGL/GLES libraries and headers, and original game data kept outside this source tree. `classic-core` is the prepared Classic runtime data; `remastered-frames` contains the original authored animation files; `remastered-test-pack` is the prepared HD test pack. The supplied tests record their input hashes.
+
+```sh
+python3 tests/run_normal197_render.py --baseline-root /external/normal196 --baseline-source /external/StarDroid-1.9.6-source.zip --include /external/gles-headers --ndk .tools/android-ndk-r27d --core /external/classic-core --authored /external/remastered-frames
+python3 tests/run_normal197_burrow.py --baseline-root /external/normal196 --baseline-source /external/StarDroid-1.9.6-source.zip --core /external/classic-core --hd-pack /external/remastered-test-pack
+python3 tests/run_normal197_death.py --baseline-root /external/normal196 --baseline-source /external/StarDroid-1.9.6-source.zip --core /external/classic-core
+```
+
+---
+
+# StarDroid 1.9.6 validation — build 187 (historical)
 
 Build 187 replaces the zoom toggle and fixed-view option with minimum and maximum zoom percentages.
 
