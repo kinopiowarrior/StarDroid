@@ -6,6 +6,8 @@
 
 Follow the [installation instructions](../README.md#install) to import a complete Remastered installation or original MPQ game files. **App Options → Import game files** offers **Installation folder** and **Files or archives**. The latter detects original MPQs and complete installations automatically. **Installed content** shows what is available.
 
+**Installation folder** accepts folders containing original MPQ files and complete Remastered installations. Select the StarCraft folder containing both `Data` and `.build.info`; a single installation inside a surrounding folder is also detected. If several installations are found, select one of their folders. Selecting `Data` alone is not enough: go back to its parent folder. A complete Remastered installation takes priority over loose files elsewhere in the selected folder.
+
 Importing copies content into the selected app storage. Keep the original archives elsewhere: uninstalling StarDroid or clearing Android app data removes local imports, settings, statistics and saves, including app-specific SD-card files. Android backup is disabled for this app. Update by installing the matching signed APK over the existing app.
 
 Use **Import** in the custom-game or host map selector for `.scm`, `.scx`, ZIP and RAR map collections. Campaign bundles belong in **Import game files**. The replay browser also accepts `.rep` files, ZIPs and RARs. Select every part together for a split RAR. See [archive import instructions](IMPORTING-ARCHIVES.md). The included community map is **Weave**; additional game maps are not bundled.

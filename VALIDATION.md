@@ -1,4 +1,46 @@
-# StarDroid 1.9.8 validation — build 189
+# StarDroid 1.9.9 validation — build 190
+
+Build 190 fixes installation-folder routing and hardens Classic fallback selection during Remastered imports.
+
+The folder picker previously required `Data` and `.build.info` directly inside the selected folder. It now performs bounded discovery, routes a single complete installation to the existing Remastered importer, and stages loose Classic content through the existing atomic game-content transaction. Multiple complete installations are rejected before copying. The picker explains both supported layouts in all nine interface languages.
+
+Native Classic selection now waits until the final priority winner is known before rejecting conflicting fallback candidates. A higher-priority localized or SD candidate can supersede a conflicting lower-priority fallback. Conflicts that remain at the selected priority are still rejected; archive integrity, path checks and cancellation remain enforced.
+
+## Current evidence
+
+- `folder-import199.json`: reproduces both Classic-folder and wrapped-installation failures from 1.9.8, then executes the current folder routing, provider reads, bounded staging, Classic transactions, cancellation, worker lifecycle and retained Remastered document checks.
+- `casc-import199.json`: mocked-CASC precedence/conflict tests, retained strict importer checks and a complete import from a separately supplied official installation using actual CASC decoding.
+- `casc-baseline199.json`: the exact reported 1.9.3 importer completes namespace selection and reads its first payload from the supplied official data. Independent review confirms that importer matches 1.9.8.
+- `retained-import199.json`: valid imports from 1.9 onward remain accepted; incomplete imports remain blocked. Existing receipts, launch guards, transactions, rollback and content preservation are checked.
+- `archive-regression199.json`: retained ZIP, actual JNI RAR and raw-MPQ routing, cancellation and rollback after the shared installer refactor.
+- `normal199-review.json`: independent review binds the five import reports and verifies production scope, unchanged generated gameplay/rendering sources and historical records.
+- `normal199-android-build.json` and `normal199-native.json`: both Android ABIs compiled from frozen native inputs; current library hashes and prepared source provenance verified.
+- `normal199-android-package.json` and `normal199-signed-package.json`: actual Java 8, resources, DEX and APK packaging; version 1.9.9/code 190, existing app/certificate identity, v2/v3 signatures, 16 KiB ZIP/ELF alignment and unchanged signed payload.
+
+Engine/protocol remain 174, saves remain schema 28, and valid imports since 1.9 remain accepted without reimport. Graphics and zoom fixes through 1.9.8 are retained. Historical evidence below is preserved rather than rerun or relabeled.
+
+## Limits
+
+The exact reported RAR was not supplied. The recovered official installation passed baseline selection, so its checks do not reproduce the reported error. The order-dependent conflict reproduction uses case aliases at a mocked CASC API boundary; the current CASC library can deduplicate those aliases before enumeration. This is defensive importer hardening, not proof that the reporter's archive now works.
+
+The folder tests use production Java methods with host document-provider adapters. No physical Android import or real phone file-picker test was performed. Android lint was not run. Original game data and imported artwork remain external; only Weave is bundled.
+
+## Reproduce the focused checks
+
+Use the published 1.9.8 source ZIP and its matching prepared tree, the published 1.9.3 source ZIP for the historical native probe, the pinned JDK, a C++ compiler, and a compatible `org.json` JAR. The native check requires a separately supplied complete game installation. Test output directories must be empty; the archive regression keeps mutated fixtures outside the source tree.
+
+```sh
+python3 tests/run_casc_baseline199.py /external/StarCraft --baseline-source /external/StarDroid-1.9.3-source.zip --work /external/casc-baseline199
+python3 tests/run_casc_import199.py /external/StarCraft --baseline-source /external/StarDroid-1.9.8-source.zip --work /external/casc-import199
+python3 tests/run_folder_import199.py --baseline /external/normal198 --json-jar /external/json.jar --output /external/folder-import199
+python3 tests/run_retained_import199.py --json-jar /external/json.jar --output /external/retained-import199
+python3 tests/run_archive_regression199.py --jdk .tools/jdk-17.0.21+9 --json-jar /external/json.jar --output /external/archive-regression199
+python3 tests/run_normal199_review.py --baseline-source /external/StarDroid-1.9.8-source.zip
+```
+
+---
+
+# StarDroid 1.9.8 validation — build 189 (historical)
 
 Build 189 corrects flashing and displaced shadows during Remastered burrowing and unburrowing.
 
