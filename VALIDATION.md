@@ -1,4 +1,22 @@
-# StarDroid 1.9.5 validation — build 184
+# StarDroid 1.9.6 validation — build 187
+
+Build 187 replaces the zoom toggle and fixed-view option with minimum and maximum zoom percentages.
+
+Run `python3 tests/run_normal196_zoom.py` for the focused checks.
+
+## Current evidence
+
+- `normal196-zoom.json`: focused execution of zoom limits, migration, input routes and the side-by-side settings layout, with hashes binding the tested source.
+- `normal196-native.json`: exact reuse of all six build 184 native libraries and all compiled native inputs, including reproduced generated source, checked against the published 1.9.5 source archive.
+- `normal196-android-package.json` and `normal196-signed-package.json`: actual Java 8, resources, DEX and APK packaging; version 1.9.6/code 187, existing app/certificate identity, v2/v3 signatures, 16 KiB ZIP/ELF alignment and unchanged signed payload.
+
+Engine/protocol stay 174, saves stay schema 28, and valid imports since 1.9 remain accepted. Native code and libraries are unchanged from 1.9.5. Historical evidence below is preserved rather than rerun or relabeled.
+
+Host Java and layout checks are not a physical phone test. Android lint was not run. Original game data and imported artwork remain external; only Weave is bundled.
+
+---
+
+# StarDroid 1.9.5 validation — build 184 (historical)
 
 Build 184 fixes the HD/GPU fallback for remembered fog shadows and adds per-player statistics in App Options.
 

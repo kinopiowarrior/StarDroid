@@ -1,0 +1,28 @@
+StarDroid 1.9.6 — Android version code 187
+
+Pinned JDK 17.0.21+9, SDK/Build Tools 35 and NDK r27d. Java targets version 8.
+
+Build the Android APK:
+1. python3 scripts/setup_toolchain161.py
+2. python3 tests/run_normal196_zoom.py
+3. python3 scripts/package_normal196.py --baseline-source /external/StarDroid-1.9.5-source.zip
+4. python3 scripts/sign_normal196.py --config /external/private/signing.json --output /external/output/StarDroid-1.9.6.apk
+5. python3 scripts/seal_normal196.py --baseline-source /external/StarDroid-1.9.5-source.zip --directory /external/output
+
+The Java-only change reuses all six native libraries from 1.9.5 build 184.
+The native sources are reproduced from shipped archives and patches, then
+checked against every input in the original native build receipt. Native
+sources and libraries must also match the published 1.9.5 source archive,
+pinned to SHA-256:
+af9503229da8c2daf330d0435e928411aa253ffbc75b1b2f394ad00de93b871a
+
+Packaging checks Java, DEX, resources and frozen APK inputs. Sealing verifies
+the focused zoom checks, source changes, owner certificate, application
+identity, v2/v3 signatures, 16 KiB ZIP/ELF alignment and signed payload.
+
+Engine/multiplayer remain 174; saves remain 28. Existing imports since 1.9
+remain valid. Historical reports stay unchanged and are not relabeled as
+current test runs.
+
+Keep signing configuration and keys outside the source tree. Only Weave is
+bundled; original StarCraft game data and imported artwork are not included.
