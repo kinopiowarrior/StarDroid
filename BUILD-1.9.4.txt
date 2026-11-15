@@ -1,0 +1,31 @@
+StarDroid 1.9.4 — Android version code 183
+
+Pinned JDK 17.0.21+9, SDK/Build Tools 35 and NDK r27d. Java targets version 8.
+
+Build the Android APK:
+1. python3 scripts/setup_toolchain161.py
+2. Run the focused current checks described in VALIDATION.md.
+3. python3 scripts/build_native_normal194.py
+4. python3 scripts/package_normal194.py
+5. python3 scripts/sign_normal194.py --config /external/private/signing.json --output /external/output/StarDroid-1.9.4.apk
+
+Both Android ABIs are rebuilt from the shipped upstream archives and patches.
+The native build and packaging receipts bind every compiled input and library
+hash. Packaging checks the prepared engine against the fresh build receipt.
+
+The release audit additionally accepts the published 1.9.3 build 182 source
+archive through --baseline-source, pinned to SHA-256:
+54623d26f0bbada50eb4e02e6cf7ba0e7429da69c1fceec7bb20e6f9f0134586
+
+After the current gates pass, scripts/seal_normal194.py takes that archive
+through --baseline-source and an output --directory to create the matching
+source ZIP, validation summary and checksums. The historical audit baseline
+is not needed for ordinary APK packaging.
+
+The owner certificate, application identity, v2/v3 signatures and 16 KiB
+ZIP/ELF alignment are checked. Engine/multiplayer remain 174; saves remain 28.
+Existing imports since 1.9 remain valid. Historical reports stay unchanged
+and are not relabeled as current test runs.
+
+Keep signing configuration and keys outside the source tree. Only Weave is
+bundled; original StarCraft game data and imported artwork are not included.

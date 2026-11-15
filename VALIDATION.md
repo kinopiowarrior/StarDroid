@@ -1,4 +1,23 @@
-# StarDroid 1.9.3 validation — build 182
+# StarDroid 1.9.4 validation — build 183
+
+Build 183 preserves Select Larvae on researching or upgrading Hatcheries, Lairs and Hives. Spore Colony requirement text omits the selected Creep Colony while retaining real requirements.
+
+## Current evidence
+
+- `normal194-larva.json`: production command selection and research/upgrade regression checks.
+- `normal194-spore.json`: production colony requirement text and prerequisite regression checks.
+- `normal194-review.json`: independent source review, focused regression evidence and reproduction of the published baseline by reversing both patches.
+- `normal194-integration.json`: current gate binding, changed-source inventory and compatibility against published build 182.
+- `normal194-android-build.json` and `normal194-native.json`: both Android ABIs compiled from frozen native inputs reproduced from shipped archives and patches; library hashes and prepared engine provenance checked.
+- `normal194-android-package.json` and `normal194-signed-package.json`: actual Java 8, resources, DEX and APK packaging; version 1.9.4/code 183, existing app/certificate identity, v2/v3 signatures, 16 KiB ZIP/ELF alignment and unchanged signed payload.
+
+Engine/protocol stay 174, saves stay schema 28, and valid imports since 1.9 remain accepted. Historical evidence below is preserved rather than rerun or relabeled.
+
+Host regression checks are not a physical phone test. Android lint was not run. Original game data and imported artwork remain external; only Weave is bundled.
+
+---
+
+# StarDroid 1.9.3 validation — build 182 (historical)
 
 Build 182 limits the Large unit group icons option and its effective HUD behavior to Widescreen. Both widescreen modes allow it. With Widescreen off, the option is hidden and normal icons are used; the saved preference is retained. A stale hidden-option callback cannot change it.
 

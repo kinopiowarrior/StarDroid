@@ -28,7 +28,7 @@ Open **Menu → Options → Controls** during a match. **Controls guides**, the 
 
 ### Selection
 
-Selection hold, double-tap and drag tolerances are grouped under **Timing & accuracy**. Custom and multiplayer **Match options** separately control whether Select Larvae uses one Hatchery or all Hatcheries, and whether a morph command uses one larva per press. These gameplay choices are set before a match.
+Selection hold, double-tap and drag tolerances are grouped under **Timing & accuracy**. Custom and multiplayer **Match options** separately control whether Select Larvae uses one Hatchery or all Hatcheries, and whether a morph command uses one larva per press. These gameplay choices are set before a match. Select Larvae remains available while a Hatchery, Lair or Hive researches or upgrades.
 
 - **Drag to pan / hold to select** is the default. Start dragging immediately to move the camera; hold briefly first to draw a selection box. The default selection hold is about 180 ms.
 - You can switch to **Drag to select / two fingers pan** under **Selection settings**.
