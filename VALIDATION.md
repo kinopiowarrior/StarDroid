@@ -1,4 +1,25 @@
-# StarDroid 1.9.4 validation — build 183
+# StarDroid 1.9.5 validation — build 184
+
+Build 184 fixes the HD/GPU fallback for remembered fog shadows and adds per-player statistics in App Options.
+
+## Current evidence
+
+- `normal195-fog.json`: production fog rendering, pixel correctness and GPU-readback regression checks.
+- `normal195-stats.json`: statistics aggregation, persistence, profile isolation and duplicate-result checks.
+- `normal195-mission.json`: actual Agent of the Swarm save/load fog state and fallback routing, with original assets kept outside the release.
+- `normal195-effects.json`: retained GPU rendering and effect regressions against the current renderer.
+- `normal195-review.json`: independent review of the feature, renderer and compatibility boundaries.
+- `normal195-integration.json`: current gate binding, changed-source inventory and compatibility against published build 183.
+- `normal195-android-build.json` and `normal195-native.json`: both Android ABIs compiled from frozen native inputs reproduced from shipped archives and patches; library hashes and prepared engine provenance checked.
+- `normal195-android-package.json` and `normal195-signed-package.json`: actual Java 8, resources, DEX and APK packaging; version 1.9.5/code 184, existing app/certificate identity, v2/v3 signatures, 16 KiB ZIP/ELF alignment and unchanged signed payload.
+
+Engine/protocol stay 174, saves stay schema 28, and valid imports since 1.9 remain accepted. Historical evidence below is preserved rather than rerun or relabeled.
+
+Host rendering and Java checks are not a physical phone test or a phone-FPS measurement. Android lint was not run. Original game data and imported artwork remain external; only Weave is bundled.
+
+---
+
+# StarDroid 1.9.4 validation — build 183 (historical)
 
 Build 183 preserves Select Larvae on researching or upgrading Hatcheries, Lairs and Hives. Spore Colony requirement text omits the selected Creep Colony while retaining real requirements.
 

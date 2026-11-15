@@ -6,7 +6,7 @@
 
 Follow the [installation instructions](../README.md#install) to import a complete Remastered installation or original MPQ game files. **App Options → Import game files** offers **Installation folder** and **Files or archives**. The latter detects original MPQs and complete installations automatically. **Installed content** shows what is available.
 
-Importing copies content into the selected app storage. Keep the original archives elsewhere: uninstalling StarDroid or clearing Android app data removes local imports, settings, and saves, including app-specific SD-card files. Android backup is disabled for this app. Update by installing the matching signed APK over the existing app.
+Importing copies content into the selected app storage. Keep the original archives elsewhere: uninstalling StarDroid or clearing Android app data removes local imports, settings, statistics and saves, including app-specific SD-card files. Android backup is disabled for this app. Update by installing the matching signed APK over the existing app.
 
 Use **Import** in the custom-game or host map selector for `.scm`, `.scx`, ZIP and RAR map collections. Campaign bundles belong in **Import game files**. The replay browser also accepts `.rep` files, ZIPs and RARs. Select every part together for a split RAR. See [archive import instructions](IMPORTING-ARCHIVES.md). The included community map is **Weave**; additional game maps are not bundled.
 
@@ -21,6 +21,14 @@ Language choices show when content is missing or only partly installed. An unava
 Cinematics display imported SRT subtitles for the selected campaign language when available. Captions follow the movie's playback time and pause with it. Missing subtitles use an installed fallback; StarDroid does not generate translations or download voice packs.
 
 Download the desired language in your own StarCraft installation before copying its `Data` folder and matching `.build.info`. If an older StarDroid import omitted a downloaded language, import the complete installation again. Do not clear app data. Change these settings from the main menu; a match must end before switching game-content languages.
+
+## Player statistics
+
+Open **App Options → Player statistics** to view statistics for the selected Player ID in a scrollable Android text dialog. **Choose player** views another profile without changing the active Player ID.
+
+The dialog shows completed games, wins, losses, draws and win rate; campaign, custom and local multiplayer game counts; results by race; total, average and longest completed-game time; units killed and lost; buildings destroyed and lost; minerals and gas gathered; and completed campaign stages.
+
+Match totals cover new games started with 1.9.5 onward. New single-player saves retain their tracking identity; replays, pure observer sessions, old saves and resumed multiplayer games are excluded. Existing campaign completion progress is included. **Player backup → Export** also preserves statistics.
 
 ## Controls and settings
 
