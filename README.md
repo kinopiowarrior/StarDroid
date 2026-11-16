@@ -4,11 +4,11 @@
 
 **StarCraft and Brood War on Android, with Classic, Remastered and optional Carbot graphics.**
 
-**Latest release: 1.9.9 (build 190) · Android 8.0+ · ARM64 and x86-64**
+**Latest release: 1.9.10 (build 191) · Android 8.0+ · ARM64 and x86-64**
 
-See [1.9.9 changes](docs/CHANGES-1.9.9.md) and [build instructions](BUILD-1.9.9.txt).
+See [1.9.10 changes](docs/CHANGES-1.9.10.md) and [build instructions](BUILD-1.9.10.txt).
 
-[Download APK](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.9/StarDroid-1.9.9.apk) · [Release notes](https://github.com/kinopiowarrior/StarDroid/releases/tag/v1.9.9) · [Source ZIP](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.9/StarDroid-1.9.9-source.zip) · [Discord](https://discord.gg/F2FnjUrtQ)
+[Download APK](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.10/StarDroid-1.9.10.apk) · [Release notes](https://github.com/kinopiowarrior/StarDroid/releases/tag/v1.9.10) · [Developer source](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.10/StarDroid-1.9.10-source.zip) · [Discord](https://discord.gg/F2FnjUrtQ)
 
 ## Features
 
@@ -21,7 +21,14 @@ See [1.9.9 changes](docs/CHANGES-1.9.9.md) and [build instructions](BUILD-1.9.9.
 - Touch, mouse, keyboard and gamepad controls, with guides in the Controls menu.
 - Nine built-in interface languages, additional text and voices from installed language packs, map filtering, and ZIP/RAR imports.
 
-## New in 1.9.9
+## New in 1.9.10
+
+- Developer source downloads now receive a clear explanation when selected as game data.
+- Test files from the developer source are rejected before they can replace working imported data.
+- The patch diagnostic identifies known developer test data already imported and explains how to replace it.
+- Clearer guidance explains which StarCraft files to import and what the patch diagnostic means.
+
+## Included from 1.9.9
 
 - Hardened Classic fallback selection against file-order conflicts during Remastered imports.
 - Installation folder now detects Classic MPQ collections and complete Remastered installations inside the selected folder.
@@ -96,9 +103,11 @@ In **App Options**, Classic / Remastered choices appear only when Remastered gra
 
 ## Install
 
-1. Install **[StarDroid-1.9.9.apk](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.9/StarDroid-1.9.9.apk)**. To update, install over the existing app **without uninstalling**.
+1. Install **[StarDroid-1.9.10.apk](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.10/StarDroid-1.9.10.apk)**. To update, install over the existing app **without uninstalling**.
 2. Import game data if prompted, through **App Options → Import game files**. Choose **Installation folder** or **Files or archives**. Data already imported for 1.9 does not need another import.
 3. Import maps as `.scm`, `.scx`, ZIP or RAR files. Use the same app version on every multiplayer device.
+
+**Use your installed StarCraft game files.** The StarDroid developer source ZIP and GitHub “Source code” downloads contain app code, not playable game data. Do not import them into the app.
 
 **Classic files:** import `StarDat.mpq`, `BrooDat.mpq` and `Patch_rt.mpq`. Import `StarCraft.mpq` and `BroodWar.mpq` from the original installation media for campaigns and movies.
 
@@ -110,11 +119,11 @@ A fresh Remastered import creates the compatible Classic `patch_rt.mpq` from the
 
 **Game data is not included.** This is an unofficial fan project, not affiliated with Blizzard Entertainment.
 
-[Player guide](docs/PLAYER-GUIDE.md) · [1.9 changes](docs/CHANGES-1.9.md) · [Checksums](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.9/StarDroid-1.9.9-SHA256SUMS.txt) · [Report a bug](https://github.com/kinopiowarrior/StarDroid/issues/new/choose)
+[Player guide](docs/PLAYER-GUIDE.md) · [1.9 changes](docs/CHANGES-1.9.md) · [Checksums](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.10/StarDroid-1.9.10-SHA256SUMS.txt) · [Report a bug](https://github.com/kinopiowarrior/StarDroid/issues/new/choose)
 
 ## Development
 
-Download **[StarDroid-1.9.9-source.zip](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.9/StarDroid-1.9.9-source.zip)** for the matching complete app source, build instructions and validation records. GitHub's automatic “Source code” archives contain the older repository code snapshot; use the attached source ZIP to build 1.9.9.
+Download **[StarDroid-1.9.10-source.zip](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.10/StarDroid-1.9.10-source.zip)** for the matching complete app source, build instructions and validation records. GitHub's automatic “Source code” archives contain the older repository code snapshot; use the attached source ZIP to build 1.9.10. This is for developers; it does not supply game data.
 
 ## Credits
 

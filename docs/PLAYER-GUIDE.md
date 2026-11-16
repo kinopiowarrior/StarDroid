@@ -6,7 +6,15 @@
 
 Follow the [installation instructions](../README.md#install) to import a complete Remastered installation or original MPQ game files. **App Options → Import game files** offers **Installation folder** and **Files or archives**. The latter detects original MPQs and complete installations automatically. **Installed content** shows what is available.
 
+Install the StarDroid **APK**. Import files from your own StarCraft installation, not the StarDroid developer source ZIP or GitHub “Source code” downloads. Those archives contain the app's code and test files, not a playable copy of the game.
+
 **Installation folder** accepts folders containing original MPQ files and complete Remastered installations. Select the StarCraft folder containing both `Data` and `.build.info`; a single installation inside a surrounding folder is also detected. If several installations are found, select one of their folders. Selecting `Data` alone is not enough: go back to its parent folder. A complete Remastered installation takes priority over loose files elsewhere in the selected folder.
+
+For an original Classic installation, select `StarDat.mpq`, `BrooDat.mpq` and `Patch_rt.mpq`; add the original `StarCraft.mpq` and `BroodWar.mpq` campaign archives when available. For Remastered, select the installation folder or a ZIP/RAR containing both `Data` and its matching `.build.info`. Existing valid imports from 1.9 onward remain usable without reimporting.
+
+The **Game-data patch** line is a version diagnostic. “Invalid or unsupported patch” means the version checker could not read or identify that patch. This is separate from the importer and does not by itself establish whether the game can run. If you imported files from the developer source download, use your actual StarCraft installation instead. Keep your existing app data and saves.
+
+If the patch line says **Developer test data — import StarCraft game files**, it has identified a known test file from the developer source. Import your actual StarCraft game files through **Import game files**; you do not need to uninstall the app.
 
 Importing copies content into the selected app storage. Keep the original archives elsewhere: uninstalling StarDroid or clearing Android app data removes local imports, settings, statistics and saves, including app-specific SD-card files. Android backup is disabled for this app. Update by installing the matching signed APK over the existing app.
 

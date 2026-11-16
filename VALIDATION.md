@@ -1,4 +1,44 @@
-# StarDroid 1.9.9 validation — build 190
+# StarDroid 1.9.10 validation — build 191
+
+Build 191 distinguishes StarDroid developer source and its authored test files from actual StarCraft game data. The screenshot's “Invalid or unsupported patch” text comes from a read-only patch-version diagnostic, not the importer or a launch gate. The selected file was not supplied, so this release does not claim to have reproduced that person's exact input.
+
+Source downloads are recognized by matching StarDroid identifiers in the app build file and Android manifest under the same directory. The game-data import paths reject that project with a specific explanation. A separate exact size and SHA-256 check rejects the three known synthetic core MPQs shipped in the developer source before replacing imported content. It does not require particular patch members or reject other archives merely because their version is unrecognized.
+
+The patch diagnostic also identifies those exact test files if they were already imported, and tells the player to import StarCraft game files. Native patch reading and compatibility rules are unchanged. Valid modified patches keep their existing handling. Import guidance and errors are translated across the nine built-in interface languages.
+
+## Current evidence
+
+- `source-import1910.json`: source-project and exact test-fixture rejection through the production importer, with retained ordinary file and archive behavior.
+- `patch-diagnosis1910.json`: production Java diagnostic and actual native patch reader; supplied original Classic archives; production conversion and MPQ writing from a complete official Classic CASC tree; exact developer fixtures and modified, missing, empty, cancelled and changed inputs. The converted core contains 2,881 files and is 208,678,764 bytes. The original and converted patches are identified without changing native code.
+- `retained-import1910.json`: current import classes and retained launch, generation, transaction, cancellation, rollback, raw-file and ZIP archive behavior. Valid imports since 1.9 remain usable.
+- `normal1910-review.json`: independent review binds the focused reports and confirms the narrow production changes and unchanged historical evidence.
+- `normal1910-native.json`: all 927 compiled native inputs are reproduced and matched to the published 1.9.9/build190 receipt. All six libraries and the complete native inventory match the pinned 1.9.9 source ZIP byte-for-byte. No native rebuild is performed.
+- `normal1910-android-package.json` and `normal1910-signed-package.json`: actual Java 8, resources, DEX and APK packaging; version 1.9.10/code 191, existing app/certificate identity, v2/v3 signatures, 16 KiB ZIP/ELF alignment and unchanged signed payload.
+
+Engine/protocol remain 174, saves remain schema 28, and valid imports since 1.9 remain accepted without reimport. The normal build's earlier import, graphics and zoom fixes are retained. Historical evidence below is preserved rather than relabeled as current testing.
+
+## Limits
+
+The reporter's selected file was not supplied. An authored test patch reproduces the old diagnostic, but that does not prove it was their input. The new source check recognizes StarDroid project structure and the three exact known fixtures; it is not a general game-data authenticity check or expanded patch support.
+
+Tests use host document-provider adapters and the actual native probe through a host process. No physical Android import or phone file-picker test was performed. The diagnostic alone does not establish whether a game can run. Android lint was not run, and no 32-bit ABI was added. Original game data and imported artwork remain external; only Weave is bundled.
+
+## Reproduce the focused checks
+
+Use the published 1.9.9 source ZIP and its matching prepared tree, the pinned JDK, a C++ compiler and a compatible `org.json` JAR. The native diagnostic check requires separately supplied original Classic MPQs and a decoded complete Classic tree from an official Remastered installation. Keep these files outside the source tree. Test output directories must be empty.
+
+```sh
+python3 tests/run_patch_diagnosis1910.py --baseline-source /external/StarDroid-1.9.9-source.zip --classic /external/classic --patch /external/patch_rt.mpq --stardat /external/StarDat.mpq --broodat /external/BrooDat.mpq --output /external/patch-diagnosis1910 --json-jar /external/json.jar
+python3 tests/run_source_import1910.py --jdk .tools/jdk-17.0.21+9 --json-jar /external/json.jar --source-zip /external/StarDroid-1.9.9-source.zip --output /external/source-import1910 --core /external/patch_rt.mpq --core /external/StarDat.mpq --core /external/BrooDat.mpq
+python3 tests/run_retained_import1910.py --json-jar /external/json.jar --output /external/retained-import1910
+python3 tests/run_normal1910_review.py --baseline-source /external/StarDroid-1.9.9-source.zip
+```
+
+See [build instructions](BUILD-1.9.10.txt) for source verification, packaging, signing and sealing.
+
+---
+
+# StarDroid 1.9.9 validation — build 190 (historical)
 
 Build 190 fixes installation-folder routing and hardens Classic fallback selection during Remastered imports.
 
