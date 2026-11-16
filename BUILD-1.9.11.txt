@@ -1,0 +1,31 @@
+StarDroid 1.9.11 — Android version code 192
+
+Pinned JDK 17.0.21+9, SDK/Build Tools 35 and NDK r27d. Java targets version 8.
+
+Build the Android APK:
+1. python3 scripts/setup_toolchain161.py
+2. Run the focused current checks described in VALIDATION.md.
+3. python3 scripts/package_normal1911.py --baseline-source /external/StarDroid-1.9.10-source.zip
+4. python3 scripts/sign_normal1911.py --config /external/private/signing.json --output /external/output/StarDroid-1.9.11.apk
+5. python3 scripts/seal_normal1911.py --baseline-source /external/StarDroid-1.9.10-source.zip --directory /external/output
+
+The native implementation is unchanged. Both ABI library sets match published
+1.9.10/build191 and the original compiled 1.9.9/build190 libraries byte-for-byte.
+Packaging reproduces the native source and verifies every compiled input,
+library and native inventory against the published build receipt and source
+ZIP. No native rebuild is performed. The previous published source archive is
+pinned to SHA-256:
+fa60a6a33658853007d5b521df7632e2945fc853c8806697f77d2d38eac49b3a
+
+Packaging checks Java, DEX, resources and frozen APK inputs. Sealing verifies
+the focused map checks, source changes, owner certificate, application identity,
+v2/v3 signatures, 16 KiB ZIP/ELF alignment and unchanged signed payload.
+
+Engine/multiplayer remain 174; saves remain 28. Existing valid imports since
+1.9 remain usable. Historical reports stay unchanged and are not relabeled
+as current test runs.
+
+Keep signing configuration and keys outside the source tree. Only Weave is
+bundled; original game data, imported artwork and tested custom maps are not
+included. The developer source ZIP is app code for building StarDroid, not
+game data.

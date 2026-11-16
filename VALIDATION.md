@@ -1,4 +1,42 @@
-# StarDroid 1.9.10 validation — build 191
+# StarDroid 1.9.11 validation — build 192
+
+Build 192 fixes the Java map validation path rejecting protected MPQ maps that the native engine can load. The reported Nearby Multiplayer error is “Mission archive has invalid bounds”. Recovered original Poker Defense maps from the same NovaY2 title family reproduce the failure; the screenshot's exact map version was not supplied.
+
+Protected map layouts can contain misleading archive metadata and unused decoy block entries. The corrected map-transfer path preserves the complete bounded original file and validates the selected scenario against actual file bounds. It does not edit, repair or repack the user's map, and does not expand the transfer or save limits. Native parsing, simulation and rendering remain unchanged.
+
+## Current evidence
+
+- `map-archive1911.json`: focused production archive validation, protected layouts, selected scenario data and malformed-boundary regressions.
+- `network-map1911.json`: the actual Java host/join map path for three original Poker Defense maps and Weave, including cached and uncached map transfer, byte-preserving map cache and save round-trips, invalid-map rollback, and retained 2–8-peer and protocol regression suites.
+- `map-original1911.json`: 24 Java checks and six native extractions using original Poker Defense 7.1.4, 7.1.7 and 7SOLO files. All three reproduce the old Java rejection while native scenario reading succeeds. The corrected Java route accepts each file unchanged, and the native reader extracts the same scenario from the resulting map cache.
+- `normal1911-review.json`: independent review binds the focused reports, the narrow production change, unchanged engine and native libraries, and preserved historical evidence.
+- `normal1911-native.json`: all 927 compiled native inputs are reproduced and matched to the original published 1.9.9/build190 receipt. All six libraries and the complete native inventory match the pinned 1.9.10 source ZIP byte-for-byte. No native rebuild is performed.
+- `normal1911-android-package.json` and `normal1911-signed-package.json`: actual Java 8, resources, DEX and APK packaging; version 1.9.11/code 192, existing app/certificate identity, v2/v3 signatures, 16 KiB ZIP/ELF alignment and unchanged signed payload.
+
+Engine/protocol remain 174, saves remain schema 28, and valid imports since 1.9 remain accepted without reimport. The normal build's earlier import, graphics and zoom fixes are retained. Historical evidence below is preserved rather than relabeled as current testing.
+
+## Limits
+
+The exact map version shown in the screenshot was not supplied. Tests exercise recovered original maps from the same title family and authored archive cases. This corrects the reproduced map admission failure, not all EUD behavior or every protected-map format.
+
+Network and storage checks use host adapters. No physical Android or two-phone multiplayer test was performed. Android lint was not run, and no 32-bit ABI was added. Original game data, imported artwork and tested custom maps remain external; only Weave is bundled.
+
+## Reproduce the focused checks
+
+Use the published 1.9.10 source ZIP and its matching prepared tree, the pinned JDK, a C++ compiler and a compatible `org.json` JAR. Supply the three original maps separately in `/external/original-poker-maps`: `[EUD]Poker Defense 7.1.4.scx`, `[EUD]Poker Defense 7.1.7.scx` and `[EUD]PokerDefense7SOLO.scx`. The original-map runner pins their hashes; the maps are not included in the source ZIP. Keep test output directories empty before running.
+
+```sh
+python3 tests/run_map_archive1911.py --output /external/map-archive1911 --json-jar /external/json.jar --baseline-root /external/normal1910
+python3 tests/run_map_original1911.py --baseline-root /external/normal1910 --baseline-source /external/StarDroid-1.9.10-source.zip --maps /external/original-poker-maps --json-jar /external/json.jar --output /external/map-original1911
+python3 tests/run_network_map1911.py --java-home .tools/jdk-17.0.21+9 --json-jar /external/json.jar --output /external/network-map1911 --map '/external/original-poker-maps/[EUD]Poker Defense 7.1.4.scx' --map '/external/original-poker-maps/[EUD]Poker Defense 7.1.7.scx' --map '/external/original-poker-maps/[EUD]PokerDefense7SOLO.scx' --map app/src/main/assets/native/weave.scx
+python3 tests/run_normal1911_review.py --baseline-source /external/StarDroid-1.9.10-source.zip
+```
+
+See [build instructions](BUILD-1.9.11.txt) for source verification, packaging, signing and sealing.
+
+---
+
+# StarDroid 1.9.10 validation — build 191 (historical)
 
 Build 191 distinguishes StarDroid developer source and its authored test files from actual StarCraft game data. The screenshot's “Invalid or unsupported patch” text comes from a read-only patch-version diagnostic, not the importer or a launch gate. The selected file was not supplied, so this release does not claim to have reproduced that person's exact input.
 

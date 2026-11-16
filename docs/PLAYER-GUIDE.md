@@ -198,6 +198,8 @@ Use the same release APK and compatible classic data on every device. Enable Blu
 
 Open **Multiplayer**, choose your name and the matching expansion/connection mode, then **Join Game**. Select the host and tap **Join**. Use **Search Again** if it has just opened its lobby. Accept Android pairing prompts and confirm only matching in-app codes. Wait for the map transfer, choose your race, and wait for the host to start.
 
+Version 1.9.11 fixes protected EUD maps such as Poker Defense being rejected with **Mission archive has invalid bounds**. Update every device to the same release and select the original map again; do not edit or repack it. This corrects map validation, not all EUD compatibility limits.
+
 The selected map transfers automatically. Core game archives do not transfer. The combined mode begins over Bluetooth and can switch connections to Wi-Fi Direct on supported devices. Try Bluetooth-only mode if Wi-Fi Direct is unreliable.
 
 There are up to eight map slots, including the host and computers. Connected-device capacity also depends on hardware and Android radio support. There is no Battle.net integration, internet lobby service, host migration, or mid-match rejoin flow. Keep the host active during play.
