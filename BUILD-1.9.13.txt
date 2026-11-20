@@ -1,0 +1,24 @@
+StarDroid 1.9.13 test build (version code 194)
+Android 8.0 or later, ARM64 and x86-64
+
+On Linux, install Python 3, GNU make and GNU patch. From the source root run
+
+1. python3 scripts/setup_toolchain161.py
+2. python3 scripts/package_normal1913.py
+3. python3 scripts/sign_normal1913.py --config /external/private/signing.json --output /external/output/StarDroid-1.9.13.apk
+4. python3 scripts/seal_normal1913.py --base /external/StarDroid-1.9.12-source.zip --apk /external/output/StarDroid-1.9.13.apk --output /external/output/StarDroid-1.9.13-source.zip
+
+The package step prepares OpenBW, builds both native engines, compiles Java and produces an aligned unsigned APK. Updating an existing installation requires the same signing certificate. Keep the signing configuration outside the source tree.
+
+The source assembly verifies the signed APK, native libraries and 1.9.12 baseline. The baseline SHA-256 is 1526250e4325fdf75ec6e734aa0e16db42a58f121540c12d41b3a85f23ad29db. See VALIDATION.md for the component tests and their inputs. The Norad II mission test reads the original StarCraft campaign, StarDat, BrooDat and patch_rt MPQs from a local installation.
+
+To run the language preference matrix, use python3 tests/run_language_matrix1913.py with --json-jar pointing to the Android-compatible org.json JAR. To run the construction and weapon checks, use python3 tests/run_construction_damage194.py /path/to/core-mpqs. validation/larva194.json includes the exact commands for the position and lifecycle tests.
+
+For a standalone native mission test, run from the source root
+
+python3 scripts/prepare_native.py
+cc -O0 -c vendor/libsmacker/smacker.c -o /tmp/stardroid-smacker194.o
+c++ -std=c++17 -O0 -g0 -pthread -DOPENBW_ENABLE_UI -DOPENBW_NO_SDL_IMAGE -DOPENBW_NO_SDL_MIXER -Inative-engine -Inative-engine/ui -Inative-engine/web tests/native_norad_repair193.cpp native/generated/wasm_backend.cpp /tmp/stardroid-smacker194.o -o /tmp/stardroid-norad194
+/tmp/stardroid-norad194 /path/to/core-and-campaign-mpqs
+
+The same compile command accepts tests/sc4j_tech_harvest.cpp or tests/native_rules_replay194.cpp as the test source. Use a distinct output name and pass two runtime arguments, the core MPQ directory and app/src/main/assets/native/weave.scx.

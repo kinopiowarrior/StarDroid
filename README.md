@@ -4,11 +4,11 @@
 
 **StarCraft and Brood War on Android, with Classic, Remastered and optional Carbot graphics.**
 
-**Latest release: 1.9.11 (build 192) · Android 8.0+ · ARM64 and x86-64**
+**Latest release: 1.9.13 (build 194) · Android 8.0+ · ARM64 and x86-64**
 
-See [1.9.11 changes](docs/CHANGES-1.9.11.md) and [build instructions](BUILD-1.9.11.txt).
+See [1.9.13 changes](docs/CHANGES-1.9.13.md) and [build instructions](BUILD-1.9.13.txt).
 
-[Download APK](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.11/StarDroid-1.9.11.apk) · [Release notes](https://github.com/kinopiowarrior/StarDroid/releases/tag/v1.9.11) · [Developer source](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.11/StarDroid-1.9.11-source.zip) · [Discord](https://discord.gg/F2FnjUrtQ)
+[Download APK](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.13/StarDroid-1.9.13.apk) · [Release notes](https://github.com/kinopiowarrior/StarDroid/releases/tag/v1.9.13) · [Developer source](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.13/StarDroid-1.9.13-source.zip) · [Discord](https://discord.gg/F2FnjUrtQ)
 
 ## Features
 
@@ -21,7 +21,19 @@ See [1.9.11 changes](docs/CHANGES-1.9.11.md) and [build instructions](BUILD-1.9.
 - Touch, mouse, keyboard and gamepad controls, with guides in the Controls menu.
 - Nine built-in interface languages, additional text and voices from installed language packs, map filtering, and ZIP/RAR imports.
 
-## New in 1.9.11
+## New in 1.9.13
+
+- SCVs repair the rescued battlecruiser on Norad II and stop silently when minerals or gas run out.
+- Text and speech can be selected independently across all 13 supported game locales.
+- Fixed larva spawning at the unit limit, siege and cloak commands issued to dying units, and Lurker force fire.
+
+For Nearby Multiplayer, update every device to 1.9.13.
+
+## Included from 1.9.12
+
+- Race-specific announcements, skirmish AI improvements and clearer Nearby connection diagnostics. [Full changes](docs/CHANGES-1.9.12.md)
+
+## Included from 1.9.11
 
 - Fixed protected EUD maps such as Poker Defense being rejected in Nearby Multiplayer with “Mission archive has invalid bounds”.
 - Keeps the original map unchanged; editing or repacking the map is not needed.
@@ -108,7 +120,7 @@ In **App Options**, Classic / Remastered choices appear only when Remastered gra
 
 ## Install
 
-1. Install **[StarDroid-1.9.11.apk](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.11/StarDroid-1.9.11.apk)**. To update, install over the existing app **without uninstalling**.
+1. Install **[StarDroid-1.9.13.apk](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.13/StarDroid-1.9.13.apk)**. To update, install over the existing app **without uninstalling**.
 2. Import game data if prompted, through **App Options → Import game files**. Choose **Installation folder** or **Files or archives**. Data already imported for 1.9 does not need another import.
 3. Import maps as `.scm`, `.scx`, ZIP or RAR files. Use the same app version on every multiplayer device.
 
@@ -124,15 +136,14 @@ A fresh Remastered import creates the compatible Classic `patch_rt.mpq` from the
 
 **Game data is not included.** This is an unofficial fan project, not affiliated with Blizzard Entertainment.
 
-[Player guide](docs/PLAYER-GUIDE.md) · [1.9 changes](docs/CHANGES-1.9.md) · [Checksums](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.11/StarDroid-1.9.11-SHA256SUMS.txt) · [Report a bug](https://github.com/kinopiowarrior/StarDroid/issues/new/choose)
+[Player guide](docs/PLAYER-GUIDE.md) · [1.9 changes](docs/CHANGES-1.9.md) · [Checksums](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.13/StarDroid-1.9.13-SHA256SUMS.txt) · [Report a bug](https://github.com/kinopiowarrior/StarDroid/issues/new/choose)
 
 ## Development
 
-Download **[StarDroid-1.9.11-source.zip](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.11/StarDroid-1.9.11-source.zip)** for the matching complete app source, build instructions and validation records. GitHub's automatic “Source code” archives contain the older repository code snapshot; use the attached source ZIP to build 1.9.11. This is for developers; it does not supply game data.
+Download **[StarDroid-1.9.13-source.zip](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.13/StarDroid-1.9.13-source.zip)** for the matching complete app source, build instructions and validation records. GitHub's automatic “Source code” archives contain the older repository code snapshot; use the attached source ZIP to build 1.9.13. This is for developers; it does not supply game data.
 
 ## Credits
 
 Put together by **ToadWarrior**, using [OpenBW](https://github.com/OpenBW/openbw) and community projects. See [third-party credits](THIRD_PARTY.md) and [contributing](CONTRIBUTING.md).
 
 StarCraft and Brood War belong to Blizzard Entertainment. StarCraft Cartooned artwork is by Carbot Animations.
-
