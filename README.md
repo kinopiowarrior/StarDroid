@@ -10,6 +10,19 @@ See [1.9.27 changes](docs/CHANGES-1.9.27.md) and [build instructions](BUILD-1.9.
 
 [Download APK](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.27/StarDroid-1.9.27.apk) · [Release notes](https://github.com/kinopiowarrior/StarDroid/releases/tag/v1.9.27) · [Developer source](https://github.com/kinopiowarrior/StarDroid/releases/download/v1.9.27/StarDroid-1.9.27-source.zip) · [Discord](https://discord.gg/F2FnjUrtQ)
 
+## What's new in 1.9.27
+
+**Fury of the Swarm** now plays through correctly. The enemy Zerg retake lost outposts, Duran announces the new objective, and killing all 30 UED scientists wins the mission. If an older save is already stuck, restart this mission with your existing game data.
+
+### Highlights since 1.9.13, the previous public release
+
+- **PC multiplayer over Wi-Fi LAN.** Join a human-only StarCraft: Remastered game hosted on PC in Melee, Free For All or Top vs Bottom. The lobby can transfer a missing map when the host enables sharing. In-game chat and shared pause work across devices. [PC LAN setup](docs/remastered-pc-lan.md)
+- **StarDroid multiplayer.** Discover nearby Wi-Fi rooms or join an Internet room by host address or a configured directory. StarDroid hosts can offer up to eight player slots and four observer slots.
+- **Startup and updates.** The imported title art and music play while the menu loads. Repeat launches reuse campaign voice checks. Find new releases under **App Options → Check for updates**.
+- **Remastered imports.** The folder picker recognizes installations with hidden build metadata. Selecting an SD card puts new graphics and temporary import files on the card.
+- **Skirmish and controls.** Normal opponents regroup between attack waves, and Terran mixed waves use fewer Firebats. Flying buildings follow the latest landing order and draw in the correct order when they overlap. Simultaneous upgrades play one announcement.
+- **Graphics and replays.** Remastered GPU graphics have optional bloom with enhanced lighting. Replays show actions per minute, and imported Classic UMS replays run shared-force triggers for each active player.
+
 ## Features
 
 - StarCraft and Brood War campaigns, briefings, cinematics, saves and replays.
@@ -20,14 +33,6 @@ See [1.9.27 changes](docs/CHANGES-1.9.27.md) and [build instructions](BUILD-1.9.
 - **UMS support and common EUD support.** EUD compatibility is partial; not every map or Windows-specific extension works.
 - Touch, mouse, keyboard and gamepad controls, with guides in the Controls menu.
 - Nine built-in interface languages, additional text and voices from installed language packs, map filtering, and ZIP/RAR imports.
-
-## New since 1.9.13
-
-- Fixed enemy expansion in **Fury of the Swarm** so the mission can announce the UED scientist objective.
-- Faster title-to-menu startup on repeat launches. Remastered folder imports recognize hidden installation metadata and use the selected SD card for temporary files and graphics.
-- Normal skirmish opponents regroup between attack waves. Terran mixed waves use fewer Firebats.
-- Wi-Fi LAN can join supported human-only Remastered PC rooms, download missing maps, chat and pause. StarDroid rooms also support Internet play and observers.
-- **App Options → Check for updates** finds new releases. Install over your current copy to keep working imports and saves.
 
 ## Included from 1.9.13
 
