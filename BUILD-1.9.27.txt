@@ -1,0 +1,13 @@
+StarDroid 1.9.27 (version code 208)
+Android 8.0 and later, ARM64 and x86-64
+Simulation and Android-to-Android multiplayer build 207, save format 34 (reads formats 1 through 34)
+
+From the source root on Linux, with Python 3, GNU make and patch, run
+
+1. python3 scripts/setup_toolchain161.py
+2. python3 scripts/build_native_normal1927.py
+3. python3 scripts/package_normal1927.py
+4. python3 scripts/sign_normal1927.py --config /external/private/signing.json --output /external/StarDroid-1.9.27.apk
+5. python3 scripts/seal_normal1927.py --base /external/StarDroid-1.9.26-source.zip --apk /external/StarDroid-1.9.27.apk --output /external/StarDroid-1.9.27-source.zip
+
+Use the existing signing identity to update an installed copy. Keep private signing files outside the source tree.
